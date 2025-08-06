@@ -26,4 +26,3 @@ $db_conn = new mysqli($host, $login, $password, $db_name);
 
 
 ?>
-asdfasdfasdfasdf
