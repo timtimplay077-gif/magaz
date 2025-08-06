@@ -24,7 +24,7 @@ include('data/user_data.php');
 <body>
     <div class="head unselectable">
         <div class="block">
-            <a class="logo" href="index.php"><img src="img/KropKants_Logo_with_DarkBG.svg" alt=""></a>
+            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt=""></a>
             <form class="input_head">
                 <label>
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -81,7 +81,11 @@ include('data/user_data.php');
             <?php } ?>
         </div>
     </div>
-
+    <div class="logo_end">
+        <div class="block">
+            <img src="img/kanskrop_logo.png" alt="">
+        </div>
+    </div>
     <div class="contact unselectable">
         <div class="block">
             <div class="card3">

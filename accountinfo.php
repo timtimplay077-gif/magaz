@@ -113,7 +113,7 @@ include('data/user_data.php');
     </div>
     <div class="logo_end">
         <div class="block">
-            <img src="img/KropKants_Logo_with_DarkBG.svg" alt="">
+            <img src="img/kanskrop_logo.png" alt="">
         </div>
     </div>
     <div class="contact unselectable">
