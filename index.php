@@ -83,7 +83,7 @@ include('data/user_data.php');
     ?>
     <div class="head unselectable">
         <div class="block">
-            <a class="logo" href="index.php"><img src="img/KropKants_Logo_with_DarkBG.svg" alt=""></a>
+            <a class="logo" href="index.php"><img src="img/KansKrop_logo.png" alt=""></a>
             <form method="GET" class="input_head" action="index.php">
                 <label>
                     <i class="fa-solid fa-magnifying-glass"></i>
