@@ -1,0 +1,187 @@
+<?php
+include('data/database.php');
+include('data/baner.php');
+include('data/baner2.php');
+include('data/user_data.php');
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/shop.css?">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poiret+One&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/ee9963f31c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/adaptive.css?">
+    <title>Реєстрація</title>
+</head>
+
+<body>
+    <div class="head unselectable">
+        <div class="block">
+            <a class="logo" href="index.php"><img src="img/KropKants_Logo_with_DarkBG.svg" alt=""></a>
+            <form class="input_head">
+                <label>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Я шукаю..." name="search">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </label>
+            </form>
+            <div class="icons_head">
+                <?php
+                if ($user_query->num_rows > 0) {
+                    include("dropdown.php")
+                        ?>
+                    <button onclick="toggleMenu()"><i class="fa-regular fa-user"></i></button>
+                    <?php
+                } else { ?>
+                    <button><?php include("auth.php"); ?></button>
+                    <?php
+                }
+                ?>
+                <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="whatWeHave unselectable">
+        <div class="block">
+            <div class="whatWeHave_kans">
+                <img src="categoty/school-material.png" alt="">
+                <a href="index.php">Канселярія</a>
+            </div>
+            <a href="">Інше</a>
+        </div>
+    </div>
+    <div class="registration_users_h2 block">
+        <h2>Реєстрація</h2>
+    </div>
+    <div class="registration_users block">
+        <div class="register_content unselectable">
+            <h3>Контактні дані</h3>
+            <form action="registercheck.php">
+                <div class="register_label">
+                    <label for="firstName">* Ім’я</label><br>
+                    <input type="text" id="firstName" name="firstName" placeholder="Ім’я"
+                        value="<?= isset($_SESSION['get']['firstName']) ? $_SESSION['get']['firstName'] : '' ?>">
+                    <?php
+                    if (isset($_SESSION["errors"]['firstName'])) {
+                        ?>
+                        <p class="incorect_pass">Ім'я має містити від 1 до 32 символів</p>
+                    <?php }
+                    ?><br><br>
+
+                    <label for="lastName">* Прізвище</label><br>
+                    <input type="text" id="lastName" name="lastName" placeholder="Прізвище"
+                        value="<?= isset($_SESSION['get']['lastName']) ? $_SESSION['get']['lastName'] : '' ?>">
+                    <?php
+                    if (isset($_SESSION["errors"]['lastName'])) {
+                        ?>
+                        <p class="incorect_pass">Прізвище має містити від 1 до 32 символів</p>
+                    <?php }
+                    ?><br><br>
+
+                    <label for="email">* E-Mail</label><br>
+                    <input type="email" id="email" name="email" placeholder="E-Mail"
+                        value="<?= isset($_SESSION['get']['email']) ? $_SESSION['get']['email'] : '' ?>">
+                    <?php
+                    if (isset($_SESSION["errors"]['email'])) {
+                        ?>
+                        <p class="incorect_pass">E-mail адреса вказана невірно</p>
+                    <?php }
+                    ?><br><br>
+
+                    <label for="phone">* Телефон</label><br>
+                    <input type="tel" id="phone" name="phone" placeholder="Телефон"
+                        value="<?= isset($_SESSION['get']['phone']) ? $_SESSION['get']['phone'] : '' ?>">
+                    <?php
+                    if (isset($_SESSION["errors"]['phone'])) {
+                        ?>
+                        <p class="incorect_pass">Номер телефону має містити від 3 до 32 символів</p>
+                    <?php }
+                    ?>
+                    <br><br>
+
+                    <h3>Ваш пароль</h3>
+
+                    <label for="password">* Пароль</label><br>
+                    <input type="password" id="password" name="password" placeholder="Пароль"
+                        value="<?= isset($_SESSION['get']['password']) ? $_SESSION['get']['password'] : '' ?>"><br><br>
+
+                    <label for="confirmPassword">* Підтвердіть пароль</label><br>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Підтвердіть пароль"
+                        value="<?= isset($_SESSION['get']['confirmPassword']) ? $_SESSION['get']['confirmPassword'] : '' ?>"> <?php
+                              if (isset($_SESSION["errors"]['password'])) {
+                                  ?>
+                        <p class="incorect_pass">Паролі не співпадають</p>
+                    <?php }
+                              ?><br><br>
+                </div>
+                <h3>Розсилка новин</h3>
+                <label>Отримувати новини на E-Mail</label><br>
+                <input type="radio" id="subscribeYes" name="newsletter" value="yes">
+                <label for="subscribeYes">Так</label>
+                <input type="radio" id="subscribeNo" name="newsletter" value="no" checked>
+                <label for="subscribeNo">Ні</label><br><br>
+                <input type="checkbox" id="terms" name="terms">
+                <label for="terms">Я погоджуюсь з умовами <a href="#">Угода користувача</a></label><br><br>
+                <button type="submit" class="register_button">Зареєструватися</button>
+            </form>
+        </div>
+        <div>
+            <div class="login-box">
+                <a href="login.php"><button>Вхід</button></a>
+                <a href="registration.php"><button>Реєстрація</button></a>
+                <a href="reset-password.php"><button>Забули пароль?</button></a>
+            </div>
+        </div>
+    </div>
+    <div class="banner-blocks-container2 unselectable">
+        <div class="block">
+            <?php
+            foreach ($data_baner1 as $key => $value) { ?>
+                <div class="card2">
+                    <img src="<?= $value['img'] ?>" alt="" class="logo_card">
+                    <h3><?= $value['name'] ?></h3>
+                    <p><?= $value['text'] ?></p>
+                    </p>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="logo_end">
+        <div class="block">
+            <img src="img/KropKants_Logo_with_DarkBG.svg" alt="">
+        </div>
+    </div>
+    <div class="contact unselectable">
+        <div class="block">
+            <div class="card3">
+                <p><img src="contact/phone.png" alt="" class="baner2_img">Номер телефона</p>
+                <p><img src="contact/gmail.png" alt="" class="baner2_img">Наша пошта:</p>
+                <p><img src="contact/location.png" alt="" class="baner2_img">м.Кропивницький</p>
+            </div>
+            <div class="ourVT">
+                <a href="https://t.me/"><img src="contact/telegram.png" alt="" class="contact_logo">
+                    <p>Telegram</p>
+                </a>
+                <a href=""><img src="contact/viber.png" alt="" class="contact_logo">
+                    <p>Viber</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php
+    include("dropdown.php");
+    ?>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
+<?php
+$_SESSION['get'] = false;
+$_SESSION['errors'] = false;
+?>
