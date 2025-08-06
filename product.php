@@ -101,7 +101,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
                     <p class="stock_status">В наявності</p>
                 </div>
                 <div class="product_manufacturer">
-                    <p>Виробник: <?php print_r($row["manufacturer"]) ?></p>
+
                     <p>Код: <?php print_r($row["productСode"]) ?></p>
                 </div>
                 <?php
