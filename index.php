@@ -162,6 +162,7 @@ include('data/user_data.php');
     </div>
     <div>
         <div class="product_tile unselectable block">
+            <p>привет</p>
 
             <?php
             for ($i = 0; $i < $tabl->num_rows; $i++) {
