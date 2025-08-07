@@ -938,7 +938,7 @@ a {
 }
 
 .sort {
-   left: 0;
+    left: 0;
 }
 
 .logaut_button {
@@ -1442,9 +1442,10 @@ a {
     padding: 10px 15px;
     text-decoration: none;
     display: block;
-    width: 305px;
+    width: 313px;
     border-bottom: 1px solid lightgray;
     transition: color 0.2s ease;
+    font-size: 18px;
 }
 
 .categories-menu a:hover {
@@ -1467,6 +1468,7 @@ a {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-items: center
 }
-.p_login_error{
+
+.p_login_error {
     color: #a94442;
 }
