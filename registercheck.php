@@ -23,7 +23,7 @@ if (strlen($firstName) < 1 || strlen($firstName) > 32) {
 if (strlen($lastName) < 1 || strlen($lastName) > 32) {
     $errors["lastName"] = true;
 }
-if (strlen($phone) < 3 || strlen($phone) > 32) {
+if (strlen($phone) < 9 || strlen($phone) > 12) {
     $errors["phone"] = true;
 
 }

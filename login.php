@@ -66,17 +66,18 @@ include('data/user_data.php');
         </div>
         <div class="form-section">
             <h2>Постійний покупець</h2>
-            <form action="authcheck.php" method="post">
+            <form action="authcheck.php">
                 <label for="email">* E-Mail адреса</label>
-                <br></br>
                 <input type="email" id="email" name="email" placeholder="E-Mail адреса">
                 <br>
                 <label for="password">* Пароль</label>
-                <br></br>
                 <input type="password" id="password" name="password" placeholder="Пароль">
-
+                <?php
+                if (isset($_SESSION['login_error'])) {
+                    echo "<p class='p_login_error'>" . $_SESSION['login_error'] . "</p>";
+                    unset($_SESSION['login_error']);
+                } ?>
                 <a class="link" href="reset-password.php">Забули пароль?</a>
-
                 <button class="btn" type="submit">Увійти</button>
             </form>
         </div>

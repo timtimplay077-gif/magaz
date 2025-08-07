@@ -111,9 +111,21 @@ include('data/user_data.php');
         <div class="block">
             <div class="whatWeHave_kans">
                 <img src="categoty/school-material.png" alt="">
-                <a href="index.php">Канселярія</a>
+                <div class="categories">
+                    <button class="categories-button" onclick="toggleCategories(this)">Категорії</button>
+                    <div class="categories-menu">
+                        <?php
+                        for ($i = 0; $i < $category_query->num_rows; $i++) {
+                            $category_row = $category_query->fetch_assoc();
+                            ?>
+                            <a href="index.php?category=<?= $category_row['id'] ?>" alt=""
+                                class="category_img"><?= $category_row['name'] ?></a>
+
+                        <?php } ?>
+                    </div>
+                </div>
+                <a href="">Інше</a>
             </div>
-            <a href="">Інше</a>
         </div>
     </div>
     <div class="slider_wrapper block">
@@ -137,19 +149,7 @@ include('data/user_data.php');
                 <?php endif; ?>
             </form>
         </div>
-        <div class="categories">
-            <button class="categories-button" onclick="toggleCategories(this)">Категорії</button>
-            <div class="categories-menu">
-                <?php
-                for ($i = 0; $i < $category_query->num_rows; $i++) {
-                    $category_row = $category_query->fetch_assoc();
-                    ?>
-                    <a href="index.php?category=<?= $category_row['id'] ?>" alt=""
-                        class="category_img"><?= $category_row['name'] ?></a>
-
-                <?php } ?>
-            </div>
-        </div>
+    </div>
     </div>
 
     <div class="tovars unselectable">
@@ -192,8 +192,8 @@ include('data/user_data.php');
                                 <?= $original_price ?>₴
                             </p>
                         <?php endif; ?>
-                            <a href="addCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>"><img
-                                    src="contact/shopping-bag.png" alt="" class="buy_button1"></a>
+                        <a href="addCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>"><img
+                                src="contact/shopping-bag.png" alt="" class="buy_button1"></a>
                     </div>
                 </div>
                 <?php

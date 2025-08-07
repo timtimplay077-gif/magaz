@@ -76,7 +76,11 @@
     }
 }
 
-
+@media screen and (max-width: 1430px) {
+    .slider_img {
+        height: 600px;
+    }
+}
 
 @media screen and (max-width: 1000px) {
     .slider_img {
@@ -103,10 +107,20 @@
 }
 
 
-@media screen and (max-width: 560px) {
+@media screen and (max-width: 540px) {
+    .input_head label {
+        width: 220px;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+@media screen and (max-width: 420px) {
+    .input_head label {
+        width: 190px;
+    }
+}
+@media screen and (max-width: 380px) {
     .input_head label {
         width: 170px;
-        grid-template-columns: 1fr 1fr 1fr;
     }
 }
 
@@ -128,11 +142,6 @@
     }
 }
 
-@media screen and (max-width: 700px) {
-    .sort {
-        gap: 100px;
-    }
-}
 
 @media screen and (max-width: 400px) {
     .sort {
@@ -199,11 +208,7 @@
     }
 }
 
-@media screen and (max-width: 500px) {
-    .whatWeHave a {
-        font-size: 15px;
-    }
-}
+
 
 @media screen and (max-width: 500px) {
     .whatWeHave img {
@@ -571,6 +576,13 @@
 @media screen and (max-width: 650px) {
     .header_card_product .price_basket {
         font-size: 18px;
+
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .icons_head i {
+        padding: 3px;
 
     }
 }

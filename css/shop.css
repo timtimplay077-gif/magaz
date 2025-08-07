@@ -175,8 +175,8 @@ a {
 
 .whatWeHave img {
     margin-right: 10px;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     margin-left: 15px;
 
 }
@@ -938,11 +938,7 @@ a {
 }
 
 .sort {
-    display: flex;
-    align-items: baseline;
-    flex-direction: row-reverse;
-    justify-content: center;
-    gap: 1200px;
+   left: 0;
 }
 
 .logaut_button {
@@ -1249,7 +1245,7 @@ a {
 }
 
 .form-section p {
-    margin-bottom: 75px;
+    margin-bottom: 20px;
 }
 
 .form-section label {
@@ -1413,13 +1409,18 @@ a {
 }
 
 .categories-button {
-    padding: 10px 20px;
-    background-color: #000000;
-    color: white;
     border: none;
+    background: none;
+    color: gray;
+    transition: color 0.2s ease;
+    margin-right: 30px;
     cursor: pointer;
-    font-size: 20px;
-    border-radius: 10px;
+}
+
+.categories-button:hover {
+    color: black;
+    cursor: pointer;
+
 }
 
 .categories-menu {
@@ -1465,4 +1466,7 @@ a {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-items: center
+}
+.p_login_error{
+    color: #a94442;
 }

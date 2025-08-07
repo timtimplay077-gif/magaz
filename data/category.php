@@ -58,7 +58,7 @@ $category = [
     [
         'link' => '#',
         'img' => 'categoty/document.png',
-        'name' => 'Глобуси, карти'
+        'name' => 'Глобуси, мапи'
     ],
     [
         'link' => '#',
@@ -291,7 +291,7 @@ $category = [
     [
         'link' => '#',
         'img' => 'categoty/document.png',
-        'name' => 'Забарвлення'
+        'name' => 'Розмальрв'
     ],
 
     [
