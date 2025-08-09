@@ -1640,7 +1640,7 @@ a {
     position: relative;
     overflow: hidden;
     white-space: nowrap;
-    color: gray;
+    color: rgb(0, 0, 0);
     font-weight: 500;
     font-size: 25px;
     padding: 8px 0;
@@ -1650,10 +1650,6 @@ a {
 
 .text-slider {
     margin-left: 360px;
-}
-
-.marquee:hover {
-    color: black;
 }
 
 .marquee span {
