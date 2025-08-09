@@ -92,14 +92,14 @@ document.addEventListener("DOMContentLoaded", function () {
         marqueeText.style.transition = 'none';
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                marqueeText.style.transition = 'transform 11s linear';
+                marqueeText.style.transition = 'transform 7s linear';
                 marqueeText.style.transform = 'translateX(-100%)';
             });
         });
         setTimeout(() => {
             index = (index + 1) % messages.length;
             startMarquee(messages[index]);
-        }, 13500);
+        }, 7500);
     }
     startMarquee(messages[index]);
 });
