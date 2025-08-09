@@ -119,32 +119,19 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
                         }
                     }
                 }
-
                 ?>
                 <div class="product_row_price">
-                    <?php if ($discount_price != $original_price): ?>
-                        <p class="price">
-                            <?php if ($discount_price != $original_price): ?>
-                                <span class="span_old_price">
-                                    <?= round($original_price, 2) ?> ₴
-                                </span><br>
-                                <span class="span_new_price">
-                                    <?= round($discount_price, 2) ?> ₴
-                                </span>
-                            <?php else: ?>
-                                <?= round($original_price, 2) ?> ₴
-                            <?php endif; ?>
-                        </p>
-                    <?php else: ?>
-                        <p class="standart_price">
-                            <?= round($original_price, 2) ?> ₴
-                        </p>
-                    <?php endif; ?>
+                    <div class="price">
+                        <?= round(num: $discount_price, precision: 2) ?> ₴
+                    </div>
                 </div>
+
                 <div class="product_row_about_buy">
-                    <a href="addCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>"><img
-                            src="contact/shopping-bag.png" alt="" class="product_row_about_buy">Купити</a>
+                    <a href="addcart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>">
+                        <img src="contact/shopping-bag.png" alt="" class="product_row_about_buy">Купить
+                    </a>
                 </div>
+
             </div>
         </div>
     </div>

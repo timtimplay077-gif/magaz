@@ -131,7 +131,7 @@ include('data/user_data.php');
     <div class="slider_wrapper block">
         <?php include 'components/slider.php'; ?>
     </div>
-       <div class="banner-blocks-container unselectable">
+    <div class="banner-blocks-container unselectable">
         <div class="block">
             <?php
             foreach ($data_baner as $key => $value) { ?>
@@ -181,36 +181,29 @@ include('data/user_data.php');
             <?php
             for ($i = 0; $i < $tabl->num_rows; $i++) {
                 $row = $tabl->fetch_assoc();
-                $new_price = $row["price"];
                 $original_price = $row["price"];
-                $discount_price = $original_price;
                 if (isset($user_row['sale']) && $user_row['sale'] > 0) {
-                    $discount_price = $original_price * (1 - $user_row['sale'] / 100);
+                    $final_price = $original_price * (1 - $user_row['sale'] / 100);
+                } else {
+                    $final_price = $original_price;
                 }
-
                 ?>
+
                 <div class="product">
-                    <img class="mini_img" src="<?php print_r($row["img"]) ?>" alt="">
-                    <a href="product.php?id=<?php print_r($row["id"]) ?>"><?php print_r($row["name"]) ?></a>
+                    <img class="mini_img" src="<?php echo $row['img']; ?>" alt="">
+                    <a href="product.php?id=<?php echo $row['id']; ?>">
+                        <?php echo $row['name']; ?>
+                    </a>
                     <div class="product_buy">
-                        <?php if (isset($user_row['sale']) && $user_row['sale'] > 0): ?>
-                            <p class="price">
-                                <span style="text-decoration: line-through; color: gray;">
-                                    <?= $original_price ?>₴
-                                </span>
-                                <span style="color: rgba(195, 1, 1, 1); font-weight: bold;">
-                                    <?= round($discount_price, 2) ?>₴
-                                </span>
-                            </p>
-                        <?php else: ?>
-                            <p class="price">
-                                <?= $original_price ?>₴
-                            </p>
-                        <?php endif; ?>
-                        <a href="addCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>"><img
-                                src="contact/shopping-bag.png" alt="" class="buy_button1"></a>
+                        <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
+                            <?php echo round($final_price, 2); ?>₴
+                        </p>
+                        <a href="addcart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $row['id']; ?>">
+                            <img src="contact/shopping-bag.png" alt="" class="buy_button">
+                        </a>
                     </div>
                 </div>
+
                 <?php
             }
             ?>
@@ -238,7 +231,7 @@ include('data/user_data.php');
     </div>
     </div>
 
- 
+
     <div class="banner-blocks-container2">
         <div class="block">
             <?php
