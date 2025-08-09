@@ -128,28 +128,9 @@
 @media screen and (max-width: 400px) {
     .slick-slide img {
         width: 300px;
-        height: 160px;
+        height: 190px;
     }
 }
-
-@media screen and (max-width: 800px) {
-    .slider_img {
-        height: 350px;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .slider_img {
-        height: 250px;
-    }
-}
-
-@media screen and (max-width: 400px) {
-    .slider_img {
-        height: 200px;
-    }
-}
-
 
 @media screen and (max-width: 540px) {
     .input_head label {
