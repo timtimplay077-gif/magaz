@@ -938,7 +938,9 @@ a {
 }
 
 .sort {
-    left: 0;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
 }
 
 .logaut_button {
@@ -1419,7 +1421,7 @@ a {
 
 .categories-button:hover {
     color: black;
-    
+    cursor: pointer;
 
 }
 
