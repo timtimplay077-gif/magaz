@@ -592,6 +592,7 @@ a {
 .product_description h2 {
     font-size: 30px;
     margin-bottom: 25px;
+    font-weight: 900;
 
 }
 
@@ -1588,7 +1589,8 @@ a {
 }
 
 .characteristics h2 {
-    font-size: 25px;
+    font-size: 30px;
+    font-weight: 900;
 }
 
 .characteristics p {
