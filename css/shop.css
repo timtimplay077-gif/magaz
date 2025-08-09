@@ -360,7 +360,7 @@ a {
 }
 
 .slider_img {
-    height: 800px;
+    height: 600px;
     border-radius: 30px;
     margin-top: 50px;
     margin: auto;
@@ -1636,36 +1636,32 @@ a {
     text-decoration: wavy
 }
 
-.text-slider {
-    width: 100%;
+.marquee {
+    position: relative;
     overflow: hidden;
     white-space: nowrap;
-    font-size: 25px;
     color: gray;
-    transition: color 0.2s ease;
+    font-size: 25px;
+    padding: 8px 0;
+    transition:  0.4s ease;
     margin-left: 300px;
-
 }
-.text-slider:hover{
+
+.marquee:hover {
     color: black;
-
 }
 
-.text-slider div {
-    display: none;
+.marquee span {
+    display: inline-block;
+    will-change: transform;
 }
 
-.text-slider div.active {
-    display: block;
-    animation: fadeIn 1.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
+@keyframes scrollText {
+    0% {
+        transform: translateX(100%);
     }
 
-    to {
-        opacity: 1;
+    100% {
+        transform: translateX(-100%);
     }
 }

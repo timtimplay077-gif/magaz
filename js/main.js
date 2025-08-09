@@ -77,19 +77,29 @@ window.addEventListener('click', (event) => {
     }
 });
 document.addEventListener("DOMContentLoaded", function () {
-    const slides = document.querySelectorAll(".text-slider div");
-    let currentIndex = 0;
+    const messages = [
+        "Купуй товари тільки в KansKrop!",
+        "Все для школи та офісу в одному місці",
+        "Купуй канцелярію вигідно вже сьогодні!"
+    ];
 
-    function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.toggle("active", i === index);
+    const marqueeText = document.getElementById("marqueeText");
+    let index = 0;
+
+    function startMarquee(text) {
+        marqueeText.textContent = text;
+        marqueeText.style.transform = 'translateX(100%)';
+        marqueeText.style.transition = 'none';
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                marqueeText.style.transition = 'transform 6s linear';
+                marqueeText.style.transform = 'translateX(-100%)';
+            });
         });
+        setTimeout(() => {
+            index = (index + 1) % messages.length;
+            startMarquee(messages[index]);
+        }, 6500);
     }
-
-    function nextSlide() {
-        currentIndex = (currentIndex + 1) % slides.length;
-        showSlide(currentIndex);
-    }
-    showSlide(currentIndex);
-    setInterval(nextSlide, 6500); 
+    startMarquee(messages[index]);
 });
