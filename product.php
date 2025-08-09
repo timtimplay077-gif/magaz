@@ -179,10 +179,24 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
         <div class="block" id="Jac">
             <h2 class="product_name">Усе про <?php print_r($row["name"]) ?></h2>
             <p><?php print_r($row["aboutproduct"]) ?></p>
-
         </div>
-
     </div>
+    <div class="block">
+        <div class="characteristics">
+            <h2>Характеристика <?php print_r($row["name"]) ?></h2>
+            <p><?php print_r($row["characteristic_1"]) ?></p>
+            <p><?php print_r($row["characteristic_2"]) ?></p>
+            <p><?php print_r($row["characteristic_3"]) ?></p>
+            <p><?php print_r($row["characteristic_4"]) ?></p>
+            <p><?php print_r($row["characteristic_5"]) ?></p>
+            <p><?php print_r($row["characteristic_6"]) ?></p>
+            <p><?php print_r($row["characteristic_7"]) ?></p>
+            <p><?php print_r($row["characteristic_8"]) ?></p>
+            <p><?php print_r($row["characteristic_9"]) ?></p>
+            <p><?php print_r($row["characteristic_10"]) ?></p>
+        </div>
+    </div>
+
     <div class="banner-blocks-container2 unselectable">
         <div class="block">
             <?php

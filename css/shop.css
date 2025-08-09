@@ -1574,3 +1574,10 @@ a {
     cursor: pointer;
     
 }
+.characteristics{
+    margin-top: 50px;
+
+}
+.characteristics h2{
+    font-size: 25px;
+}
