@@ -278,10 +278,13 @@ include('data/user_data.php');
         $(document).on('ready', function () {
             $(".slick_slider").slick({
                 dots: true,
-                arrows: true,
+                infinite: true,
+                slidesToShow: 1,
+                centerMode: true,
+                variableWidth: true,
                 autoplay: true,
                 autoplaySpeed: 5000,
-                speed: 1000,
+                speed: 800,
                 pauseOnHover: true,
                 pauseOnFocus: true,
 
