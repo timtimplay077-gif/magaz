@@ -143,8 +143,7 @@ include('data/user_data.php');
     <div class="contact unselectable">
         <div class="block">
             <div class="card3">
-                <p><img src="contact/phone.png" alt="" class="baner2_img">Номер телефона</p>
-                <p><img src="contact/gmail.png" alt="" class="baner2_img">Наша пошта:</p>
+             
                 <p><img src="contact/location.png" alt="" class="baner2_img">м.Кропивницький</p>
             </div>
             <div class="ourVT">
