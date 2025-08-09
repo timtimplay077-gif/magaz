@@ -29,6 +29,6 @@ $basket_product_query = $db_conn->query($basket_product);
         </div>
         <hr>
     <?php } ?>
-    <button class="buy-button">Оформити замовлення</button>
+    <a href="chekout.php"> <button class="buy-button">Оформити замовлення</button></a>
 
 </div>
