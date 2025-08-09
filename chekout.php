@@ -143,7 +143,11 @@ include('data/user_data.php');
     <div class="contact unselectable">
         <div class="block">
             <div class="card3">
-             
+                <p><img src="contact/phone.png" alt="" class="baner2_img">Номер телефона:⠀<snap class="phone_number">
+                        +380 500 534 408</snap>
+                </p>
+                <p><img src="contact/gmail.png" alt="" class="baner2_img">Наша пошта:⠀<snap class="phone_number">
+                        admin@kanskrop.com</snap>
                 <p><img src="contact/location.png" alt="" class="baner2_img">м.Кропивницький</p>
             </div>
             <div class="ourVT">
