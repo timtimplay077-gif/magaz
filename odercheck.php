@@ -1,4 +1,6 @@
 <?php
+$temp = include("mail/rekvisit.php");
+print_r($temp);
 $mail_host = "smtp.gmail.com";
 $mail_username = "pykpykdaun69@gmail.com";
 $mail_to = "timtimplay077@gmail.com";
