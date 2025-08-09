@@ -12,6 +12,6 @@
         <img src="slider/sldier_photo_6.jpg" class="slider_img">
     </div>
        <div>
-        <img src="slider/slider_photo_7.jpg" class="slider_img">
+        <img src="slider/sldier_photo_7.jpg" class="slider_img">
     </div>
 </section>
