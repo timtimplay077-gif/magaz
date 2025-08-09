@@ -1641,10 +1641,14 @@ a {
     overflow: hidden;
     white-space: nowrap;
     color: gray;
+    font-weight: 500;
     font-size: 25px;
     padding: 8px 0;
-    transition:  0.4s ease;
-    margin-left: 300px;
+    transition: 0.4s ease;
+    width: 1000px;
+    margin-left: 200px;
+
+
 }
 
 .marquee:hover {
