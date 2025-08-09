@@ -274,6 +274,11 @@ include('data/user_data.php');
             $(".slick_slider").slick({
                 dots: true,
                 arrows: true,
+                autoplay: true,
+                autoplaySpeed: 5000,
+                speed: 1000,
+                pauseOnHover: true,
+                pauseOnFocus: true,
 
             });
         })

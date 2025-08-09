@@ -63,8 +63,8 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
     </div>
     <div class="about_product unselectable">
         <div class="block">
-            <a href="#Jac">Усе про товар</a>
-            <a href="#Jac">Характеристики</a>
+            <a href="#about">Усе про товар</a>
+            <a href="#char">Характеристики</a>
         </div>
     </div>
     <div class="block unselectable">
@@ -164,7 +164,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
     </div>
     <?php if (!empty($row['aboutproduct'])): ?>
         <div class="product_description unselectable">
-            <div class="block" id="Jac">
+            <div class="block" id="about">
                 <h2 class="product_name">Усе про <?php print_r(value: $row['name']) ?></h2>
                 <p><?php print_r(value: $row['ABOUTPRODUCT']) ?></p>
             </div>
@@ -172,7 +172,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
     <?php endif; ?>
     </div>
     <div class="block">
-        <div class="characteristics">
+        <div class="characteristics" id="char">
             <h2>Характеристика <?php print_r($row["name"]) ?></h2>
             <p><?php print_r($row["characteristic_1"]) ?></p>
             <p><?php print_r($row["characteristic_2"]) ?></p>
