@@ -563,6 +563,7 @@ a {
 
 .product_delivery_payment .delivery {
     border-right: 1px solid lightgray;
+    padding: 10px;
 }
 
 .delivery_p1 {
@@ -593,6 +594,7 @@ a {
     font-size: 30px;
     margin-bottom: 25px;
     font-weight: 900;
+    color: mediumblue;
 
 }
 
@@ -1591,6 +1593,7 @@ a {
 .characteristics h2 {
     font-size: 30px;
     font-weight: 900;
+    color: limegreen;
 }
 
 .characteristics p {
