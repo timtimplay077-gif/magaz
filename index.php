@@ -189,20 +189,17 @@ include('data/user_data.php');
                 }
                 ?>
 
-                <div class="product">
-                    <img class="mini_img" src="<?php echo $row['img']; ?>" alt="">
-                    <a href="product.php?id=<?php echo $row['id']; ?>">
-                        <?php echo $row['name']; ?>
-                    </a>
-                    <div class="product_buy">
-                        <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
-                            <?php echo round($final_price, 2); ?>₴
-                        </p>
-                        <a href="addcart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $row['id']; ?>">
-                            <img src="contact/shopping-bag.png" alt="" class="buy_button">
-                        </a>
+                <a href="product.php?id=<?php echo $row['id']; ?>" class="product_link">
+                    <div class="product">
+                        <img class="mini_img" src="<?php echo $row['img']; ?>" alt="">
+                        <p class="product_name_p"><?php echo $row['name']; ?></p>
+                        <div class="product_buy">
+                            <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
+                                <?php echo round($final_price, 2); ?> ₴
+                            </p>
+                        </div>
                     </div>
-                </div>
+                </a>
 
                 <?php
             }

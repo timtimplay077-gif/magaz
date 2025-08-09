@@ -1607,6 +1607,31 @@ a {
     height: 50px;
 
 }
-.phone_number{
+
+.phone_number {
     color: white;
+}
+
+.product_link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.product_link .product {
+    text-align: left;
+}
+
+.product_name_p {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--line-clamp, 2);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: gray;
+    transition: color 0.3s ease;
+}
+
+.product_name_p:hover {
+    color: black;
+    text-decoration: wavy
 }
