@@ -8,7 +8,7 @@ if ($order_query && $row = $order_query->fetch_assoc()) {
     die("Не вдалося отримати email одержувача");
 }
 $mail_host = "smtp.gmail.com";
-$mail_username = "pykpykdaun69@gmail.com";
+$mail_username = "admin@kanskrop.com";
 // $mail_to = "timtimplay077@gmail.com";
 $firstName = $_GET['firstName'] ?? '';
 $lastName = $_GET['lastName'] ?? '';

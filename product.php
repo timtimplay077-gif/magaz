@@ -165,7 +165,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
     <div class="product_description unselectable">
         <div class="block" id="Jac">
             <h2 class="product_name">Усе про <?php print_r($row["name"]) ?></h2>
-            <p><?php print_r($row["aboutproduct"]) ?></p>
+            <p><?php print_r($row["ABOUTBPRODUCT"]) ?></p>
         </div>
     </div>
     <div class="block">
