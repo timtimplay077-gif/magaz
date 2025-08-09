@@ -51,7 +51,7 @@
     }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 570px) {
     .card2 {
         width: 180px;
     }
@@ -76,15 +76,59 @@
     }
 }
 
-@media screen and (max-width: 1430px) {
-    .slider_img {
-        height: 600px;
+@media screen and (max-width: 1400px) {
+    .slick-slide img {
+        width: 850px;
+        height: 510px;
     }
 }
 
-@media screen and (max-width: 1000px) {
-    .slider_img {
-        height: 430px;
+@media screen and (max-width: 1300px) {
+    .slick-slide img {
+        width: 800px;
+        height: 460px;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .slick-slide img {
+        width: 700px;
+        height: 410px;
+    }
+}
+
+@media screen and (max-width: 780px) {
+    .slick-slide img {
+        width: 570px;
+        height: 310px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .slick-slide img {
+        width: 470px;
+        height: 270px;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .slick-slide img {
+        width: 400px;
+        height: 220px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .slick-slide img {
+        width: 340px;
+        height: 190px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .slick-slide img {
+        width: 300px;
+        height: 160px;
     }
 }
 
@@ -113,11 +157,13 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
+
 @media screen and (max-width: 420px) {
     .input_head label {
         width: 190px;
     }
 }
+
 @media screen and (max-width: 380px) {
     .input_head label {
         width: 170px;
@@ -583,6 +629,57 @@
 @media screen and (max-width: 430px) {
     .icons_head i {
         padding: 3px;
+
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .text-slider {
+        margin-left: 0;
+
+    }
+}
+
+@media screen and (max-width: 630px) {
+    .marquee {
+        max-width: 220px;
+
+    }
+}
+@media screen and (max-width: 476px) {
+    .marquee {
+        max-width: 180px;
+
+    }
+}
+/* @media screen and (max-width: 420px) {
+    .marquee {
+        max-width: 85px;
+
+    }
+} */
+@media screen and (max-width: 380px) {
+    .marquee {
+        max-width: 120px;
+        font-size: 18px;
+
+    }
+}
+@media screen and (max-width: 500px) {
+    .marquee span{
+        font-size: 18px;
+
+    }
+}
+@media screen and (max-width: 500px) {
+    .whatWeHave_kans{
+        font-size: 18px;
+
+    }
+}
+@media screen and (max-width: 500px) {
+    .whatWeHave a {
+        margin-right: 7px;
 
     }
 }
