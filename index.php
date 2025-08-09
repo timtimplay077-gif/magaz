@@ -125,6 +125,12 @@ include('data/user_data.php');
                     </div>
                 </div>
                 <a href="">Інше</a>
+                <div class="text-slider">
+                    <div>Купуй товари тільки в KansKrop!</div>
+                    <div>Доставка по всій Україні!</div>
+                    <div>Все для школи та офісу в одному місці</div>
+                    <div>Купуй канцелярію вигідно вже сьогодні!</div>
+                </div>
             </div>
         </div>
     </div>

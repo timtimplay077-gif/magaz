@@ -1635,3 +1635,37 @@ a {
     color: black;
     text-decoration: wavy
 }
+
+.text-slider {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 25px;
+    color: gray;
+    transition: color 0.2s ease;
+    margin-left: 300px;
+
+}
+.text-slider:hover{
+    color: black;
+
+}
+
+.text-slider div {
+    display: none;
+}
+
+.text-slider div.active {
+    display: block;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
