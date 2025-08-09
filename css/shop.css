@@ -1581,3 +1581,7 @@ a {
 .characteristics h2{
     font-size: 25px;
 }
+.characteristics p{
+    margin-top: 15px;
+    font-size: 19px;
+}
