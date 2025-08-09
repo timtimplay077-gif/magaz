@@ -1472,3 +1472,81 @@ a {
 .p_login_error {
     color: #a94442;
 }
+
+.oder {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.ored_adres {
+    border: 1px solid lightgrey;
+    border-radius: 30px;
+    padding: 25px;
+    width: 830px;
+}
+
+.chekount h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.label_chekount input {
+    border-radius: 10px;
+    padding-left: 8px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+    border: 1px solid lightgrey;
+    width: 350px;
+}
+
+.label_chekount form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+}
+
+.label_adres input {
+    border-radius: 10px;
+    padding-left: 8px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+    border: 1px solid lightgrey;
+    width: 350px;
+}
+
+.adres {
+    border: 1px solid lightgrey;
+    border-radius: 30px;
+    padding: 25px;
+    width: 500px;
+    margin-top: 30px;
+}
+
+.chekount {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.your_oder img {
+    height: 100px;
+    width: 100px;
+}
+
+.your_oder {
+    border: 1px solid lightgrey;
+    border-radius: 30px;
+    padding: 25px;
+    display: grid;
+    grid-template-columns: auto 1fr ;
+}
+.name_price{
+    margin-left: 40px;
+}
+.oder_price{
+    font-size: 25px;
+}
+.ored_name{
+    margin-bottom: 20px;
+    font-size: 20px;
+}
