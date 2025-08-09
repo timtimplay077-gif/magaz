@@ -70,7 +70,7 @@ include('data/user_data.php');
             <div class="ored_adres">
                 <h2>Покупець</h2>
                 <div class="label_chekount">
-                    <form action="">
+                    <form action="odercheck.php" method="get">
                         <div>
                             <label for="firstName">* Ім’я</label><br>
                             <input type="text" id="firstName" name="firstName" placeholder="Ім’я">
@@ -102,18 +102,23 @@ include('data/user_data.php');
             </div>
         </div>
         <div class="adres">
-            <h2>Адреса доставки</h2>
-            <div class="label_adres">
-                <div>
-                    <label for="city">* Місто</label><br>
-                    <input type="text" id="city" name="city" placeholder="Місто">
-                    <br><br>
-                    <label for="region">* Регіон / Область</label><br>
-                    <input type="text" id="region" name="region" placeholder="Регіон / Область">
-                    <br><br>
-                    <label for="adres">* Адреса</label><br>
-                    <input type="text" id="adres" name="adres" placeholder="Адреса">
+            <div class="adres_label">
+                <h2>Адреса доставки</h2>
+                <div class="label_adres">
+                    <div>
+                        <label for="city">* Місто</label><br>
+                        <input type="text" id="city" name="city" placeholder="Місто">
+                        <br><br>
+                        <label for="region">* Регіон / Область</label><br>
+                        <input type="text" id="region" name="region" placeholder="Регіон / Область">
+                        <br><br>
+                        <label for="adres">* Адреса</label><br>
+                        <input type="text" id="adres" name="adres" placeholder="Адреса">
+                    </div>
                 </div>
+            </div>
+            <div class="order_ready">
+                <a href="odercheck.php"><button class="order_ready_button">Оформлення замовлення </button></a>
             </div>
         </div>
     </div>

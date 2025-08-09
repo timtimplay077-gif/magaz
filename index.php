@@ -131,6 +131,21 @@ include('data/user_data.php');
     <div class="slider_wrapper block">
         <?php include 'components/slider.php'; ?>
     </div>
+       <div class="banner-blocks-container unselectable">
+        <div class="block">
+            <?php
+            foreach ($data_baner as $key => $value) { ?>
+                <div class="card">
+                    <img src="<?= $value['img'] ?>" alt="" class="logo_card">
+                    <h3><?= $value['name'] ?></h3>
+                    <p><?= $value['text'] ?></p>
+                    </p>
+                </div>
+            <?php } ?>
+
+        </div>
+
+    </div>
     <div class="sort block">
         <div>
             <form method="GET" id="sortForm">
@@ -223,21 +238,7 @@ include('data/user_data.php');
     </div>
     </div>
 
-    <div class="banner-blocks-container unselectable">
-        <div class="block">
-            <?php
-            foreach ($data_baner as $key => $value) { ?>
-                <div class="card">
-                    <img src="<?= $value['img'] ?>" alt="" class="logo_card">
-                    <h3><?= $value['name'] ?></h3>
-                    <p><?= $value['text'] ?></p>
-                    </p>
-                </div>
-            <?php } ?>
-
-        </div>
-
-    </div>
+ 
     <div class="banner-blocks-container2">
         <div class="block">
             <?php

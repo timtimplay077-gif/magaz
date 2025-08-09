@@ -26,6 +26,7 @@ $basket_product_query = $db_conn->query($basket_product);
             <img class="basket_pdoruct_photo" src="<?php print_r($row["img"]) ?>" alt="">
             <p><?php print_r($row["name"]) ?></p>
             <p class="price_basket">₴<?php print_r($row["price"]) ?></p>
+            
         </div>
         <hr>
     <?php } ?>
