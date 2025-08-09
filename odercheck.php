@@ -1,6 +1,4 @@
 <?php
-
-
 $mail_host = "smtp.gmail.com";
 $mail_username = "pykpykdaun69@gmail.com";
 $mail_to = "timtimplay077@gmail.com";
