@@ -1,4 +1,3 @@
-
 let puk = 0;
 const slider_wrapper = ['slider/sliderphoto1.jpg', 'slider/slidephoto2.jpg']
 function slider_product(cord) {

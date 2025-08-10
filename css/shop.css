@@ -576,7 +576,7 @@ a {
 .product_name {
     font-size: 30px;
     margin-bottom: 25px;
-    font-weight: 900;
+    font-weight: 700;
 
 }
 
@@ -594,8 +594,7 @@ a {
 .product_description h2 {
     font-size: 30px;
     margin-bottom: 25px;
-    font-weight: 900;
-    color: mediumblue;
+    font-weight: 700;
 
 }
 
@@ -1593,8 +1592,7 @@ a {
 
 .characteristics h2 {
     font-size: 30px;
-    font-weight: 900;
-    color: limegreen;
+    font-weight: 700;
 }
 
 .characteristics p {
