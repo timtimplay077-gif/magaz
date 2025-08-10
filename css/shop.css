@@ -1664,3 +1664,27 @@ a {
         transform: translateX(-100%);
     }
 }
+
+.logo_end div {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 20px;
+    align-items: center;
+
+}
+
+.logo_end iframe {
+    transition: all 0.3s ease;
+}
+
+.logo_end iframe:hover {
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+}
+
+.contact .ourVT p {
+    transition: all 0.3s ease;
+}
+
+.contact .ourVT p:hover {
+    color: white;
+}
