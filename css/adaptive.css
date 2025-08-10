@@ -35,21 +35,12 @@
         flex-wrap: wrap;
     }
 }
-
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 550px) {
     .banner-blocks-container .block {
-        gap: 5px;
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
+        display: none;
     }
 }
 
-@media screen and (max-width: 500px) {
-    .card {
-        width: 180px;
-    }
-}
 
 @media screen and (max-width: 570px) {
     .card2 {
@@ -168,7 +159,11 @@
         gap: 300px;
     }
 }
-
+@media screen and (max-width: 560px) {
+    .sort {
+        margin-bottom: 50px;
+    }
+}
 
 @media screen and (max-width: 400px) {
     .sort {
@@ -620,7 +615,12 @@
 
     }
 }
+@media screen and (max-width: 800px) {
+    .marquee {
+        max-width: 320px;
 
+    }
+}
 @media screen and (max-width: 630px) {
     .marquee {
         max-width: 220px;
@@ -633,12 +633,7 @@
 
     }
 }
-/* @media screen and (max-width: 420px) {
-    .marquee {
-        max-width: 85px;
 
-    }
-} */
 @media screen and (max-width: 380px) {
     .marquee {
         max-width: 120px;
