@@ -276,7 +276,7 @@ include('data/user_data.php');
                 <a href="https://t.me/kanskrop"><img src="contact/telegram.png" alt="" class="contact_logo">
                     <p>Telegram</p>
                 </a>
-                <a href="viber://chat?number=%2B380550534408"><img src="contact/viber.png" alt="" class="contact_logo">
+                <a href="viber://chat?number=%2B380668665369"><img src="contact/viber.png" alt="" class="contact_logo">
                     <p>Viber</p>
                 </a>
             </div>
