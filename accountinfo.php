@@ -120,8 +120,8 @@ include('data/user_data.php');
             <div class="iframe">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7QvyAvINCa0LDQvdGH0YLQvtCy0LDRgNC4!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
-                    width="450" height="300" style="border-radius: 15px; border-color:lightgray;" allowfullscreen=""
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    width="450" height="300" style="border-radius: 15px; border-color:lightgray;"
+                    allowfullscreen=""></iframe>
             </div>
 
         </div>
