@@ -60,6 +60,9 @@ include('data/user_data.php');
                             onclick="toggleCategories(this)">Категорії</button></a>
                 </div>
                 <a href="">Інше</a>
+                <div class="marquee">
+                    <span id="marqueeText"></span>
+                </div>
             </div>
         </div>
     </div>

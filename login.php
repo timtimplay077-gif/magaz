@@ -55,6 +55,9 @@ include('data/user_data.php');
                 <a href="index.php">Канселярія</a>
             </div>
             <a href="">Інше</a>
+            <div class="marquee">
+                <span id="marqueeText"></span>
+            </div>
         </div>
     </div>
     <div class="h2_login block">
