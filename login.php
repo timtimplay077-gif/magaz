@@ -54,7 +54,7 @@ include('data/user_data.php');
                 <img src="categoty/school-material.png" alt="">
                 <a href="index.php">Канселярія</a>
             </div>
-            <a href="">Інше</a>
+
             <div class="marquee">
                 <span id="marqueeText"></span>
             </div>

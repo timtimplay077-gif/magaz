@@ -124,7 +124,7 @@ include('data/user_data.php');
                         <?php } ?>
                     </div>
                 </div>
-                <a href="">Інше</a>
+             
                 <div class="text-slider">
                     <div class="marquee">
                         <span id="marqueeText"></span>
