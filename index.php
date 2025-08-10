@@ -273,7 +273,7 @@ include('data/user_data.php');
                 <p><img src="contact/location.png" alt="" class="baner2_img">м.Кропивницький</p>
             </div>
             <div class="ourVT">
-                <a href="https://t.me/MrZiger1"><img src="contact/telegram.png" alt="" class="contact_logo">
+                <a href="https://t.me/kanskrop"><img src="contact/telegram.png" alt="" class="contact_logo">
                     <p>Telegram</p>
                 </a>
                 <a href=""><img src="contact/viber.png" alt="" class="contact_logo">
