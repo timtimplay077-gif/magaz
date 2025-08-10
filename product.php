@@ -140,11 +140,11 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
             <div class="delivery">
                 <h2>Доставка</h2>
                 <a href="https://novaposhta.ua/shipping-cost/"><img src="payment/novaposhta.svg" alt="">Доставка Новою
-                    Поштою від</a>
+                    Поштою</a>
                 <p class="delivery_p">Адреси найближчих відділень дивитися на карті</p>
                 <a href="https://www.ukrposhta.ua/ua/taryfy-ukrposhta-standart" class="delivery_a"><img
                         src="payment/ukrposhta.svg" alt="">
-                    <p class="delivery_p1">Доставка Укр поштою від</p>
+                    <p class="delivery_p1">Доставка Укр поштою</p>
                 </a>
 
                 <p class="p_last"><img src="payment/pickup.svg" alt="">Самовивіз (м.Кропивницький) Безкоштовно</p>
