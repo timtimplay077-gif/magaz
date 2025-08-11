@@ -1763,9 +1763,9 @@ quantity-controls {
     border: none;
     background: transparent;
     font-size: 18px;
-    color: #999;
+    color: black;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 40px;
 }
 
 .delete-btn:hover {
