@@ -705,3 +705,67 @@
         font-size: 23px;
     }
 }
+
+@media screen and (max-width: 1270px) {
+    .ored_adres {
+        width: 530px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .ored_adres {
+        width: 380px;
+    }
+}
+
+@media screen and (max-width: 1270px) {
+    .label_chekount input {
+        width: 200px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .label_chekount input {
+        width: 120px;
+        gap: 0px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .label_chekount form {
+        gap: 0px;
+    }
+}
+
+@media screen and (max-width: 1160px) {
+    .adres {
+        grid-template-columns: 1fr;
+        justify-items: normal;
+    }
+}
+@media screen and (max-width: 750px) {
+    .chekount{
+        grid-template-columns: 1fr;
+    }
+}
+@media screen and (max-width: 750px) {
+    .ored_adres {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 750px) {
+    .label_chekount input {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 750px) {
+    .label_chekount form {
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .label_adres input {
+        width: 250px;
+    }
+}
