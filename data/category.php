@@ -23,8 +23,39 @@ $category = [
     [
         'link' => '#',
         'img' => 'categoty/correction-tape.png',
+        'name' => 'Альбоми для монет'
+    ],
+    [
+        'link' => '#',
+        'img' => 'categoty/correction-tape.png',
         'name' => 'Альбоми для малювання'
     ],
+        [
+        'link' => '#',
+        'img' => 'categoty/correction-tape.png',
+        'name' => 'Аплікації'
+    ],
+        [
+        'link' => '#',
+        'img' => 'categoty/correction-tape.png',
+        'name' => 'Батарейки'
+    ],
+        [
+        'link' => '#',
+        'img' => 'categoty/correction-tape.png',
+        'name' => 'Бейджі'
+    ],
+        [
+        'link' => '#',
+        'img' => 'categoty/correction-tape.png',
+        'name' => 'Бланки, трудові, медичні'
+    ],
+        [
+        'link' => '#',
+        'img' => 'categoty/correction-tape.png',
+        'name' => 'Альбоми для малювання'
+    ],
+
     [
         'link' => '#',
         'img' => 'categoty/pencil-case.png',
@@ -429,7 +460,7 @@ $category = [
         'link' => '#',
         'name' => 'Кулі повітряні'
     ],
-    
 
 
+  
 ];
