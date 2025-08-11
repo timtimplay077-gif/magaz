@@ -700,3 +700,9 @@
         margin-bottom: 0;
     }
 }
+
+@media screen and (max-width: 500px) {
+    .characteristics h2 {
+        font-size: 20px;
+    }
+}
