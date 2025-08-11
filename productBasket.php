@@ -13,23 +13,40 @@ $basket_product_query = $db_conn->query($basket_product);
 <script src="js/main.js"></script>
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="modal modal-basket" id="cartModal">
-    <div class="modal-header">
-        <p>Кошик</p>
-        <span class="close-btn" onclick="closeCart()">×</span>
-    </div>
+    <div class="cart-title">Кошик</div>
     <hr>
-    <?php
-    for ($i = 0; $i < $basket_product_query->num_rows; $i++) {
-        $row = $basket_product_query->fetch_assoc();
-        ?>
-        <div class="header_card_product">
-            <img class="basket_pdoruct_photo" src="<?php print_r($row["img"]) ?>" alt="">
-            <p><?php print_r($row["name"]) ?></p>
-            <p class="price_basket">₴<?php print_r($row["price"]) ?></p>
-            
-        </div>
-        <hr>
-    <?php } ?>
-    <a href="chekout.php"> <button class="buy-button">Оформити замовлення</button></a>
 
+    <div id="cart-items">
+        <?php while ($row = $basket_product_query->fetch_assoc()) { ?>
+            <div class="header_card_product" data-id="<?php echo $row['id']; ?>" data-price="<?php echo $row['price']; ?>">
+                <div class="delete-wrapper">
+                    <button class="delete-btn">🗑</button>
+                </div>
+                <div class="photo-wrapper">
+                    <img src="<?php echo $row['img']; ?>" alt="">
+                </div>
+                <div class="name-wrapper">
+                    <?php echo $row['name']; ?>
+                </div>
+                <div class="price-wrapper">
+                    <span class="price"><?php echo $row['price']; ?></span>⠀<p>₴</p>
+                </div>
+                <div class="quantity-wrapper">
+                    <button type="button" class="qty-btn minus">−</button>
+                    <span class="count">1</span>
+                    <button type="button" class="qty-btn plus">+</button>
+                </div>
+
+            </div>
+            <hr>
+        <?php } ?>
+    </div>
+
+    <div class="cart-footer">
+        <span id="cart-count">В кошику: 0 товарів</span>
+        <span id="cart-total">на суму: 0 ₴</span>
+    </div>
+
+
+    <a href="checkout.php" class="buy-button">Оформити замовлення</a>
 </div>

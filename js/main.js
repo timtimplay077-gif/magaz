@@ -102,3 +102,60 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     startMarquee(messages[index]);
 });
+document.addEventListener('DOMContentLoaded', function () {
+    var cart = document.getElementById('cartModal');
+    var countFooter = document.getElementById('cart-count');
+    var totalFooter = document.getElementById('cart-total');
+
+    function getItemWord(count) {
+        if (count === 1) {
+            return 'товар';
+        } else if (count >= 2 && count <= 4) {
+            return 'товари';
+        } else {
+            return 'товарів';
+        }
+    }
+
+    function recalTotal() {
+        var total = 0;
+        var itemsCount = 0;
+        var items = cart.querySelectorAll('.header_card_product');
+
+        items.forEach(function (item) {
+            var price = parseFloat(item.dataset.price) || 0;
+            var count = parseInt(item.querySelector('.count').textContent) || 0;
+            itemsCount += count;
+            total += price * count;
+            item.querySelector('.price').textContent = (price * count).toLocaleString('uk-UA');
+        });
+
+        countFooter.textContent = 'В кошику: ' + itemsCount + ' ' + getItemWord(itemsCount);
+        totalFooter.textContent = '⠀на суму: ' + total.toLocaleString('uk-UA') + '⠀₴';
+    }
+
+    cart.addEventListener('click', function (e) {
+        var plus = e.target.closest('.plus');
+        var minus = e.target.closest('.minus');
+        var del = e.target.closest('.delete-btn');
+
+        if (plus || minus) {
+            var item = plus || minus;
+            item = item.closest('.header_card_product');
+            var countEl = item.querySelector('.count');
+            var count = parseInt(countEl.textContent) || 0;
+            if (plus) count++;
+            if (minus) count = Math.max(0, count - 1); // не даём уйти в минус
+            countEl.textContent = count;
+            recalTotal();
+        }
+
+        if (del) {
+            var item = del.closest('.header_card_product');
+            item.remove();
+            recalTotal();
+        }
+    });
+
+    recalTotal();
+});
