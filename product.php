@@ -146,8 +146,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
                         src="payment/ukrposhta.svg" alt="">
                     <p class="delivery_p1">Доставка Укр поштою</p>
                 </a>
-
-                <p class="p_last"><img src="payment/pickup.svg" alt="">Самовивіз (м.Кропивницький) Безкоштовно</p>
+                <a href="#location"><img src="payment/pickup.svg" alt="">Самовивіз (м.Кропивницький) Безкоштовно</a>
             </div>
             <div class="payment">
                 <h2>Оплата</h2>
@@ -205,7 +204,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
             <div>
                 <img src="img/kanskrop_logo.png" alt="">
             </div>
-            <div class="iframe">
+            <div class="iframe" id="location">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7QvyAvINCa0LDQvdGH0YLQvtCy0LDRgNC4!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
                     width="450" height="300" style="border-radius: 15px; border-color:lightgray;"
