@@ -186,7 +186,8 @@ include('data/user_data.php');
             <?php
             for ($i = 0; $i < $tabl->num_rows; $i++) {
                 $row = $tabl->fetch_assoc();
-                $original_price = $row["price"];
+                $original_price = $row['price'];
+
                 if (isset($user_row['sale']) && $user_row['sale'] > 0) {
                     $final_price = $original_price * (1 - $user_row['sale'] / 100);
                 } else {
@@ -194,17 +195,23 @@ include('data/user_data.php');
                 }
                 ?>
 
-                <a href="product.php?id=<?php echo $row['id']; ?>" class="product_link">
-                    <div class="product">
+                <div class="product">
+                    <a href="product.php?id=<?php echo $row['id']; ?>" class="product_link">
                         <img class="mini_img" src="<?php echo $row['img']; ?>" alt="">
-                        <p class="product_name_p"><?php echo $row['name']; ?></p>
-                        <div class="product_buy">
-                            <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
-                                <?php echo round($final_price, 2); ?> ₴
-                            </p>
+                        <div class="product_info">
+                            <?php echo $row['name']; ?>
                         </div>
+                    </a>
+                    <div class="price_buy">
+                        <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
+                            <?php echo round($final_price, 2); ?>₴
+                        </p>
+                        <a href="addcart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $row['id']; ?>">
+                            <img src="contact/shopping-bag.png" alt="" class="buy_button">
+                        </a>
                     </div>
-                </a>
+
+                </div>
 
                 <?php
             }
