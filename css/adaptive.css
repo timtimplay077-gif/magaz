@@ -270,7 +270,7 @@
 @media screen and (max-width: 610px) {
     .product_delivery_payment .delivery a {
         font-size: 25px;
-        width: 320px;
+        width: 530px;
     }
 }
 
@@ -677,7 +677,7 @@
 @media screen and (max-width: 1000px) {
     .logo_end iframe {
         width: 330px;
-                margin: auto;
+        margin: auto;
     }
 }
 
