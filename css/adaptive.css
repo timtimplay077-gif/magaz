@@ -269,9 +269,8 @@
 
 @media screen and (max-width: 1000px) {
     .product_delivery_payment .delivery a {
-
         font-size: 25px;
-        width: 375px;
+        width: 275spx;
     }
 }
 
