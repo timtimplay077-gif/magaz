@@ -55,7 +55,6 @@ $category = [
         'img' => 'categoty/correction-tape.png',
         'name' => 'Альбоми для малювання'
     ],
-
     [
         'link' => '#',
         'img' => 'categoty/pencil-case.png',
@@ -151,7 +150,6 @@ $category = [
         'img' => 'categoty/document.png',
         'name' => 'Клей'
     ],
-
     [
         'link' => '#',
         'img' => 'categoty/document.png',
