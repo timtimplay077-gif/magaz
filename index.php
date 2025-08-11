@@ -206,7 +206,7 @@ include('data/user_data.php');
                         <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
                             <?php echo round($final_price, 2); ?>₴
                         </p>
-                        <a href="addcart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $row['id']; ?>">
+                        <a href="addCart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $row['id']; ?>">
                             <img src="contact/shopping-bag.png" alt="" class="buy_button">
                         </a>
                     </div>
