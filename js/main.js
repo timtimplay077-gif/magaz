@@ -159,11 +159,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
     recalTotal();
 });
-document.addEventListener('DOMContentLoaded', function () {
-    var cartModal = document.getElementById('cartModal');
-    document.querySelectorAll('.delete-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            cartModal.style.display = 'none';
-        });
-    });
-});

@@ -1796,5 +1796,20 @@ quantity-controls {
 .cart-title {
     font-weight: 700;
     font-size: 25px;
+
+}
+
+.delete-button {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+}
+
+.flex_close {
     border-bottom: 1px solid lightgrey;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

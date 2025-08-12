@@ -13,8 +13,10 @@ $basket_product_query = $db_conn->query($basket_product);
 <script src="js/main.js"></script>
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="modal modal-basket" id="cartModal">
-    <div class="cart-title">Кошик</div>
-    <button class="delete-btn" onclick="closeCart()">✖️</button>    
+    <div class="flex_close">
+        <div class="cart-title">Кошик</div>
+        <button class="delete-button" onclick="closeCart()"><img src="img/close.png" alt=""></button>
+    </div>
     <div id="cart-items">
 
         <?php while ($row = $basket_product_query->fetch_assoc()) { ?>
