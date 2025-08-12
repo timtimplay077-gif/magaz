@@ -14,6 +14,7 @@ $basket_product_query = $db_conn->query($basket_product);
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="modal modal-basket" id="cartModal">
     <div class="cart-title">Кошик</div>
+    <button class="delete-btn" onclick="closeCart()">✖️</button>    
     <div id="cart-items">
 
         <?php while ($row = $basket_product_query->fetch_assoc()) { ?>
