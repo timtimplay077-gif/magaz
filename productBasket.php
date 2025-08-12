@@ -17,8 +17,9 @@ $basket_product_query = $db_conn->query($basket_product);
 
 
     <div id="cart-items">
-        <hr>
+
         <?php while ($row = $basket_product_query->fetch_assoc()) { ?>
+            <hr>
             <div class="header_card_product" data-id="<?php echo $row['id']; ?>" data-price="<?php echo $row['price']; ?>">
                 <div class="delete-wrapper">
                     <button class="delete-btn">🗑</button>
