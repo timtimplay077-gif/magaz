@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var countEl = item.querySelector('.count');
             var count = parseInt(countEl.textContent) || 0;
             if (plus) count++;
-            if (minus) count = Math.max(0, count - 1); // не даём уйти в минус
+            if (minus) count = Math.max(0, count - 1);
             countEl.textContent = count;
             recalTotal();
         }
@@ -158,4 +158,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     recalTotal();
+});
+cart.addEventListener('click', function (e) {
+    var del = e.target.closest('.delete-btn');
+    if (del) {
+        var item = del.closest('.header_card_product');
+        var id = item.dataset.id;
+
+        // Удаляем на фронте
+        item.remove();
+        recalTotal();
+
+        // Уведомляем сервер
+        fetch('removeFromCart.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'id=' + encodeURIComponent(id)
+        });
+    }
 });
