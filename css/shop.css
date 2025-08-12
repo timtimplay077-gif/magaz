@@ -1174,7 +1174,8 @@ a {
     align-items: center;
     gap: 10px;
     padding: 10px;
-    justify-items: center
+    justify-items: center;
+    border-bottom: 1px solid lightgray;
 }
 
 .header_card_product p {
@@ -1795,4 +1796,5 @@ quantity-controls {
 .cart-title {
     font-weight: 700;
     font-size: 25px;
+    border-bottom: 1px solid lightgrey;
 }
