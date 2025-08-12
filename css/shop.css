@@ -1617,11 +1617,7 @@ a {
     margin-top: 50px;
     border: 1px solid lightgray;
     border-radius: 30px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 30px;
-    padding-bottom: 5px;
-
+    padding: 30px;
 }
 
 .characteristics h2 {
@@ -1793,6 +1789,7 @@ quantity-controls {
     justify-content: flex-end;
     margin-bottom: 30px;
     margin-top: 10px;
+    align-items: center;
 }
 
 .cart-title {
