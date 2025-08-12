@@ -159,23 +159,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     recalTotal();
 });
-cart.addEventListener('click', function (e) {
-    var del = e.target.closest('.delete-btn');
-    if (del) {
-        var item = del.closest('.header_card_product');
-        var id = item.dataset.id;
+if (del) {
+    var item = del.closest('.header_card_product');
+    var id = item.dataset.id;
 
-        // Удаляем на фронте
+    fetch('removeFromCart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'id=' + encodeURIComponent(id)
+    })
+    .then(r => r.text())
+    .then(res => {
+        console.log('Ответ сервера:', res);
         item.remove();
         recalTotal();
-
-        // Уведомляем сервер
-        fetch('removeFromCart.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: 'id=' + encodeURIComponent(id)
-        });
-    }
-});
+    })
+    .catch(err => console.error(err));
+}

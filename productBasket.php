@@ -1,5 +1,4 @@
 <?php
-$basket_product_id = $_SESSION['basket_product_id'] ?? [];
 $basket_sql = "SELECT * FROM basket WHERE user_id = '$user_id'";
 $basket_query = $db_conn->query($basket_sql);
 $basket_product_id = [];

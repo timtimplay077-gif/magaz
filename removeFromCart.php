@@ -1,14 +1,21 @@
 <?php
 include("data/database.php");
-if (isset($_POST['id'])) {
-    $id = intval($_POST['id']);
 
-    if (!empty($_SESSION['basket_product_id'])) {
-        $_SESSION['basket_product_id'] = array_filter(
-            $_SESSION['basket_product_id'],
-            function ($productId) use ($id) {
-                return $productId != $id;
-            }
-        );
-    }
+$user_id = $_SESSION['user_id'] ?? null;
+if (!$user_id) {
+    http_response_code(403);
+    echo "Нет доступа";
+    exit;
+}
+
+if (isset($_POST['id'])) {
+    $product_id = intval($_POST['id']);
+    $sql = "DELETE FROM basket WHERE user_id = ? AND product_id = ?";
+    $stmt = $db_conn->prepare($sql);
+    $stmt->bind_param("ii", $user_id, $product_id);
+    $stmt->execute();
+
+    echo "OK";
+} else {
+    echo "NO ID";
 }
