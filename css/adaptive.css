@@ -575,8 +575,9 @@
     }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 750px) {
     .modal-basket {
+        width: 450px;
        
 
     }
