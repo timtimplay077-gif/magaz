@@ -636,6 +636,12 @@
     }
 }
 
+    @media screen and (max-width: 1500px) {
+    .header_card_product .value-money {
+        width: 1px;
+
+    }
+}
 @media screen and (max-width: 750px) {
     .header_card_product {
         gap: 0px;
