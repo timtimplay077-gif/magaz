@@ -602,19 +602,18 @@
     }
 }
 
-@media screen and (max-width: 450px) {
-    .modal-basket {
-        display: grid;
-        grid-template-columns: 20px 70px 1fr 70px 100px;
+@media screen and (max-width: 750px) {
+    .header_card_product {
+        gap: 0px;
 
 
     }
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 500px) {
     .header_card_product {
         gap: 0px;
-
+        grid-template-columns: 20px 70px 1fr 70px 100px;
 
     }
 }
