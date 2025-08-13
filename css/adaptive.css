@@ -629,13 +629,19 @@
     }
 }
 
-@media screen and (max-width: 1500px) {
+@media screen and (max-width: 500px) {
+    .header_card_product p {
+        width: 70px;
+
+    }
+}
+
+    @media screen and (max-width: 1500px) {
     .header_card_product .value-money {
         width: 20px;
 
     }
 }
-
 @media screen and (max-width: 750px) {
     .header_card_product {
         gap: 0px;
