@@ -590,6 +590,7 @@
 
     }
 }
+
 @media screen and (max-width: 390px) {
     .modal-basket {
         width: 350px;
@@ -601,6 +602,19 @@
 @media screen and (max-width: 390px) {
     .delete-btn {
         font-size: 25px;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    .header_card_product p {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    .qty-btn {
+        width: 20px;
+        height: 20px;
     }
 }
 
