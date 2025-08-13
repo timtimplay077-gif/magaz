@@ -28,7 +28,7 @@ $basket_product_query = $db_conn->query($basket_product);
                     <img src="<?php echo $row['img']; ?>" alt="">
                 </div>
                 <div class="name-wrapper">
-                    <?php echo $row['name']; ?>
+                    <p><?php echo $row['name']; ?></p>
                 </div>
                 <div class="price-wrapper">
                     <span class="price"><?php echo $row['price']; ?></span>⠀<p>₴</p>
