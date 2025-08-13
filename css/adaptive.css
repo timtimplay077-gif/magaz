@@ -606,8 +606,8 @@
 }
 
 @media screen and (max-width: 390px) {
-    .header_card_product p {
-        font-size: 12px;
+    .header_card_product .name-wrapepr {
+        font-size: 13px;
     }
 }
 
