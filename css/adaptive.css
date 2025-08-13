@@ -598,6 +598,12 @@
     }
 }
 
+@media screen and (max-width: 390px) {
+    .delete-btn {
+        font-size: 25px;
+    }
+}
+
 @media screen and (max-width: 750px) {
     .name-wrapepr {
         display: -webkit-box;
