@@ -590,6 +590,13 @@
 
     }
 }
+@media screen and (max-width: 390px) {
+    .modal-basket {
+        width: 350px;
+
+
+    }
+}
 
 @media screen and (max-width: 750px) {
     .name-wrapepr {
