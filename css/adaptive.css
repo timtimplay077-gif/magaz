@@ -573,11 +573,8 @@
         display: flex;
         flex-wrap: wrap
     }
-}@media screen and (max-width: 750px) {
-    .name-wrapepr {
-        width: 100px;
-    }
 }
+
 
 @media screen and (max-width: 750px) {
     .modal-basket {
@@ -612,6 +609,7 @@
 @media screen and (max-width: 390px) {
     .header_card_product .name-wrapepr {
         font-size: 13px;
+        width: 100px;
     }
 }
 
