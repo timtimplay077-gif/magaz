@@ -585,6 +585,14 @@
 
 @media screen and (max-width: 450px) {
     .modal-basket {
+        width: 400px;
+
+
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .modal-basket {
         grid-template-columns: 20px 70px 1fr 70px 100px;
 
 
