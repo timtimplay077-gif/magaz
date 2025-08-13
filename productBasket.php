@@ -31,7 +31,7 @@ $basket_product_query = $db_conn->query($basket_product);
                     <p><?php echo $row['name']; ?></p>
                 </div>
                 <div class="price-wrapper">
-                    <span class="price"><?php echo $row['price']; ?></span>⠀<p>₴</p>
+                    <span class="price"><?php echo $row['price']; ?></span>⠀<p class="value-money">₴</p>
                 </div>
                 <div class="quantity-wrapper">
                     <button type="button" class="qty-btn minus">−</button>
