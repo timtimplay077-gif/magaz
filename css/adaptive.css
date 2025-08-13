@@ -578,7 +578,15 @@
 @media screen and (max-width: 750px) {
     .modal-basket {
         width: 450px;
-       
+
+
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .modal-basket {
+        grid-template-columns: 20px 70px 1fr 70px 100px;
+
 
     }
 }
@@ -586,7 +594,7 @@
 @media screen and (max-width: 750px) {
     .header_card_product {
         gap: 0px;
-       
+
 
     }
 }
@@ -746,21 +754,25 @@
         justify-items: normal;
     }
 }
+
 @media screen and (max-width: 750px) {
-    .chekount{
+    .chekount {
         grid-template-columns: 1fr;
     }
 }
+
 @media screen and (max-width: 750px) {
     .ored_adres {
         width: 100%;
     }
 }
+
 @media screen and (max-width: 750px) {
     .label_chekount input {
         width: 100%;
     }
 }
+
 @media screen and (max-width: 750px) {
     .label_chekount form {
         gap: 20px;
