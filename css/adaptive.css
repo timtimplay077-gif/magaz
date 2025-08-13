@@ -629,9 +629,9 @@
     }
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 500px) {
     .header_card_product p {
-        width: 100px;
+        font-size: 12px;
 
     }
 }
