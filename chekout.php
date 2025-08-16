@@ -102,27 +102,30 @@ if (!empty($basket_product_id)) {
                     </form>
                 </div>
             </div>
-            <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
-                $total = 0;
-                while ($item = $basket_product_query->fetch_assoc()) {
-                    $total += $item['price'];
-                    ?>
-                    <div class="oder_item">
-                        <!-- Фото товара -->
-                        <img src="product_img/<?php echo $item['img']; ?>" alt="" width="120">
+            <div class="your_oder">
+                <h2>Ваше замовлення</h2>
+                <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
+                    $total = 0;
+                    while ($item = $basket_product_query->fetch_assoc()) {
+                        $total += $item['price'];
+                        ?>
+                        <div class="oder_item">
+                            <!-- Фото товара -->
+                            <img src="product_img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" width="120">
 
-                        <!-- Название -->
-                        <p class="oder_name"><?php echo $item['name']; ?></p>
+                            <!-- Название -->
+                            <p class="oder_name"><?php echo $item['name']; ?></p>
 
-                        <!-- Цена -->
-                        <p class="oder_price"><?php echo $item['price']; ?> €</p>
-                    </div>
+                            <!-- Цена -->
+                            <p class="oder_price"><?php echo $item['price']; ?> €</p>
+                        </div>
+                    <?php } ?>
+                    <hr>
+                    <p class="oder_total"><b>Загальна сума: <?php echo $total; ?> €</b></p>
+                <?php } else { ?>
+                    <p>Кошик порожній.</p>
                 <?php } ?>
-                <hr>
-                <p class="oder_total"><b>Загальна сума: <?php echo $total; ?> €</b></p>
-            <?php } else { ?>
-                <p>Кошик порожній.</p>
-            <?php } ?>
+            </div>
         </div>
         <div class="adres">
             <div class="adres_label">
