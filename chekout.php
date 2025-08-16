@@ -3,6 +3,18 @@ include('data/database.php');
 include('data/baner2.php');
 include('data/category.php');
 include('data/user_data.php');
+$user_id = $_SESSION['user_id'];
+$basket_sql = "SELECT * FROM basket WHERE user_id = '$user_id'";
+$basket_query = $db_conn->query($basket_sql);
+$basket_product_id = [];
+while ($basket_row = $basket_query->fetch_assoc()) {
+    $basket_product_id[] = $basket_row['product_id'];
+}
+if (!empty($basket_product_id)) {
+    $in = implode(',', array_map('intval', $basket_product_id));
+    $basket_product = "SELECT * FROM products WHERE id IN ($in)";
+    $basket_product_query = $db_conn->query($basket_product);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,16 +103,23 @@ include('data/user_data.php');
                 </div>
             </div>
             <div class="your_oder">
-                <div>
-                    <img src="product_img/dcc99ac50efe11e9beb9002682d30847_fc1d810e999b11ee83fe002522f8e32e-1000x1000.webp"
-                        alt="">
-                </div>
-
-                <div class="name_price">
-                    <p class="ored_name">asfgjhaf</p>
-                    <p class="oder_price">321 ₴</p>
-                </div>
-
+                <h2>Ваше замовлення</h2>
+                <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
+                    $total = 0;
+                    while ($item = $basket_product_query->fetch_assoc()) {
+                        $total += $item['price'];
+                        ?>
+                        <div class="oder_item">
+                            <img src="product_img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" width="120">
+                            <p class="oder_name"><?php echo $item['name']; ?></p>
+                            <p class="oder_price"><?php echo $item['price']; ?>₴</p>
+                        </div>
+                    <?php } ?>
+                    <hr>
+                    <p class="oder_total"><b>Загальна сума: <?php echo $total; ?> ₴</b></p>
+                <?php } else { ?>
+                    <p>Кошик порожній.</p>
+                <?php } ?>
             </div>
         </div>
         <div class="adres">
