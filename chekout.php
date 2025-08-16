@@ -103,7 +103,6 @@ if (!empty($basket_product_id)) {
                 </div>
             </div>
             <div class="your_oder">
-                <h2>Ваше замовлення</h2>
                 <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
                     $total = 0;
                     while ($item = $basket_product_query->fetch_assoc()) {
