@@ -110,7 +110,7 @@ if (!empty($basket_product_id)) {
                         $total += $item['price'];
                         ?>
                         <div class="oder_item">
-                            <img src="product_img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" width="120">
+                            <img src="<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" width="120">
                             <p class="oder_price"><?php echo $item['price']; ?>₴</p>
                         </div>
                     <?php } ?>
