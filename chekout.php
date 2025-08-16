@@ -117,6 +117,7 @@ if (!empty($basket_product_id)) {
                 <?php } ?>
             </div>
         </div>
+        <p class="oder_total"><b>Загальна сума: <?php echo $total; ?>₴</b></p>
         <div class="adres">
             <div class="adres_label">
                 <h2>Адреса доставки</h2>
@@ -133,7 +134,6 @@ if (!empty($basket_product_id)) {
                     </div>
                 </div>
             </div>
-            <p class="oder_total"><b>Загальна сума: <?php echo $total; ?>₴</b></p>
             <div class="order_ready">
                 <a href="odercheck.php"><button class="order_ready_button">Оформлення замовлення </button></a>
             </div>
