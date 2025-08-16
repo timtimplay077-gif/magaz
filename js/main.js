@@ -15,10 +15,10 @@ function slider_product(cord) {
     }
     set_mimiImg(puk);
 }
-function set_mimiImg(src) {
-    puk = src;
+function set_miniImg(srcIndex) {
+    puk = srcIndex;
     const big_img = document.querySelector('.slider_product');
-    big_img.src = slider_wrapper_product[puk]
+    big_img.src = slider_wrapper_product[puk];
 }
 function openCart() {
     document.getElementById('cartModal').classList.add('show');

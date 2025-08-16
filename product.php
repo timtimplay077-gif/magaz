@@ -73,74 +73,67 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
 
     <div class="product_row unselectable">
         <div class="block">
-
-            <!-- Главное фото -->
-            <img class="slider_product" src="<?php print_r($row["img"]); ?>" alt="">
-
-            <!-- Слайдер миниатюр -->
-            <div class="product_photo_slider">
-
+            <div class="slider_wrapper2">
                 <?php if ($db_image_query->num_rows > 1): ?>
                     <div class="arrow_l1" onclick="slider_product('left')">
                         <i class="fa-solid fa-chevron-left"></i>
                     </div>
-                <?php endif; ?>
 
-                <?php
-                $images = "";
-                for ($i = 0; $i < $db_image_query->num_rows; $i++) {
-                    $db_image_row = $db_image_query->fetch_assoc();
-                    $images = $db_image_row["img"];
-                    ?>
-                    <img class="mini_img" onclick="set_miniImg(<?= $i ?>)" src="<?php print_r($images); ?>">
-                <?php } ?>
-
-                <?php if ($db_image_query->num_rows > 1): ?>
                     <div class="arrow_r1" onclick="slider_product('right')">
                         <i class="fa-solid fa-chevron-right"></i>
                     </div>
                 <?php endif; ?>
-
             </div>
+            <?php
+            $images = [];
+            for ($i = 0; $i < $db_image_query->num_rows; $i++) {
+                $db_image_row = $db_image_query->fetch_assoc();
+                $images[] = $db_image_row["img"];
+                ?>
+                <img class="mini_img" onclick="set_miniImg(<?= $i ?>)" src="<?= $db_image_row['img'] ?>">
+            <?php } ?>
+            <script>
+                // Передаём PHP массив картинок → в JS переменную slider_wrapper_product
+                const slider_wrapper_product = <?= json_encode($images) ?>;
+            </script>
         </div>
-    </div>
-    <div class="product_row_about">
-        <div class="status">
-            <p class="stock_status">В наявності</p>
-        </div>
-        <div class="product_manufacturer">
+        <div class="product_row_about">
+            <div class="status">
+                <p class="stock_status">В наявності</p>
+            </div>
+            <div class="product_manufacturer">
 
-            <p>Код: <?php print_r($row["productСode"]) ?></p>
-        </div>
-        <?php
-        $original_price = $row['price'];
-        $discount_price = $original_price;
+                <p>Код: <?php print_r($row["productСode"]) ?></p>
+            </div>
+            <?php
+            $original_price = $row['price'];
+            $discount_price = $original_price;
 
-        if (isset($_SESSION['id'])) {
-            $user_id = $_SESSION['id'];
-            $user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
-            $user_result = $db_conn->query($user_sql);
-            if ($user_result && $user_result->num_rows > 0) {
-                $user_row = $user_result->fetch_assoc();
-                if ($user_row['sale'] > 0) {
-                    $discount_price = $original_price * (1 - $user_row['sale'] / 100);
+            if (isset($_SESSION['id'])) {
+                $user_id = $_SESSION['id'];
+                $user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
+                $user_result = $db_conn->query($user_sql);
+                if ($user_result && $user_result->num_rows > 0) {
+                    $user_row = $user_result->fetch_assoc();
+                    if ($user_row['sale'] > 0) {
+                        $discount_price = $original_price * (1 - $user_row['sale'] / 100);
+                    }
                 }
             }
-        }
-        ?>
-        <div class="product_row_price">
-            <div class="price">
-                <?= round(num: $discount_price, precision: 2) ?> ₴
+            ?>
+            <div class="product_row_price">
+                <div class="price">
+                    <?= round(num: $discount_price, precision: 2) ?> ₴
+                </div>
             </div>
-        </div>
 
-        <div class="product_row_about_buy">
-            <a href="addcart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>">
-                <img src="contact/shopping-bag.png" alt="" class="product_row_about_buy">Купить
-            </a>
-        </div>
+            <div class="product_row_about_buy">
+                <a href="addcart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>">
+                    <img src="contact/shopping-bag.png" alt="" class="product_row_about_buy">Купить
+                </a>
+            </div>
 
-    </div>
+        </div>
     </div>
     </div>
     <div class="product_delivery_payment unselectable">
