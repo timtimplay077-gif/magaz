@@ -1816,10 +1816,16 @@ quantity-controls {
     justify-content: space-between;
     align-items: center;
 }
-.oder_item{
+
+.oder_item {
     border: 1px solid lightgray;
     padding: 8px;
 }
-.oder_total{
+
+.oder_total {
     font-size: 20px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    padding-top: 25px;
 }
