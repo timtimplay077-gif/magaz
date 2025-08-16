@@ -110,18 +110,11 @@ if (!empty($basket_product_id)) {
                         $total += $item['price'];
                         ?>
                         <div class="oder_item">
-                            <!-- Фото товара -->
                             <img src="product_img/<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>" width="120">
-
-                            <!-- Название -->
-                            <p class="oder_name"><?php echo $item['name']; ?></p>
-
-                            <!-- Цена -->
-                            <p class="oder_price"><?php echo $item['price']; ?> €</p>
+                            <p class="oder_price"><?php echo $item['price']; ?>₴</p>
                         </div>
                     <?php } ?>
-                    <hr>
-                    <p class="oder_total"><b>Загальна сума: <?php echo $total; ?> €</b></p>
+                    <p class="oder_total"><b>Загальна сума: <?php echo $total; ?>₴</b></p>
                 <?php } else { ?>
                     <p>Кошик порожній.</p>
                 <?php } ?>
