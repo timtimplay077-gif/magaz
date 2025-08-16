@@ -127,7 +127,7 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
                 </div>
 
                 <div class="product_row_about_buy">
-                    <a href="addcart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>">
+                    <a href="addСart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>">
                         <img src="contact/shopping-bag.png" alt="" class="product_row_about_buy">Купить
                     </a>
                 </div>
