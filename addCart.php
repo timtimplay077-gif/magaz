@@ -27,7 +27,9 @@ if ($db_cart_query->num_rows > 0) {
 } else {
     $add_cart_sql = "INSERT INTO `basket` (`id`, `user_id`, `product_id`, `count`) VALUES (NULL, '$user_id', '$product_id', '1')";
     $add_cart_query = $db_conn->query($add_cart_sql);
-    
+
 }
-header("Location: " . $_SERVER['HTTP_REFERER']);
+$redirect = $_SERVER['HTTP_REFERER'] ?? '/index.php';
+header("Location: $redirect");
+exit;
 
