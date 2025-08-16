@@ -1579,7 +1579,9 @@ a {
     border-radius: 30px;
     padding: 25px;
     display: grid;
-    grid-template-columns: auto 1fr;
+    overflow-y: scroll;
+    max-height: 350px;
+    grid-template-columns: 1fr 1fr;
 }
 
 .name_price {
@@ -1812,4 +1814,8 @@ quantity-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+.oder_items{
+    border: 1px solid lightgray;
+    padding: 8px;
 }
