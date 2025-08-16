@@ -102,25 +102,27 @@ if (!empty($basket_product_id)) {
                     </form>
                 </div>
             </div>
-            <div class="your_oder">
-                <h2>Ваше замовлення</h2>
-                <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
-                    $total = 0;
-                    while ($item = $basket_product_query->fetch_assoc()) {
-                        $total += $item['price'];
-                        ?>
-                        <div class="oder_item">
-                            <img src="product_img/<?php echo $item['img']; ?>" alt="" width="100">
-                            <p class="oder_name"><?php echo $item['name']; ?></p>
-                            <p class="oder_price"><?php echo $item['price']; ?>₴</p>
-                        </div>
-                    <?php } ?>
-                    <hr>
-                    <p class="oder_total"><b>Загальна сума: <?php echo $total; ?> ₴</b></p>
-                <?php } else { ?>
-                    <p>Кошик порожній.</p>
+            <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
+                $total = 0;
+                while ($item = $basket_product_query->fetch_assoc()) {
+                    $total += $item['price'];
+                    ?>
+                    <div class="oder_item">
+                        <!-- Фото товара -->
+                        <img src="product_img/<?php echo $item['img']; ?>" alt="" width="120">
+
+                        <!-- Название -->
+                        <p class="oder_name"><?php echo $item['name']; ?></p>
+
+                        <!-- Цена -->
+                        <p class="oder_price"><?php echo $item['price']; ?> €</p>
+                    </div>
                 <?php } ?>
-            </div>
+                <hr>
+                <p class="oder_total"><b>Загальна сума: <?php echo $total; ?> €</b></p>
+            <?php } else { ?>
+                <p>Кошик порожній.</p>
+            <?php } ?>
         </div>
         <div class="adres">
             <div class="adres_label">
