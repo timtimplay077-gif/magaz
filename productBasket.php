@@ -22,8 +22,7 @@ $basket_product_query = $db_conn->query($basket_product);
         <?php while ($row = $basket_product_query->fetch_assoc()) { ?>
             <div class="header_card_product" data-id="<?php echo $row['id']; ?>" data-price="<?php echo $row['price']; ?>">
                 <div class="delete-wrapper">
-                    <a href="removeFromCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>" class="delete-btn"
-                        onclick="return confirm('Удалить товар из корзины?')">🗑</a>
+                    <a href="removeFromCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>" class="delete-btn">🗑</a>
                 </div>
                 <div class="photo-wrapper">
                     <img src="<?php echo $row['img']; ?>" alt="">
