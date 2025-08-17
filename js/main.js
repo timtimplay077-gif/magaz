@@ -151,13 +151,19 @@ document.addEventListener('DOMContentLoaded', function () {
             recalcTotal();
         }
 
-        if (del) {
-            var item = del.closest('.header_card_product');
-            item.remove();
-            recalTotal();
-        }
+        del.addEventListener('click', function (e) {
+            e.preventDefault();
+            var url = this.href;
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    var item = del.closest('.header_card_product');
+                    if (item) item.remove();
+                    recalcTotal();
+                });
+        });
     });
-    recalTotal();
 });
 // cart.addEventListener('click', function (e) {
 //     var plus = e.target.closest('.plus');

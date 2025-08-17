@@ -2,21 +2,28 @@
 include("data/database.php");
 $user_id = $_GET['user_id'] ?? 0;
 $product_id = $_GET['product_id'] ?? 0;
-if ($user_id > 0 && $product_id > 0) {
-    $sql = "SELECT count FROM basket WHERE user_id = '$user_id' AND product_id = '$product_id'";
-    $result = $db_conn->query($sql);
 
-    if ($result && $row = $result->fetch_assoc()) {
+if ($user_id > 0 && $product_id > 0) {
+
+    // Prepared statement для выборки count
+    $stmt = $db_conn->prepare("SELECT count FROM basket WHERE user_id = ? AND product_id = ?");
+    $stmt->bind_param("ii", $user_id, $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
         if ($row['count'] > 1) {
-            $update_sql = "UPDATE basket SET count = count - 1 WHERE user_id = '$user_id' AND product_id = '$product_id'";
-            $db_conn->query($update_sql);
+            $stmt2 = $db_conn->prepare("UPDATE basket SET count = count - 1 WHERE user_id = ? AND product_id = ?");
+            $stmt2->bind_param("ii", $user_id, $product_id);
+            $stmt2->execute();
         } else {
-            $delete_sql = "DELETE FROM basket WHERE user_id = '$user_id' AND product_id = '$product_id'";
-            $db_conn->query($delete_sql);
+            $stmt2 = $db_conn->prepare("DELETE FROM basket WHERE user_id = ? AND product_id = ?");
+            $stmt2->bind_param("ii", $user_id, $product_id);
+            $stmt2->execute();
         }
     }
 }
 
 $redirect = $_SERVER['HTTP_REFERER'] ?? '/index.php';
 header("Location: $redirect");
-exit; ?>
+exit;
