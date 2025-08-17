@@ -1182,7 +1182,7 @@ a {
 
 .header_card_product {
     display: grid;
-    grid-template-columns: 40px 80px 1fr 100px 110px;
+    grid-template-columns: 35px 80px 1fr 100px 110px;
     align-items: center;
     gap: 10px;
     padding: 10px;

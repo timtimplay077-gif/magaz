@@ -44,7 +44,7 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
                 <div class="header_card_product" data-id="<?php echo $row['id']; ?>" data-price="<?php echo $final_price; ?>">
                     <div class="delete-wrapper">
                         <a href="removeFromCart.php?user_id=<?= $user_id ?>&product_id=<?= $row["id"] ?>"
-                            class="delete-btn">🗑</a>
+                            class="delete-btn"><img src="img/recycle-bin.png" alt=""></a>
                     </div>
                     <div class="photo-wrapper">
                         <img src="<?php echo $row['img']; ?>" alt="">
