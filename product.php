@@ -125,11 +125,17 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
                         <?= round(num: $discount_price, precision: 2) ?> ₴
                     </div>
                 </div>
-
                 <div class="product_row_about_buy">
-                    <a href="/addCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>">
-                        <img src="contact/shopping-bag.png" alt="" class="product_row_about_buy">Купити
-                    </a>
+                    <?php if (!isset($user_id) || empty($user_id)): ?>
+                        <button onclick="openLogin()" class="product_row_about_buy">
+                            <img src="contact/shopping-bag.png" alt=""> Купити
+                        </button>
+                    <?php else: ?>
+                        <a href="addCart.php?user_id=<?= $user_id ?>&product_id=<?= $row['id'] ?>"
+                            class="product_row_about_buy">
+                            <img src="contact/shopping-bag.png" alt=""> Купити
+                        </a>
+                    <?php endif; ?>
                 </div>
 
             </div>

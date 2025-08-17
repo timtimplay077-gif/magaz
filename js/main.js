@@ -1,24 +1,24 @@
-let puk = 0;
+let slider_work = 0;
 const slider_wrapper = ['slider/sliderphoto1.jpg', 'slider/slidephoto2.jpg']
 function slider_product(cord) {
     if (cord == "right") {
-        puk++
+        slider_work++
     }
     else if (cord == "left") {
-        puk--
+        slider_work--
     }
-    if (puk >= slider_wrapper_product.length && cord == "right") {
-        puk = 0
+    if (slider_work >= slider_wrapper_product.length && cord == "right") {
+        slider_work = 0
     }
-    else if (puk < 0 && cord == "left") {
-        puk = slider_wrapper_product.length - 1
+    else if (slider_work < 0 && cord == "left") {
+        slider_work = slider_wrapper_product.length - 1
     }
-    set_mimiImg(puk);
+    set_mimiImg(slider_work);
 }
 function set_mimiImg(src) {
-    puk = src;
+    slider_work = src;
     const big_img = document.querySelector('.slider_product');
-    big_img.src = slider_wrapper_product[puk]
+    big_img.src = slider_wrapper_product[slider_work]
 }
 function openCart() {
     document.getElementById('cartModal').classList.add('show');
@@ -62,7 +62,9 @@ window.onclick = (event) => {
         modal.style.display = 'none';
     }
 };
-
+function openLogin() {
+    document.getElementById("loginModal").style.display = "block";
+}
 function toggleCategories(button) {
     const categoriesBlock = button.closest('.categories');
     categoriesBlock.classList.toggle('show');
@@ -86,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let index = 0;
 
     function startMarquee(text) {
-        marqueeText.textContent = text;
         marqueeText.style.transform = 'translateX(100%)';
         marqueeText.style.transition = 'none';
         requestAnimationFrame(() => {
@@ -133,21 +134,21 @@ document.addEventListener('DOMContentLoaded', function () {
         countFooter.textContent = 'В кошику: ' + itemsCount + ' ' + getItemWord(itemsCount);
         totalFooter.textContent = '⠀на суму: ' + total.toLocaleString('uk-UA') + '⠀₴';
     }
-
-    cart.addEventListener('click', function (e) {
-        var plus = e.target.closest('.plus');
-        var minus = e.target.closest('.minus');
-        var del = e.target.closest('.delete-btn');
+    document.addEventListener("click", function (e) {
+        const plus = e.target.closest(".plus");
+        const minus = e.target.closest(".minus");
 
         if (plus || minus) {
-            var item = plus || minus;
-            item = item.closest('.header_card_product');
-            var countEl = item.querySelector('.count');
-            var count = parseInt(countEl.textContent) || 0;
+            const item = e.target.closest(".header_card_product, .cart-item");
+            const countEl = item.querySelector(".count");
+            let count = parseInt(countEl.textContent) || 0;
+
             if (plus) count++;
-            if (minus) count = Math.max(0, count - 1);
+            if (minus && count > 1) count--;  // не даём уйти в 0
+
             countEl.textContent = count;
-            recalTotal();
+
+            recalcTotal();
         }
 
         if (del) {
@@ -156,6 +157,42 @@ document.addEventListener('DOMContentLoaded', function () {
             recalTotal();
         }
     });
-
     recalTotal();
 });
+// cart.addEventListener('click', function (e) {
+//     var plus = e.target.closest('.plus');
+//     var minus = e.target.closest('.qty-btn minus');
+//     var del = e.target.closest('.delete-btn');
+
+//     if (plus || minus) {
+//         // fetch("updata.php", {
+//         //     method: "POST",
+//         //     headers: {
+//         //         "Content-Type": "application/x-www-form-urlencoded"
+//         //     },
+//         //     body: "name=фывафыва"
+//         // })
+//         //     .then(response => response.text())
+//         //     .then(date => {
+//         //         console.log(date);
+//         //     })
+//         //     .catch(error => console.error(error))
+
+//         var item = plus || minus;
+//         item = item.closest('.header_card_product');
+//         var countEl = item.querySelector('.count');
+//         var count = parseInt(countEl.textContent) || 0;
+//         if (plus) count++;
+//         if (minus) count = Math.max(0, count - 1);
+//         countEl.textContent = count;
+//         recalTotal();
+//     }
+
+//     if (del) {
+//         var item = del.closest('.header_card_product');
+//         item.remove();
+//         recalTotal();
+//     }
+// });
+
+// recalTotal();

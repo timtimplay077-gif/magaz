@@ -531,6 +531,18 @@ a {
     cursor: pointer;
 }
 
+.product_row_about_buy button {
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    background-color: black;
+    color: white;
+    padding-right: 13px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+
 .product_delivery_payment h2 {
     font-size: 30px;
     padding-top: 10px;
@@ -1170,7 +1182,7 @@ a {
 
 .header_card_product {
     display: grid;
-    grid-template-columns: 40px 95px 1fr 80px 120px;
+    grid-template-columns: 40px 80px 1fr 100px 110px;
     align-items: center;
     gap: 10px;
     padding: 10px;
@@ -1523,7 +1535,6 @@ a {
     border: 1px solid lightgrey;
     border-radius: 30px;
     padding: 25px;
-    width: 830px;
 }
 
 .chekount h2 {
@@ -1537,7 +1548,7 @@ a {
     padding-bottom: 7px;
     padding-top: 7px;
     border: 1px solid lightgrey;
-    width: 350px;
+    width: 305px;
 }
 
 .label_chekount form {
@@ -1559,8 +1570,6 @@ a {
     border: 1px solid lightgrey;
     border-radius: 30px;
     padding: 25px;
-    width: 830px;
-    margin-top: 30px;
 }
 
 .chekount {
@@ -1580,9 +1589,10 @@ a {
     padding: 25px;
     display: grid;
     overflow-y: scroll;
-    max-height: 350px;
+    max-height: 400px;
     gap: 25px;
     grid-template-columns: 1fr 1fr;
+    margin-top: 30px;
 }
 
 .name_price {
@@ -1600,9 +1610,6 @@ a {
 
 .adres {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    align-items: end;
     justify-items: center
 }
 
@@ -1615,6 +1622,11 @@ a {
     background-color: rgb(41, 155, 255);
     cursor: pointer;
 
+}
+.order_ready{
+    display: grid;
+    justify-content: center;
+    margin-top: 30px;
 }
 
 .characteristics {
@@ -1824,8 +1836,9 @@ quantity-controls {
 
 .oder_total {
     font-size: 20px;
+    padding-top: 10px;
+}
+.order_price{
+    margin-top: 5px;
     font-size: 20px;
-    display: flex;
-    justify-content: center;
-    padding-top: 25px;
 }

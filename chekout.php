@@ -7,6 +7,10 @@ $user_id = $_SESSION['user_id'];
 $basket_sql = "SELECT * FROM basket WHERE user_id = '$user_id'";
 $basket_query = $db_conn->query($basket_sql);
 $basket_product_id = [];
+
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['user_id'] = 1;
+}
 while ($basket_row = $basket_query->fetch_assoc()) {
     $basket_product_id[] = $basket_row['product_id'];
 }
@@ -15,6 +19,10 @@ if (!empty($basket_product_id)) {
     $basket_product = "SELECT * FROM products WHERE id IN ($in)";
     $basket_product_query = $db_conn->query($basket_product);
 }
+$basket_product_query = $db_conn->query("SELECT p.* 
+    FROM basket b 
+    JOIN products p ON p.id = b.product_id 
+    WHERE b.user_id = '{$_SESSION['user_id']}'");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,23 +110,6 @@ if (!empty($basket_product_id)) {
                     </form>
                 </div>
             </div>
-            <div class="your_oder">
-                <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) {
-                    $total = 0;
-                    while ($item = $basket_product_query->fetch_assoc()) {
-                        $total += $item['price'];
-                        ?>
-                        <div class="oder_item">
-                            <img src="<?php echo $item['img']; ?>" alt="">
-                            <p class="oder_name"><?php echo $item['name']; ?></p>
-                            <p class="oder_price"><?php echo $item['price']; ?>₴</p>
-                        </div>
-                    <?php } ?>
-                <?php } ?>
-            </div>
-        </div>
-        <p class="oder_total"><b>Загальна сума: <?php echo $total; ?>₴</b></p>
-        <div class="adres">
             <div class="adres_label">
                 <h2>Адреса доставки</h2>
                 <div class="label_adres">
@@ -134,9 +125,40 @@ if (!empty($basket_product_id)) {
                     </div>
                 </div>
             </div>
-            <div class="order_ready">
-                <a href="odercheck.php"><button class="order_ready_button">Оформлення замовлення </button></a>
-            </div>
+        </div>
+
+        <div class="your_oder">
+            <?php
+            $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '{$_SESSION['user_id']}'")->fetch_assoc();
+
+            $total = 0;
+
+            if ($basket_product_query && $basket_product_query->num_rows > 0) {
+                while ($item = $basket_product_query->fetch_assoc()) {
+                    $original_price = $item['price'];
+                    if (isset($user_row['sale']) && $user_row['sale'] > 0) {
+                        $final_price = $original_price * (1 - $user_row['sale'] / 100);
+                    } else {
+                        $final_price = $original_price;
+                    }
+
+                    $total += $final_price
+                    ?>
+                    <div class="oder_item">
+                        <a href="product.php?id=<?php echo $item['id']; ?>">
+                            <img src="<?php echo $item['img']; ?>" alt="">
+                            <p class="order_name"><?php echo $item['name']; ?></p>
+                            <p class="order_price"><?php echo $final_price; ?>₴</p>
+                        </a>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
+        </div>
+        <p class="oder_total">Загальна сума: <b><?php echo $total; ?>₴</b></p>
+        <div class="order_ready">
+            <a href="odercheck.php"><button class="order_ready_button">Оформлення замовлення </button></a>
         </div>
     </div>
     <div class="banner-blocks-container2">
