@@ -11,8 +11,8 @@ $row = $tabl->fetch_assoc();
 function dd($data): void
 {
 }
-$db_imgage_sql = "SELECT * FROM `productimages` WHERE `product_Id` = $id";
-$db_imgage_query = $db_conn->query($db_imgage_sql);
+$db_image_sql = "SELECT * FROM `productimages` WHERE `product_Id` = $id";
+$db_image_query = $db_conn->query($db_image_sql);
 
 ?>
 <!DOCTYPE html>
@@ -74,28 +74,32 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
     <div class="product_row unselectable">
         <div class="block">
             <div class="slider_wrapper2">
-                <div class="arrow_l1" onclick="slider_product('left')">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </div>
-                <div class="arrow_r1" onclick="slider_product('right')">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </div>
-                <img class="slider_product" src="<?php print_r($row["img"]) ?>" alt="">
-                <div class="product_photo_slider">
-                    <?php
-                    $images = "";
-                    for ($i = 0; $i < $db_imgage_query->num_rows; $i++) {
-                        $db_imgage_row = $db_imgage_query->fetch_assoc();
-                        $images .= "'" . $db_imgage_row["img"] . "',";
-                        $img = $db_imgage_row["img"];
-                        ?>
+                <?php if ($db_image_query->num_rows > 0) { ?>
+                    <div class="arrow_l1" onclick="slider_product('left')">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                <?php } ?>
+                <?php if ($db_image_query->num_rows > 0) { ?>
+                    <div class="arrow_r1" onclick="slider_product('right')">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                <?php } ?>
+                <img class="slider_product" src="<?php print_r($row['img']); ?>" alt="">
+                <div class="product_photo_slider"> <?php
+                $images = "";
+                for ($i = 0; $i < $db_image_query->num_rows; $i++) {
+                    $db_image_row = $db_image_query->fetch_assoc();
+                    $images .= "'" . $db_image_row["img"] . "',";
+                    $img = $db_image_row["img"];
+                    ?>
                         <img onclick="set_mimiImg('<?= $i ?>')" src="<?php print_r($img) ?>" alt="">
                     <?php } ?>
                 </div>
-                <script>
-                    const slider_wrapper_product = [<?= $images ?>];
-                </script>
             </div>
+            <script>
+                const slider_wrapper_product = [<?= $images ?>];
+            </script>
+
             <div class="product_row_about">
                 <div class="status">
                     <p class="stock_status">В наявності</p>
@@ -137,9 +141,9 @@ $db_imgage_query = $db_conn->query($db_imgage_sql);
                         </a>
                     <?php endif; ?>
                 </div>
-
             </div>
         </div>
+    </div>
     </div>
     <div class="product_delivery_payment unselectable">
         <div class="block">
