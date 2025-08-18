@@ -51,7 +51,7 @@ include('data/user_data.php');
         <div class="block">
             <div class="whatWeHave_kans">
                 <img src="categoty/school-material.png" alt="">
-                <a href="index.php">Канселярія</a>
+                 <a href="index.php">Канцелярія</a>
             </div>
             <div class="marquee">
                 <span id="marqueeText"></span>
