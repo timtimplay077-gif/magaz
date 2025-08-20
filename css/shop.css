@@ -78,10 +78,11 @@ a {
 
 
 .head {
-    position: sticky;
+    position: fixed;
     align-items: center;
     top: 0;
     z-index: 999;
+    width: 100%;
 
 }
 
@@ -1623,7 +1624,8 @@ a {
     cursor: pointer;
 
 }
-.order_ready{
+
+.order_ready {
     display: grid;
     justify-content: center;
     margin-top: 30px;
@@ -1838,7 +1840,8 @@ quantity-controls {
     font-size: 20px;
     padding-top: 10px;
 }
-.order_price{
+
+.order_price {
     margin-top: 5px;
     font-size: 20px;
 }
