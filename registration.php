@@ -43,7 +43,17 @@ include('data/user_data.php');
                     <?php
                 }
                 ?>
-                <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+                <?php
+                if ($user_query->num_rows > 0) {
+                    ?>
+                    <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+                    <?php
+                } else {
+                    ?>
+                    <button onclick="alert('Спочатку авторизуйтесь!')"><i class="fa-solid fa-cart-shopping"></i></button>
+                    <?php
+                }
+                ?>
             </div>
         </div>
     </div>

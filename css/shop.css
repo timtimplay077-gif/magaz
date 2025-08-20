@@ -137,6 +137,10 @@ a {
 
 }
 
+.icons_head {
+    display: flex;
+}
+
 .input_head button {
     padding: 10px 20px;
     background-color: black;

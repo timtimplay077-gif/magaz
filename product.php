@@ -57,7 +57,17 @@ $db_image_query = $db_conn->query($db_image_sql);
                     <?php
                 }
                 ?>
-                <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+                <?php
+                if ($user_query->num_rows > 0) {
+                    ?>
+                    <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+                    <?php
+                } else {
+                    ?>
+                    <button onclick="alert('Спочатку авторизуйтесь!')"><i class="fa-solid fa-cart-shopping"></i></button>
+                    <?php
+                }
+                ?>
             </div>
         </div>
     </div>

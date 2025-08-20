@@ -43,7 +43,17 @@ include('data/user_data.php');
                     <?php
                 }
                 ?>
-                <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+                <?php
+                if ($user_query->num_rows > 0) {
+                    ?>
+                    <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
+                    <?php
+                } else {
+                    ?>
+                    <button onclick="alert('Спочатку авторизуйтесь!')"><i class="fa-solid fa-cart-shopping"></i></button>
+                    <?php
+                }
+                ?>
             </div>
         </div>
     </div>
@@ -51,7 +61,7 @@ include('data/user_data.php');
         <div class="block">
             <div class="whatWeHave_kans">
                 <img src="categoty/school-material.png" alt="">
-                 <a href="index.php">Канцелярія</a>
+                <a href="index.php">Канцелярія</a>
             </div>
             <div class="marquee">
                 <span id="marqueeText"></span>
