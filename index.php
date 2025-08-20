@@ -27,7 +27,7 @@ include('data/user_data.php');
 
 <body>
     <?php
-    $max_page = 80;
+    $max_page = 75;
     $search_get = $_GET['search'] ?? '';
     $search_get_t = "&search=$search_get";
     $search_active = '';
