@@ -104,67 +104,144 @@ document.addEventListener("DOMContentLoaded", function () {
     startMarquee(messages[index]);
 });
 document.addEventListener('DOMContentLoaded', function () {
-    var cart = document.getElementById('cartModal');
-    var countFooter = document.getElementById('cart-count');
-    var totalFooter = document.getElementById('cart-total');
-
-    function getItemWord(count) {
-        if (count === 1) {
-            return 'товар';
-        } else if (count >= 2 && count <= 4) {
-            return 'товари';
-        } else {
-            return 'товарів';
-        }
-    }
-
-    function recalTotal() {
-        var total = 0;
-        var itemsCount = 0;
-        var items = cart.querySelectorAll('.header_card_product');
-
-        items.forEach(function (item) {
-            var price = parseFloat(item.dataset.price) || 0;
-            var count = parseInt(item.querySelector('.count').textContent) || 0;
-            itemsCount += count;
-            total += price * count;
-            item.querySelector('.price').textContent = (price * count).toLocaleString('uk-UA');
-        });
-
-        countFooter.textContent = 'В кошику: ' + itemsCount + ' ' + getItemWord(itemsCount);
-        totalFooter.textContent = '⠀на суму: ' + total.toLocaleString('uk-UA') + '⠀₴';
-    }
-    document.addEventListener("click", function (e) {
-        const plus = e.target.closest(".plus");
-        const minus = e.target.closest(".minus");
-
-        if (plus || minus) {
-            const item = e.target.closest(".header_card_product, .cart-item");
-            const countEl = item.querySelector(".count");
-            let count = parseInt(countEl.textContent) || 0;
-
-            if (plus) count++;
-            if (minus && count > 1) count--;  // не даём уйти в 0
-
-            countEl.textContent = count;
-
-            recalcTotal();
-        }
-
-        del.addEventListener('click', function (e) {
-            e.preventDefault();
-            var url = this.href;
-
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    var item = del.closest('.header_card_product');
-                    if (item) item.remove();
-                    recalcTotal();
-                });
-        });
-    });
 });
+
+function changeQuantity(button, action) {
+    const item = button.closest('.header_card_product');
+    if (!item) return;
+
+    const countEl = item.querySelector('.count');
+    const priceElement = item.querySelector('.price');
+    const productId = item.dataset.id;
+    const pricePerUnit = parseFloat(item.dataset.price) || 0;
+
+    let count = parseInt(countEl.textContent) || 0;
+
+    if (action === 'increase') {
+        count++;
+    } else if (action === 'decrease' && count > 1) {
+        count--;
+    } else {
+        return;
+    }
+
+    countEl.textContent = count;
+
+    const totalPrice = pricePerUnit * count;
+    priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
+
+    recalcTotal();
+    updateQuantity(productId, action, count);
+}
+
+function recalcTotal() {
+    let totalSum = 0;
+    let totalItems = 0;
+    const items = document.querySelectorAll('.header_card_product');
+
+    items.forEach(function (item) {
+        const priceElement = item.querySelector('.price');
+        const countElement = item.querySelector('.count');
+
+        if (priceElement && countElement) {
+            const priceText = priceElement.textContent.replace(' ₴', '').replace(',', '.');
+            const price = parseFloat(priceText) || 0;
+            const count = parseInt(countElement.textContent) || 0;
+
+            totalSum += price;
+            totalItems += count;
+        }
+    });
+
+    updateCartFooter(totalItems, totalSum);
+}
+
+function updateCartFooter(totalItems, totalSum) {
+    const countFooter = document.getElementById('cart-count');
+    const totalFooter = document.getElementById('cart-total');
+
+    if (countFooter && totalFooter) {
+        countFooter.textContent = 'В кошику: ' + totalItems + ' ' + getItemWord(totalItems);
+        totalFooter.textContent = 'на суму: ' + totalSum.toFixed(2) + ' ₴';
+    }
+}
+
+function getItemWord(count) {
+    if (count == 0) return 'товарів';
+    if (count % 10 === 1 && count % 100 !== 11) return 'товар';
+    if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'товари';
+    return 'товарів';
+}
+
+function updateQuantity(productId, action, newQuantity) {
+    fetch('update.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'product_id=' + productId + '&action=' + action + '&quantity=' + newQuantity
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Ошибка обновления: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Ошибка сети при обновлении количества');
+        });
+}
+
+function removeFromCart(link) {
+    event.preventDefault();
+
+    const item = link.closest('.header_card_product');
+    if (!item) return;
+
+    const productId = item.dataset.id;
+    const url = 'removeFromCart.php?product_id=' + productId;
+
+    // Отправляем AJAX-запрос
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка сети');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Удаляем товар из HTML
+                item.remove();
+                recalcTotal();
+
+                // Если корзина пуста, показываем сообщение
+                if (document.querySelectorAll('.header_card_product').length === 0) {
+                    document.getElementById('cart-items').innerHTML = '<p class="empty-cart">Кошик порожній</p>';
+                    // Также скрываем кнопку оформления заказа если она есть
+                    const orderButton = document.querySelector('.order_ready_button');
+                    if (orderButton) {
+                        orderButton.disabled = true;
+                    }
+                }
+            } else {
+                alert('Ошибка: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Ошибка сети при удалении товара');
+        });
+}
+
+function openCart() {
+    document.getElementById('cartModal').classList.add('show');
+    document.getElementById('overlay').classList.add('show');
+}
+
+function closeCart() {
+    document.getElementById('cartModal').classList.remove('show');
+    document.getElementById('overlay').classList.remove('show');
+}
 // cart.addEventListener('click', function (e) {
 //     var plus = e.target.closest('.plus');
 //     var minus = e.target.closest('.qty-btn minus');

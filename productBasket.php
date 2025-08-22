@@ -1,23 +1,26 @@
 <?php
+include('data/database.php');
+// Если не авторизован - показываем сообщение
 if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 1;
+    echo '<div class="modal modal-basket" id="cartModal">';
+    echo '    <div class="cart-header"><p>Кошик</p><button onclick="closeCart()">×</button></div>';
+    echo '    <div id="cart-items"><p>Будь ласка, авторизуйтесь!</p></div>';
+    echo '</div>';
+    exit;
 }
-$user_id = $_SESSION['user_id'];
-$basket_sql = "SELECT * FROM basket WHERE user_id = '$user_id'";
+
+$user_id = $_SESSION['user_id']; // Важно: берем из сессии!
+
+// Получаем товары из корзины ТОЛЬКО этого пользователя
+$basket_sql = "SELECT b.*, p.* FROM basket b 
+               JOIN products p ON b.product_id = p.id 
+               WHERE b.user_id = '$user_id'"; // Фильтр по user_id
 $basket_query = $db_conn->query($basket_sql);
-$basket_product_id = [];
-while ($basket_row = $basket_query->fetch_assoc()) {
-    $basket_product_id[$basket_row['product_id']] = $basket_row['count'];
-}
-$basket_product_query = null;
-if (!empty($basket_product_id)) {
-    $in = implode(',', array_map('intval', array_keys($basket_product_id)));
-    $basket_product_sql = "SELECT * FROM products WHERE id IN ($in)";
-    $basket_product_query = $db_conn->query($basket_product_sql);
-}
-$user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fetch_assoc();
+$user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
+$user_result = $db_conn->query($user_sql);
+$user_discount = $user_result->fetch_assoc()['sale'] ?? 0;
 ?>
-<script src="js/main.js"></script>
+
 <div class="modal modal-basket" id="cartModal">
     <div class="cart-header">
         <div class="flex_close">
@@ -25,50 +28,64 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
                 <p>Кошик</p>
             </div>
             <button class="delete-button" onclick="closeCart()">
-                <img src="img/close.png" alt="Закрыть">
+                <img src="img/close.png" alt="Закрити">
             </button>
         </div>
-
     </div>
+
     <div id="cart-items">
-        <?php if (!empty($basket_product_query) && $basket_product_query->num_rows > 0) { ?>
-            <?php while ($row = $basket_product_query->fetch_assoc()) {
-                $original_price = $row['price'];
-                if (isset($user_row['sale']) && $user_row['sale'] > 0) {
-                    $final_price = $original_price * (1 - $user_row['sale'] / 100);
-                } else {
-                    $final_price = $original_price;
-                }
-                $count = $basket_product_id[$row['id']];
+        <?php if ($basket_query->num_rows > 0): ?>
+            <?php while ($item = $basket_query->fetch_assoc()):
+                $price = $item['price'];
+                $final_price = $user_discount > 0 ? $price * (1 - $user_discount / 100) : $price;
+                $total_price = $final_price * $item['count'];
                 ?>
-                <div class="header_card_product" data-id="<?php echo $row['id']; ?>" data-price="<?php echo $final_price; ?>">
+                <div class="header_card_product" data-id="<?= $item['id'] ?>" data-price="<?= $final_price ?>">
                     <div class="delete-wrapper">
-                        <a href="removeFromCart.php?user_id=<?= $user_id ?>&product_id=<?= $row["id"] ?>"
-                            class="delete-btn"><img src="img/recycle-bin.png" alt=""></a>
+                        <a href="removeFromCart.php?product_id=<?= $item['id'] ?>" class="delete-btn"
+                            onclick="removeFromCart(this); return false;">
+                            <img src="img/recycle-bin.png" alt="Видалити">
+                        </a>
                     </div>
                     <div class="photo-wrapper">
-                        <img src="<?php echo $row['img']; ?>" alt="">
+                        <img src="<?= $item['img'] ?>" alt="<?= $item['name'] ?>">
                     </div>
                     <div class="name-wrapper">
-                        <p><?php echo $row['name']; ?></p>
+                        <p><?= $item['name'] ?></p>
                     </div>
                     <div class="price-wrapper">
-                        <span class="price"><?php echo $final_price; ?> ₴</span>
+                        <span class="price"><?= number_format($total_price, 2) ?> ₴</span>
                     </div>
                     <div class="quantity-wrapper">
-                        <button type="button" class="qty-btn minus">-</button>
-                        <span class="count"><?php echo $count; ?></span>
-                        <button type="button" class="qty-btn plus">+</button>
+                        <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease')">-</button>
+                        <span class="count"><?= $item['count'] ?></span>
+                        <button class="qty-btn plus" onclick="changeQuantity(this, 'increase')">+</button>
                     </div>
                 </div>
-            <?php } ?>
-        <?php } ?>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p class="empty-cart">Кошик порожній</p>
+        <?php endif; ?>
     </div>
+
     <div class="cart-footer">
         <span id="cart-count">В кошику: 0 товарів</span>
         <span id="cart-total">на суму: 0 ₴</span>
     </div>
 
-
     <a href="chekout.php" class="buy-button">Оформити замовлення</a>
 </div>
+
+<script src="js/main.js"></script>
+<?php
+function getItemWord($count)
+{
+    if ($count == 0)
+        return 'товарів';
+    if ($count % 10 === 1 && $count % 100 !== 11)
+        return 'товар';
+    if ($count % 10 >= 2 && $count % 10 <= 4 && ($count % 100 < 10 || $count % 100 >= 20))
+        return 'товари';
+    return 'товарів';
+}
+?>

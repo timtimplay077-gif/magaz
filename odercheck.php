@@ -37,19 +37,15 @@ include('data/database.php');
 //     echo "Помилка при надсиланні листа.";
 // }
 // Получаем email администратора
+// Получаем email администратораа
 $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1";
-$order_query = $db->query($order_sql);
+$order_query = $db_conn->query($order_sql);
 if ($order_query && $row = $order_query->fetch_assoc()) {
     $mail_to = $row['email'];
 } else {
     die("Не удалось отримати email одержувача");
 }
 
-// Данные SMTP (если захотите через PHPMailer)
-$mail_host = "smtp.gmail.com";
-$mail_username = "admin@knaskrop.com";
-
-// Получаем данные из формы
 $firstName = $_GET['firstName'] ?? '';
 $lastName = $_GET['lastName'] ?? '';
 $email = $_GET['email'] ?? '';
@@ -57,35 +53,66 @@ $phone = $_GET['phone'] ?? '';
 $city = $_GET['city'] ?? '';
 $region = $_GET['region'] ?? '';
 $adres = $_GET['adres'] ?? '';
+$user_id = $_SESSION['user_id'] ?? 1;
+$basket_items = [];
+$total_amount = 0;
+$total_items = 0;
 
-// Формируем текст заказа
-$orderInfo = "
-Нове замовлення:
-Ім'я: $firstName $lastName
-Email: $email
-Телефон: $phone
-Місто: $city
-Область: $region
-Адреса: $adres
-";
+$basket_sql = "SELECT b.product_id, b.count, p.name, p.price, p.productСode 
+               FROM basket b 
+               JOIN products p ON b.product_id = p.id 
+               WHERE b.user_id = '$user_id'";
+$basket_result = $db_conn->query($basket_sql);
 
-// ================== ОТПРАВКА НА ПОЧТУ ==================
-$headers = "MIME-Version: 1.0" . "\r\n";
-$headers .= "Content-type: text/plain; charset=UTF-8" . "\r\n";
-$headers .= "From: Магазин <$mail_username>\r\n";
-$headers .= "Reply-To: $mail_username\r\n";
-
-if (mail($mail_to, "Нове замовлення", $orderInfo, $headers)) {
-    echo "Замовлення відправлено на email<br>";
-} else {
-    echo "Помилка при надсиланні листа<br>";
+if ($basket_result && $basket_result->num_rows > 0) {
+    while ($item = $basket_result->fetch_assoc()) {
+        $item_total = $item['price'] * $item['count'];
+        $basket_items[] = $item;
+        $total_amount += $item_total;
+        $total_items += $item['count'];
+    }
 }
+$orderInfo = "
+🛒 <b>Нове замовлення</b>
+
+👤 <b>Клієнт:</b>
+• Ім'я: $firstName $lastName
+• Email: $email
+• Телефон: $phone
+
+📍 <b>Адреса:</b>
+• Місто: $city
+• Область: $region
+• Адреса: $adres
+
+📦 <b>Замовлення:</b>
+";
+foreach ($basket_items as $item) {
+    $item_total = $item['price'] * $item['count'];
+    $product_code = !empty($item['productСode']) ? $item['productСode'] : 'н/д';
+    
+    $orderInfo .= "
+• {$item['name']}
+  📦 Код: $product_code
+  📊 Кількість: {$item['count']} шт.
+  💰 Ціна: {$item['price']} ₴ × {$item['count']} = {$item_total} ₴
+";
+}
+
+$orderInfo .= "
+────────────────
+✅ <b>Разом:</b>
+• Товарів: $total_items шт.
+• Загальна сума: $total_amount ₴
+────────────────
+";
 
 // ================== ОТПРАВКА В TELEGRAM ==================
 function sendTelegram($message)
 {
-    $token = "ВАШ_BOT_TOKEN";  // <- замените
-    $chat_id = "ВАШ_CHAT_ID";  // <- замените
+    $token = "7985968026:AAHoNcDbNimVpToWxoYlDskFoBajQ03T5Uc";
+    $chat_id = "6596649217";
+
     $url = "https://api.telegram.org/bot$token/sendMessage";
 
     $data = [
@@ -94,39 +121,26 @@ function sendTelegram($message)
         'parse_mode' => 'HTML'
     ];
 
-    file_get_contents($url . "?" . http_build_query($data));
-}
-
-sendTelegram($orderInfo);
-
-// ================== ОТПРАВКА В VIBER (по желанию) ==================
-function sendViber($message)
-{
-    $token = "ВАШ_VIBER_TOKEN";     // <- замените
-    $receiver = "ВАШ_USER_ID";      // <- замените
-    $url = "https://chatapi.viber.com/pa/send_message";
-
-    $data = [
-        "receiver" => $receiver,
-        "type" => "text",
-        "text" => $message
+    $options = [
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+            'content' => http_build_query($data)
+        ]
     ];
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "X-Viber-Auth-Token: $token",
-        "Content-Type: application/json"
-    ]);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    return $response;
+    $context = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    
+    return $result !== false;
 }
-
-// Если хотите активировать — раскомментируйте:
-// sendViber($orderInfo);
+if (sendTelegram($orderInfo)) {
+    $clear_sql = "DELETE FROM basket WHERE user_id = '$user_id'";
+    $db_conn->query($clear_sql);
+    
+        header("Location: thank_order.php");
+} else {
+    echo "Помилка при відправленні замовлення. Спробуйте ще раз.";
+}
 
 ?>

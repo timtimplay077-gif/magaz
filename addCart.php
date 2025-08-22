@@ -1,35 +1,34 @@
 <?php
 include('data/database.php');
-$errors = [];
-$user_id = $_GET["user_id"] ?? 0;
-$product_id = $_GET["product_id"] ?? 0;
-// if ($confirmPassword !== $password) {
-//     $errors["password"] = true;
-// }
-// $db_sql_email = "SELECT * FROM users WHERE email = '$email'";
 
-// $tabl = $db_conn->query($db_sql_email);
-// $email_row = $tabl->fetch_assoc();
-// if ($email_row) {
-//     $errors["email"] = true;
-// }
-$db_cart_sql = "SELECT * FROM basket WHERE user_id = '$user_id' AND product_id = $product_id";
-$db_cart_query = $db_conn->query($db_cart_sql);
-// 
-if ($db_cart_query->num_rows > 0) {
-    $db_cart_row = $db_cart_query->fetch_assoc();
-    $cart_id = $db_cart_row['id'];
-    $count = $db_cart_row['count'] + 1;
-    // $db_cart_sql = "SELECT * FROM basket WHERE user_id = '$user_id' AND product_id = $product_id";
-    $db_cart_sql = "UPDATE `basket` SET `count` = '$count' WHERE `basket`.`id` = $cart_id;";
-    $db_cart_query = $db_conn->query($db_cart_sql);
-
-} else {
-    $add_cart_sql = "INSERT INTO `basket` (`id`, `user_id`, `product_id`, `count`) VALUES (NULL, '$user_id', '$product_id', '1')";
-    $add_cart_query = $db_conn->query($add_cart_sql);
-
+// Если пользователь не авторизован - просим авторизоваться
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php?error=auth_required');
+    exit;
 }
-$redirect = $_SERVER['HTTP_REFERER'] ?? '/index.php';
-header("Location: $redirect");
-exit;
 
+$user_id = $_SESSION['user_id']; // Берем user_id из сессии
+$product_id = $_GET["product_id"] ?? 0;
+
+if ($product_id > 0) {
+    // Проверяем есть ли товар уже в корзине ЭТОГО пользователя
+    $check_sql = "SELECT * FROM basket WHERE user_id = '$user_id' AND product_id = $product_id";
+    $result = $db_conn->query($check_sql);
+    
+    if ($result->num_rows > 0) {
+        // Увеличиваем количество
+        $row = $result->fetch_assoc();
+        $new_count = $row['count'] + 1;
+        $update_sql = "UPDATE basket SET count = '$new_count' WHERE id = " . $row['id'];
+        $db_conn->query($update_sql);
+    } else {
+        // Добавляем новый товар
+        $insert_sql = "INSERT INTO basket (user_id, product_id, count) VALUES ('$user_id', '$product_id', 1)";
+        $db_conn->query($insert_sql);
+    }
+}
+
+// Возвращаем обратно на страницу
+header("Location: " . $_SERVER['HTTP_REFERER']);
+exit;
+?>
