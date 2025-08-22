@@ -35,6 +35,7 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="ваш_csrf_токен">
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -115,7 +116,7 @@ if (isset($_SESSION['user_id'])) {
                     <button onclick="openLogin()"><?php include("auth.php"); ?></button>
                 <?php endif; ?>
 
-                <button onclick="openCart()" class="cart-button">
+                <button onclick="alert('Спочатку авторизуйтесь!')" class="cart-button">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <?php if ($cart_count > 0): ?>
                         <span class="cart-counter"><?= $cart_count ?></span>
