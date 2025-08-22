@@ -1,27 +1,68 @@
 <?php
 include('data/database.php');
 
-if (!isset($_SESSION['user_id'])) {
-    // Показываем пустую корзину для неавторизованных
-    echo '<div class="modal modal-basket" id="cartModal">';
-    echo '    <div class="cart-header"> <div class="flex_close"><div class="cart-title"><p>Кошик</p></div><button class="delete-button" onclick="closeCart()"><img src="img/close.png" alt="Закрити"></button></div></div>';
-    echo '    <div id="cart-items"><p class="empty-cart">Кошик порожній</p></div>';
-    echo '    <div class="cart-footer">';
-    echo '        <span id="cart-count">В кошику: 0 товарів</span>';
-    echo '        <span id="cart-total">на суму: 0 ₴</span>';
-    echo '    </div>';
-    echo '</div>';
-    exit;
-}
+// Получаем данные корзины
+$basket_items = [];
+$total_items = 0;
+$total_sum = 0;
 
-$user_id = $_SESSION['user_id'];
-$basket_sql = "SELECT b.*, p.* FROM basket b 
-               JOIN products p ON b.product_id = p.id 
-               WHERE b.user_id = '$user_id'";
-$basket_query = $db_conn->query($basket_sql);
-$user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
-$user_result = $db_conn->query($user_sql);
-$user_discount = $user_result->fetch_assoc()['sale'] ?? 0;
+if (isset($_SESSION['user_id'])) {
+    // Для авторизованных пользователей - из БД
+    $user_id = $_SESSION['user_id'];
+    $basket_sql = "SELECT b.*, p.*, b.count as basket_count 
+                   FROM basket b 
+                   JOIN products p ON b.product_id = p.id 
+                   WHERE b.user_id = '$user_id'";
+    $basket_query = $db_conn->query($basket_sql);
+
+    if ($basket_query && $basket_query->num_rows > 0) {
+        while ($item = $basket_query->fetch_assoc()) {
+            $price = $item['price'];
+            $final_price = $price; // Базовая цена
+            $quantity = $item['basket_count'];
+            $item_total = $final_price * $quantity;
+
+            $basket_items[] = [
+                'id' => $item['id'],
+                'name' => $item['name'],
+                'img' => $item['img'],
+                'price' => $final_price,
+                'quantity' => $quantity,
+                'total' => $item_total
+            ];
+
+            $total_items += $quantity;
+            $total_sum += $item_total;
+        }
+    }
+} elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    // Для неавторизованных - из сессии
+    $product_ids = array_keys($_SESSION['cart']);
+    if (!empty($product_ids)) {
+        $in = implode(',', array_map('intval', $product_ids));
+        $products_sql = "SELECT * FROM products WHERE id IN ($in)";
+        $products_query = $db_conn->query($products_sql);
+
+        if ($products_query && $products_query->num_rows > 0) {
+            while ($product = $products_query->fetch_assoc()) {
+                $quantity = $_SESSION['cart'][$product['id']];
+                $item_total = $product['price'] * $quantity;
+
+                $basket_items[] = [
+                    'id' => $product['id'],
+                    'name' => $product['name'],
+                    'img' => $product['img'],
+                    'price' => $product['price'],
+                    'quantity' => $quantity,
+                    'total' => $item_total
+                ];
+
+                $total_items += $quantity;
+                $total_sum += $item_total;
+            }
+        }
+    }
+}
 ?>
 
 <div class="modal modal-basket" id="cartModal">
@@ -37,15 +78,11 @@ $user_discount = $user_result->fetch_assoc()['sale'] ?? 0;
     </div>
 
     <div id="cart-items">
-        <?php if ($basket_query->num_rows > 0): ?>
-            <?php while ($item = $basket_query->fetch_assoc()):
-                $price = $item['price'];
-                $final_price = $user_discount > 0 ? $price * (1 - $user_discount / 100) : $price;
-                $total_price = $final_price * $item['count'];
-                ?>
-                <div class="header_card_product" data-id="<?= $item['id'] ?>" data-price="<?= $final_price ?>">
+        <?php if (!empty($basket_items)): ?>
+            <?php foreach ($basket_items as $item): ?>
+                <div class="header_card_product" data-id="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
                     <div class="delete-wrapper">
-                        <a href="#" class="delete-btn" onclick="removeFromCart(this); return false;">
+                        <a href="#" class="delete-btn" onclick="removeFromCart(<?= $item['id'] ?>); return false;">
                             <img src="img/recycle-bin.png" alt="Видалити">
                         </a>
                     </div>
@@ -56,29 +93,42 @@ $user_discount = $user_result->fetch_assoc()['sale'] ?? 0;
                         <p><?= $item['name'] ?></p>
                     </div>
                     <div class="price-wrapper">
-                        <span class="price"><?= number_format($total_price, 2) ?> ₴</span>
+                        <span class="price"><?= number_format($item['total'], 2) ?> ₴</span>
                     </div>
                     <div class="quantity-wrapper">
-                        <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease')">-</button>
-                        <span class="count"><?= $item['count'] ?></span>
-                        <button class="qty-btn plus" onclick="changeQuantity(this, 'increase')">+</button>
+                        <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', <?= $item['id'] ?>)">-</button>
+                        <span class="count"><?= $item['quantity'] ?></span>
+                        <button class="qty-btn plus" onclick="changeQuantity(this, 'increase', <?= $item['id'] ?>)">+</button>
                     </div>
                 </div>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         <?php else: ?>
             <p class="empty-cart">Кошик порожній</p>
         <?php endif; ?>
     </div>
 
     <div class="cart-footer">
-        <span id="cart-count">В кошику: 0 товарів</span>
-        <span id="cart-total">на суму: 0 ₴</span>
+        <span id="cart-count">В кошику: <?= $total_items ?> <?= getItemWord($total_items) ?></span>
+        <span id="cart-total">на суму: <?= number_format($total_sum, 2) ?> ₴</span>
     </div>
 
-    <a href="chekout.php" class="buy-button">Оформити замовлення</a>
+    <?php if (!empty($basket_items)): ?>
+        <a href="chekout.php" class="buy-button">Оформити замовлення</a>
+    <?php endif; ?>
 </div>
 
-<script src="js/main.js"></script>
+<script>
+    // Передаем данные из PHP в JavaScript
+    const cartData = {
+        items: <?= json_encode($basket_items) ?>,
+        totalItems: <?= $total_items ?>,
+        totalSum: <?= $total_sum ?>,
+        isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>
+    };
+
+    console.log('Cart data loaded:', cartData);
+</script>
+
 <?php
 function getItemWord($count)
 {
@@ -91,3 +141,7 @@ function getItemWord($count)
     return 'товарів';
 }
 ?>
+<script src="js/main.js"></script>
+</body>
+
+</html>

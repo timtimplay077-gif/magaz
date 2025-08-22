@@ -1,32 +1,31 @@
 <?php
-// Добавьте session_start() в самое начало
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include("data/database.php");
+header('Content-Type: application/json');
 
-// Просто обновляем количество без строгих проверок
 $product_id = intval($_POST['product_id'] ?? 0);
 $new_quantity = intval($_POST['quantity'] ?? 0);
+$response = ['success' => false];
 
-if ($product_id > 0 && $new_quantity > 0 && isset($_SESSION['user_id'])) {
-    include("data/database.php");
+if ($product_id > 0 && $new_quantity > 0) {
+    if (isset($_SESSION['user_id'])) {
+        // Для авторизованных - обновляем в БД
+        $user_id = $_SESSION['user_id'];
 
-    $user_id = $_SESSION['user_id'];
-
-    try {
         $stmt = $db_conn->prepare("UPDATE basket SET count = ? WHERE user_id = ? AND product_id = ?");
         if ($stmt) {
             $stmt->bind_param("iii", $new_quantity, $user_id, $product_id);
-            $stmt->execute();
+            if ($stmt->execute()) {
+                $response = ['success' => true];
+            }
             $stmt->close();
         }
-    } catch (Exception $e) {
-        // Игнорируем ошибки базы данных
+    } elseif (isset($_SESSION['cart'][$product_id])) {
+        // Для неавторизованных - обновляем в сессии
+        $_SESSION['cart'][$product_id] = $new_quantity;
+        $response = ['success' => true];
     }
 }
 
-// Всегда возвращаем успех
-header('Content-Type: application/json');
-echo json_encode(['success' => true]);
+echo json_encode($response);
 exit;
 ?>

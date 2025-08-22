@@ -140,15 +140,9 @@ $db_image_query = $db_conn->query($db_image_sql);
                     </div>
                 </div>
                 <div class="product_row_about_buy">
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="addCart.php?product_id=<?= $row['id'] ?>">
-                            <img src="contact/shopping-bag.png" alt=""> Купити
-                        </a>
-                    <?php else: ?>
-                        <button onclick="alert('Для покупки товара необходимо авторизоваться'); openLogin();">
-                            <img src="contact/shopping-bag.png" alt=""> Купити
-                        </button>
-                    <?php endif; ?>
+                    <button class="buy-btn" onclick="addToCart(<?= $row['id'] ?>, event)">
+                        <img src="contact/shopping-bag.png" alt="Купити" class="buy_button">Купити
+                    </button>
                 </div>
             </div>
         </div>

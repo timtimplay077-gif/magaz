@@ -1,12 +1,36 @@
 <?php
 include('data/database.php');
+if (isset($_SESSION['logout_success'])) {
+    $logout_message = $_SESSION['logout_success'];
+    unset($_SESSION['logout_success']);
+    echo '<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        showNotification("' . $logout_message . '", "success");
+    });
+    </script>';
+}
 include('data/baner.php');
 include('data/baner2.php');
 include('data/category.php');
 include('data/user_data.php');
+if (!isset($_SESSION['user_id']) && !isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+$cart_count = 0;
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $count_sql = "SELECT SUM(count) as total FROM basket WHERE user_id = '$user_id'";
+    $count_result = $db_conn->query($count_sql);
+    if ($count_result) {
+        $count_row = $count_result->fetch_assoc();
+        $cart_count = $count_row['total'] ?? 0;
+    }
+} elseif (isset($_SESSION['cart'])) {
+    $cart_count = array_sum($_SESSION['cart']);
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
     <meta charset="UTF-8">
@@ -35,12 +59,17 @@ include('data/user_data.php');
     $category_get = $_GET['category'] ?? '';
     $category_get_t = "&category=$category_get";
     $category_active = '';
-    $category_sql = "SELECT *  FROM `categories`";
+    $category_sql = "SELECT * FROM `categories`";
     $category_query = $db_conn->query($category_sql);
     $offset = isset($page_active) ? $page_active * $max_page : 0;
     $sort_get = $_GET['sort'] ?? '';
     $sort_active = "";
     $sort_get_t = "&sort=$sort_get";
+    // Временный фикс для старых сессий
+    if (isset($_SESSION['id']) && !isset($_SESSION['user_id'])) {
+        $_SESSION['user_id'] = $_SESSION['id'];
+    }
+
     if ($category_get) {
         $category_active = " WHERE category=$category_get";
     }
@@ -57,86 +86,57 @@ include('data/user_data.php');
     } else if ($sort_get == 'price_desc') {
         $sort_active = " ORDER BY `products`.`price` DESC";
     }
-    $db_sql = "SELECT *  FROM `products` $category_active $search_active $sort_active  LIMIT $max_page OFFSET $offset";
 
+    $db_sql = "SELECT * FROM `products` $category_active $search_active $sort_active LIMIT $max_page OFFSET $offset";
     $tabl = $db_conn->query($db_sql);
+
     if (!$tabl->num_rows && $page_active > 0) {
         $next_page_t = $page_active - 1;
         header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
     }
-    $order_by = "";
-
-    if (isset($_GET['sort'])) {
-        switch ($_GET['sort']) {
-            case 'price_asc':
-                $order_by = "ORDER BY price ASC";
-                break;
-            case 'price_desc':
-                $order_by = "ORDER BY price DESC";
-                break;
-            default:
-                $order_by = "";
-        }
-    }
-    // if (!isset($_SESSION['user_id'])) {
-
-    //     header("Location: login.php");
-    //     exit;
-    // }
-    $user_id = $_SESSION['user_id'];
     ?>
+
     <div class="head unselectable">
         <div class="block">
-            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt=""></a>
+            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt="KansKrop"></a>
             <form method="GET" class="input_head" action="index.php">
                 <label>
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Я шукаю..." name="search">
-                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <input type="text" placeholder="Я шукаю..." name="search"
+                        value="<?= htmlspecialchars($search_get) ?>">
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </label>
             </form>
             <div class="icons_head">
-                <?php
-                if ($user_query->num_rows > 0) {
-                    include("dropdown.php")
-                        ?>
+                <?php if ($user_query->num_rows > 0): ?>
+                    <?php include("dropdown.php") ?>
                     <button onclick="toggleMenu()"><i class="fa-regular fa-user"></i></button>
-                    <?php
-                } else { ?>
-                    <button><?php include("auth.php"); ?></button>
-                    <?php
-                }
-                ?>
-                <?php
-                if ($user_query->num_rows > 0) {
-                    ?>
-                    <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
-                    <?php
-                } else {
-                    ?>
-                    <button onclick="alert('Спочатку авторизуйтесь!')"><i class="fa-solid fa-cart-shopping"></i></button>
-                    <?php
-                }
-                ?>
+                <?php else: ?>
+                    <button onclick="openLogin()"><?php include("auth.php"); ?></button>
+                <?php endif; ?>
 
+                <button onclick="openCart()" class="cart-button">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <?php if ($cart_count > 0): ?>
+                        <span class="cart-counter"><?= $cart_count ?></span>
+                    <?php endif; ?>
+                </button>
             </div>
         </div>
     </div>
+
     <div class="whatWeHave unselectable">
         <div class="block">
             <div class="whatWeHave_kans">
-                <img src="categoty/school-material.png" alt="">
+                <img src="categoty/school-material.png" alt="Канцелярские товары">
                 <div class="categories">
                     <button class="categories-button" onclick="toggleCategories(this)">Категорії</button>
                     <div class="categories-menu">
-                        <?php
-                        for ($i = 0; $i < $category_query->num_rows; $i++) {
-                            $category_row = $category_query->fetch_assoc();
-                            ?>
-                            <a href="index.php?category=<?= $category_row['id'] ?>" alt=""
-                                class="category_img"><?= $category_row['name'] ?></a>
-
-                        <?php } ?>
+                        <?php while ($category_row = $category_query->fetch_assoc()): ?>
+                            <a href="index.php?category=<?= $category_row['id'] ?>" class="category_link">
+                                <?= htmlspecialchars($category_row['name']) ?>
+                            </a>
+                        <?php endwhile; ?>
                     </div>
                 </div>
 
@@ -148,149 +148,137 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
+
     <div class="slider_wrapper block">
         <?php include 'components/slider.php'; ?>
     </div>
+
     <div class="sort block">
         <div>
             <form method="GET" id="sortForm">
-                <select name="sort" onchange="document.getElementById('sortForm').submit();">
-                    <option value="default">
-                        За замовчуванням</option>
-                    <option value="price_asc" <?php if ($sort_get == 'price_asc')
-                        echo 'selected'; ?>>За ціною
-                        (зростання)</option>
-                    <option value="price_desc" <?php if ($sort_get == 'price_desc')
-                        echo 'selected'; ?>>За ціною
-                        (спадання)</option>
+                <select name="sort" onchange="this.form.submit()">
+                    <option value="default">За замовчуванням</option>
+                    <option value="price_asc" <?= $sort_get == 'price_asc' ? 'selected' : '' ?>>За ціною (зростання)
+                    </option>
+                    <option value="price_desc" <?= $sort_get == 'price_desc' ? 'selected' : '' ?>>За ціною (спадання)
+                    </option>
                 </select>
-                <?php if (isset($_GET['category'])): ?>
-                    <input type="hidden" name="category" value="<?php echo htmlspecialchars($_GET['category']); ?>">
+                <?php if ($category_get): ?>
+                    <input type="hidden" name="category" value="<?= htmlspecialchars($category_get) ?>">
+                <?php endif; ?>
+                <?php if ($search_get): ?>
+                    <input type="hidden" name="search" value="<?= htmlspecialchars($search_get) ?>">
                 <?php endif; ?>
             </form>
         </div>
     </div>
-    </div>
 
-    <div class="tovars unselectable">
-
-        <div class="block">
-            <div class="tovars_ul">
-
-            </div>
-        </div>
-    </div>
-    <div>
-        <div class="product_tile unselectable block">
-
-            <?php
-            for ($i = 0; $i < $tabl->num_rows; $i++) {
-                $row = $tabl->fetch_assoc();
+    <div class="product_tile unselectable block">
+        <?php if ($tabl->num_rows > 0): ?>
+            <?php while ($row = $tabl->fetch_assoc()): ?>
+                <?php
                 $original_price = $row['price'];
-
                 if (isset($user_row['sale']) && $user_row['sale'] > 0) {
                     $final_price = $original_price * (1 - $user_row['sale'] / 100);
                 } else {
                     $final_price = $original_price;
                 }
                 ?>
-
                 <div class="product">
-                    <a href="product.php?id=<?php echo $row['id']; ?>" class="product_link">
-                        <img class="mini_img" src="<?php echo $row['img']; ?>" alt="">
+                    <a href="product.php?id=<?= $row['id'] ?>" class="product_link">
+                        <img class="mini_img" src="<?= $row['img'] ?>" alt="<?= htmlspecialchars($row['name']) ?>">
                         <div class="product_info">
-                            <?php echo $row['name']; ?>
+                            <?= htmlspecialchars($row['name']) ?>
                         </div>
                     </a>
                     <div class="price_buy">
-                        <p class="price" style="color: rgba(0, 0, 0, 1); font-weight: bold;">
-                            <?php echo round($final_price, 2); ?>₴
-                        </p>
-                        <a href="addCart.php?user_id=<?php echo $user_id; ?>&product_id=<?php echo $row['id']; ?>">
-                            <img src="contact/shopping-bag.png" alt="" class="buy_button">
-                        </a>
+                        <p class="price"><?= number_format($final_price, 2) ?>₴</p>
+                        <button class="buy-btn" onclick="addToCart(<?= $row['id'] ?>, event)">
+                            <img src="contact/shopping-bag.png" alt="Купити" class="buy_button">
+                        </button>
                     </div>
-
                 </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="no-products">
+                <p>Товарів не знайдено</p>
+            </div>
+        <?php endif; ?>
+    </div>
 
-                <?php
-            }
-            ?>
-
-        </div>
+    <?php if ($tabl->num_rows > 0): ?>
         <div class="pagination">
             <?php
-            $prew_page = $page_active > 0 ? $page_active - 1 : 'null';
-            $next_page = $tabl->num_rows > 1 ? $page_active + 1 : 'null';
-            if ($prew_page != 'null') { ?>
-                <a href="index.php?page=<?= $prew_page ?><?= $category_get_t . $sort_get_t . $search_get_t ?>"><i
-                        class="fa-solid fa-chevron-left"></i></a>
+            $prev_page = $page_active > 0 ? $page_active - 1 : null;
+            $next_page = $tabl->num_rows >= $max_page ? $page_active + 1 : null;
+            ?>
+            <?php if ($prev_page !== null): ?>
+                <a href="index.php?page=<?= $prev_page ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            <?php endif; ?>
 
-            <?php }
-            if ($next_page != 'null') { ?>
-                <a href="index.php?page=<?= $next_page ?><?= $category_get_t . $sort_get_t . $search_get_t ?>"><i
-                        class="fa-solid fa-chevron-right"></i></a>
-
-            <?php } ?>
-
-
-
+            <?php if ($next_page !== null): ?>
+                <a href="index.php?page=<?= $next_page ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            <?php endif; ?>
         </div>
-    </div>
-    </div>
-    </div>
-
+    <?php endif; ?>
 
     <div class="banner-blocks-container2">
         <div class="block">
-            <?php
-            foreach ($data_baner1 as $key => $value) { ?>
+            <?php foreach ($data_baner1 as $value): ?>
                 <div class="card2">
-                    <img src="<?= $value['img'] ?>" alt="" class="logo_card">
-                    <h3><?= $value['name'] ?></h3>
-                    <p><?= $value['text'] ?></p>
-                    </p>
+                    <img src="<?= $value['img'] ?>" alt="<?= htmlspecialchars($value['name']) ?>" class="logo_card">
+                    <h3><?= htmlspecialchars($value['name']) ?></h3>
+                    <p><?= htmlspecialchars($value['text']) ?></p>
                 </div>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
     </div>
+
     <div class="logo_end">
         <div class="block">
             <div>
-                <img src="img/kanskrop_logo.png" alt="">
+                <img src="img/kanskrop_logo.png" alt="KansKrop">
             </div>
             <div class="iframe">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7QvyAvINCa0LDQvdGH0YLQvtCy0LDRgNC4!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
-                    width="450" height="300" style="border-radius: 15px; border-color:lightgray;"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7Qvy / 0JrQsNC90YfRgtC+0LLQsNGA0Lg!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
+                    width="450" height="300" style="border-radius: 15px; border: 1px solid lightgray;"
                     allowfullscreen=""></iframe>
             </div>
-
         </div>
     </div>
+
     <div class="contact unselectable">
         <div class="block">
             <div class="card3">
-                <p><img src="contact/phone.png" alt="" class="baner2_img">Номер телефона:⠀<snap class="phone_number">
-                        +380 500 534 408</snap>
+                <p><img src="contact/phone.png" alt="Телефон" class="baner2_img">Номер телефона:
+                    <span class="phone_number">+380 500 534 408</span>
                 </p>
-                <p><img src="contact/gmail.png" alt="" class="baner2_img">Наша пошта:⠀<snap class="phone_number">
-                        admin@kanskrop.com</snap>
-                <p><img src="contact/location.png" alt="" class="baner2_img">м.Кропивницький</p>
+                <p><img src="contact/gmail.png" alt="Email" class="baner2_img">Наша пошта:
+                    <span class="phone_number">admin@kanskrop.com</span>
+                </p>
+                <p><img src="contact/location.png" alt="Адреса" class="baner2_img">м.Кропивницький</p>
             </div>
             <div class="ourVT">
-                <a href="https://t.me/kanskrop"><img src="contact/telegram.png" alt="" class="contact_logo">
+                <a href="https://t.me/kanskrop" target="_blank">
+                    <img src="contact/telegram.png" alt="Telegram" class="contact_logo">
                     <p>Telegram</p>
                 </a>
-                <a href="viber://chat?number=%2B380500534408"><img src="contact/viber.png" alt="" class="contact_logo">
+                <a href="viber://chat?number=%2B380500534408">
+                    <img src="contact/viber.png" alt="Viber" class="contact_logo">
                     <p>Viber</p>
                 </a>
             </div>
         </div>
     </div>
+
     <script src="js/main.js"></script>
     <script>
-        $(document).on('ready', function () {
+        $(document).ready(function () {
             $(".slick_slider").slick({
                 dots: true,
                 infinite: true,
@@ -302,15 +290,13 @@ include('data/user_data.php');
                 speed: 800,
                 pauseOnHover: true,
                 pauseOnFocus: true,
-
             });
-        })
+        });
     </script>
     <?php
     include('productBasket.php');
     include("dropdown.php");
     ?>
-
 
 </body>
 

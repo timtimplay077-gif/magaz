@@ -2,34 +2,37 @@
 include('data/database.php');
 include('data/baner2.php');
 include('data/category.php');
+include('data/user_data.php');
 // if (!isset($_SESSION['user_id'])) {
 //     header('Location: login.php?message=Для оформления заказа необходимо авторизоваться');
 //     exit;
 // }
 
-$user_id = $_SESSION['user_id']; 
-$user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
+$user_id = $_SESSION['user_id'];
+$user_sql = "SELECT * FROM users WHERE id = '$user_id'";
 $user_result = $db_conn->query($user_sql);
 $user_row = $user_result->fetch_assoc();
 $basket_items = [];
+$basket_sql = "SELECT b.*, p.* FROM basket b 
+               JOIN products p ON b.product_id = p.id 
+               WHERE b.user_id = '$user_id'";
+$basket_query = $db_conn->query($basket_sql);
 
-while ($basket_row = $basket_query->fetch_assoc()) {
-    $basket_items[$basket_row['product_id']] = [
-        'count' => $basket_row['count'],
-        'productСode' => $basket_row['productСode']
-    ];
+if ($basket_query && $basket_query->num_rows > 0) {
+    while ($basket_row = $basket_query->fetch_assoc()) {
+        $basket_items[$basket_row['product_id']] = [
+            'count' => $basket_row['count'],
+            'productCode' => $basket_row['productCode'] ?? ''
+        ];
+    }
 }
-$basket_product_query = null;
-if (!empty($basket_items)) {
-    $in = implode(',', array_map('intval', array_keys($basket_items)));
-    $basket_product_sql = "SELECT * FROM products WHERE id IN ($in)";
-    $basket_product_query = $db_conn->query($basket_product_sql);
+if (empty($basket_items)) {
+    header('Location: index.php?message=Кошик порожній');
+    exit;
 }
-
-$user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fetch_assoc();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
     <meta charset="UTF-8">
@@ -39,10 +42,6 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poiret+One&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="./slick/slick.css">
-    <link rel="stylesheet" type="text/css" href="./slick/slick-theme.css">
-    <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
-    <script src="./slick/slick.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://kit.fontawesome.com/ee9963f31c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/adaptive.css?">
     <title>Оформлення заказу</title>
@@ -51,7 +50,7 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
 <body>
     <div class="head unselectable">
         <div class="block">
-            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt=""></a>
+            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt="KansKrop"></a>
             <form method="GET" class="input_head" action="index.php">
                 <label>
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -60,38 +59,24 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
                 </label>
             </form>
             <div class="icons_head">
-                <?php
-                if ($user_query->num_rows > 0) {
-                    include("dropdown.php")
-                        ?>
+                <?php if ($user_query->num_rows > 0): ?>
+                    <?php include("dropdown.php") ?>
                     <button onclick="toggleMenu()"><i class="fa-regular fa-user"></i></button>
-                    <?php
-                } else { ?>
-                    <button><?php include("auth.php"); ?></button>
-                    <?php
-                }
-                ?>
-                <?php
-                if ($user_query->num_rows > 0) {
-                    ?>
-                    <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
-                    <?php
-                } else {
-                    ?>
-                    <button onclick="alert('Спочатку авторизуйтесь!')"><i class="fa-solid fa-cart-shopping"></i></button>
-                    <?php
-                }
-                ?>
+                <?php else: ?>
+                    <button onclick="openLogin()"><?php include("auth.php"); ?></button>
+                <?php endif; ?>
+
+                <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
             </div>
         </div>
     </div>
+
     <div class="whatWeHave unselectable">
         <div class="block">
             <div class="whatWeHave_kans">
-                <img src="categoty/school-material.png" alt="">
+                <img src="categoty/school-material.png" alt="Канцелярские товары">
                 <div class="categories">
-                    <a href="index.php"> <button class="categories-button"
-                            onclick="toggleCategories(this)">Категорії</button></a>
+                    <a href="index.php"><button class="categories-button">Категорії</button></a>
                 </div>
                 <div class="marquee">
                     <span id="marqueeText"></span>
@@ -99,26 +84,32 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
             </div>
         </div>
     </div>
-    <div class="oder block">Оформлення замовлення.</div>
+
+    <div class="oder block">Оформлення замовлення</div>
+
     <div class="block">
-        <form action="odercheck.php" method="get">
+        <form action="odercheck.php" method="POST">
             <div class="chekount">
                 <div class="ored_adres">
                     <h2>Покупець</h2>
                     <div class="label_chekount">
-                        <div style=" margin-bottom: 30px;">
-                            <label for=" firstName">* Ім'я</label><br>
-                            <input type="text" id="firstName" name="firstName" placeholder="Ім'я" required>
+                        <div style="margin-bottom: 30px;">
+                            <label for="firstName">* Ім'я</label><br>
+                            <input type="text" id="firstName" name="firstName" placeholder="Ім'я" required
+                                value="<?= htmlspecialchars($user_row['first_name'] ?? '') ?>">
                             <br><br>
                             <label for="lastName">* Прізвище</label><br>
-                            <input type="text" id="lastName" name="lastName" placeholder="Прізвище" required>
+                            <input type="text" id="lastName" name="lastName" placeholder="Прізвище" required
+                                value="<?= htmlspecialchars($user_row['last_name'] ?? '') ?>">
                         </div>
                         <div>
                             <label for="email">* E-Mail</label><br>
-                            <input type="email" id="email" name="email" placeholder="E-Mail" required>
+                            <input type="email" id="email" name="email" placeholder="E-Mail" required
+                                value="<?= htmlspecialchars($user_row['email'] ?? '') ?>">
                             <br><br>
                             <label for="phone">* Телефон</label><br>
-                            <input type="tel" id="phone" name="phone" placeholder="Телефон" required>
+                            <input type="tel" id="phone" name="phone" placeholder="Телефон" required
+                                value="<?= htmlspecialchars($user_row['phone'] ?? '') ?>">
                         </div>
                     </div>
                 </div>
@@ -133,71 +124,71 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
                             <label for="region">* Регіон / Область</label><br>
                             <input type="text" id="region" name="region" placeholder="Регіон / Область" required>
                             <br><br>
-                            <label for="adres">* Адреса</label><br>
-                            <input type="text" id="adres" name="adres" placeholder="Адреса" required>
+                            <label for="address">* Адреса</label><br>
+                            <input type="text" id="address" name="address" placeholder="Адреса" required>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="your_oder">
 
+            <div class="your_oder">
                 <?php
                 $total = 0;
                 $total_items = 0;
 
-                if ($basket_product_query && $basket_product_query->num_rows > 0) {
-                    while ($item = $basket_product_query->fetch_assoc()) {
-                        $original_price = $item['price'];
+                foreach ($basket_items as $product_id => $item_data) {
+                    $product_sql = "SELECT * FROM products WHERE id = '$product_id'";
+                    $product_result = $db_conn->query($product_sql);
+
+                    if ($product_result && $product_result->num_rows > 0) {
+                        $product = $product_result->fetch_assoc();
+                        $original_price = $product['price'];
                         if (isset($user_row['sale']) && $user_row['sale'] > 0) {
                             $final_price = $original_price * (1 - $user_row['sale'] / 100);
                         } else {
                             $final_price = $original_price;
                         }
 
-                        $quantity = $basket_items[$item['id']]['count'];
-                        $product_code = $basket_items[$item['id']]['productСode'];
+                        $quantity = $item_data['count'];
                         $item_total = $final_price * $quantity;
                         $total += $item_total;
                         $total_items += $quantity;
                         ?>
                         <div class="oder_item">
-                            <a href="product.php?id=<?php echo $item['id']; ?>">
-                                <img src="<?php echo $item['img']; ?>" alt="<?php echo $item['name']; ?>">
-                                <p class="order_name"><?php echo $item['name']; ?></p>
-                                <p class="order_code">Код: <?php echo $product_code; ?></p>
-                                <p class="order_quantity">Кількість: <?php echo $quantity; ?> шт.</p>
-                                <p class="order_price"><?php echo number_format($final_price, 2); ?> ₴ ×
-                                    <?php echo $quantity; ?> = <?php echo number_format($item_total, 2); ?> ₴
+                            <a href="product.php?id=<?= $product['id'] ?>">
+                                <img src="<?= $product['img'] ?>" alt="<?= $product['name'] ?>">
+                                <p class="order_name"><?= $product['name'] ?></p>
+                                <p class="order_code">Код: <?= $item_data['productCode'] ?></p>
+                                <p class="order_quantity">Кількість: <?= $quantity ?> шт.</p>
+                                <p class="order_price"><?= number_format($final_price, 2) ?> ₴ ×
+                                    <?= $quantity ?> = <?= number_format($item_total, 2) ?> ₴
                                 </p>
                             </a>
                         </div>
                         <?php
                     }
-                } else {
-                    echo '<p class="empty-cart">Кошик порожній</p>';
                 }
                 ?>
             </div>
-            <p class="oder_total">Загальна сума: <b><?php echo number_format($total, 2); ?> ₴</b></p>
-            <h3 class="oder_total">Ваше замовлення (<?php echo array_sum(array_column($basket_items, 'count')); ?>
-                товарів)</h3>
+
+            <p class="oder_total">Загальна сума: <b><?= number_format($total, 2) ?> ₴</b></p>
+            <h3 class="oder_total">Ваше замовлення (<?= $total_items ?> товарів)</h3>
+
             <div class="order_ready">
-                <button type="submit" class="order_ready_button" <?php echo ($total_items == 0) ? 'disabled' : ''; ?>>Оформлення
-                    замовлення</button>
+                <button type="submit" class="order_ready_button">Оформлення замовлення</button>
             </div>
         </form>
     </div>
 
     <div class="banner-blocks-container2">
         <div class="block">
-            <?php
-            foreach ($data_baner1 as $key => $value) { ?>
+            <?php foreach ($data_baner1 as $value): ?>
                 <div class="card2">
-                    <img src="<?= $value['img'] ?>" alt="" class="logo_card">
+                    <img src="<?= $value['img'] ?>" alt="<?= $value['name'] ?>" class="logo_card">
                     <h3><?= $value['name'] ?></h3>
                     <p><?= $value['text'] ?></p>
                 </div>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
     </div>
 
@@ -209,7 +200,7 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
             <div class="iframe">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7QvyAvINCa0LDQvdGH0YLQvtCy0LDRgNC4!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
-                    width="450" height="300" style="border-radius: 15px; border-color:lightgray;"
+                    width="450" height="300" style="border-radius: 15px; border: 1px solid lightgray;"
                     allowfullscreen=""></iframe>
             </div>
         </div>
@@ -218,17 +209,20 @@ $user_row = $db_conn->query("SELECT sale FROM users WHERE id = '$user_id'")->fet
     <div class="contact unselectable">
         <div class="block">
             <div class="card3">
-                <p><img src="contact/phone.png" alt="" class="baner2_img">Номер телефона:⠀<span
-                        class="phone_number">+380 500 534 408</span></p>
-                <p><img src="contact/gmail.png" alt="" class="baner2_img">Наша пошта:⠀<span
-                        class="phone_number">admin@kanskrop.com</span></p>
-                <p><img src="contact/location.png" alt="" class="baner2_img">м.Кропивницький</p>
+                <p><img src="contact/phone.png" alt="Телефон" class="baner2_img">Номер телефона:
+                    <span class="phone_number">+380 500 534 408</span>
+                </p>
+                <p><img src="contact/gmail.png" alt="Email" class="baner2_img">Наша пошта:
+                    <span class="phone_number">admin@kanskrop.com</span>
+                </p>
+                <p><img src="contact/location.png" alt="Адреса" class="baner2_img">м.Кропивницький</p>
             </div>
             <div class="ourVT">
-                <a href="https://t.me/kanskrop"><img src="contact/telegram.png" alt="" class="contact_logo">
+                <a href="https://t.me/kanskrop"><img src="contact/telegram.png" alt="Telegram" class="contact_logo">
                     <p>Telegram</p>
                 </a>
-                <a href="viber://chat?number=%2B380500534408"><img src="contact/viber.png" alt="" class="contact_logo">
+                <a href="viber://chat?number=%2B380500534408"><img src="contact/viber.png" alt="Viber"
+                        class="contact_logo">
                     <p>Viber</p>
                 </a>
             </div>

@@ -31,6 +31,7 @@ if (!$row) {
         header("Location: login.php");
         exit();
     } else {
+        $_SESSION['user_id'] = $row['id'];
         $_SESSION['id'] = $row['id'];
         header("Location: index.php");
         exit();
