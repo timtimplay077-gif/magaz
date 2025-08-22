@@ -78,11 +78,11 @@ include('data/user_data.php');
                 $order_by = "";
         }
     }
-    if (!isset($_SESSION['user_id'])) {
+    // if (!isset($_SESSION['user_id'])) {
 
-        header("Location: login.php");
-        exit;
-    }
+    //     header("Location: login.php");
+    //     exit;
+    // }
     $user_id = $_SESSION['user_id'];
     ?>
     <div class="head unselectable">

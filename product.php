@@ -145,7 +145,7 @@ $db_image_query = $db_conn->query($db_image_sql);
                             <img src="contact/shopping-bag.png" alt=""> Купити
                         </a>
                     <?php else: ?>
-                        <button onclick="alert('Будь ласка, авторизуйтесь!'); openLogin();">
+                        <button onclick="alert('Для покупки товара необходимо авторизоваться'); openLogin();">
                             <img src="contact/shopping-bag.png" alt=""> Купити
                         </button>
                     <?php endif; ?>

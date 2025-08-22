@@ -1,5 +1,4 @@
 <?php
-session_start();
 // $host = "localhost";
 // $login = "root";
 // $password = "";
@@ -9,6 +8,12 @@ session_start();
 // $password = "u6&HxJdZ+f6C";
 // $db_name = "u623724617_kanskrop";
 // u6&HxJdZ+f6C
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 $server_name = $_SERVER['SERVER_NAME'];
 if ($server_name == 'localhost') {
     $host = "localhost";
@@ -22,7 +27,10 @@ if ($server_name == 'localhost') {
     $db_name = "u623724617_kanskrop";
 }
 $db_conn = new mysqli($host, $login, $password, $db_name);
-
-
+if ($db_conn->connect_error) {
+    error_log("Database connection failed: " . $db_conn->connect_error);
+    die("Database connection error");
+}
+$db_conn->set_charset("utf8");
 
 ?>

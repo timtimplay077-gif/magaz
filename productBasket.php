@@ -1,20 +1,23 @@
 <?php
 include('data/database.php');
-// Если не авторизован - показываем сообщение
+
 if (!isset($_SESSION['user_id'])) {
+    // Показываем пустую корзину для неавторизованных
     echo '<div class="modal modal-basket" id="cartModal">';
-    echo '    <div class="cart-header"><p>Кошик</p><button onclick="closeCart()">×</button></div>';
-    echo '    <div id="cart-items"><p>Будь ласка, авторизуйтесь!</p></div>';
+    echo '    <div class="cart-header"> <div class="flex_close"><div class="cart-title"><p>Кошик</p></div><button class="delete-button" onclick="closeCart()"><img src="img/close.png" alt="Закрити"></button></div></div>';
+    echo '    <div id="cart-items"><p class="empty-cart">Кошик порожній</p></div>';
+    echo '    <div class="cart-footer">';
+    echo '        <span id="cart-count">В кошику: 0 товарів</span>';
+    echo '        <span id="cart-total">на суму: 0 ₴</span>';
+    echo '    </div>';
     echo '</div>';
     exit;
 }
 
-$user_id = $_SESSION['user_id']; // Важно: берем из сессии!
-
-// Получаем товары из корзины ТОЛЬКО этого пользователя
+$user_id = $_SESSION['user_id'];
 $basket_sql = "SELECT b.*, p.* FROM basket b 
                JOIN products p ON b.product_id = p.id 
-               WHERE b.user_id = '$user_id'"; // Фильтр по user_id
+               WHERE b.user_id = '$user_id'";
 $basket_query = $db_conn->query($basket_sql);
 $user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
 $user_result = $db_conn->query($user_sql);
@@ -42,8 +45,7 @@ $user_discount = $user_result->fetch_assoc()['sale'] ?? 0;
                 ?>
                 <div class="header_card_product" data-id="<?= $item['id'] ?>" data-price="<?= $final_price ?>">
                     <div class="delete-wrapper">
-                        <a href="removeFromCart.php?product_id=<?= $item['id'] ?>" class="delete-btn"
-                            onclick="removeFromCart(this); return false;">
+                        <a href="#" class="delete-btn" onclick="removeFromCart(this); return false;">
                             <img src="img/recycle-bin.png" alt="Видалити">
                         </a>
                     </div>

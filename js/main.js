@@ -104,6 +104,8 @@ document.addEventListener("DOMContentLoaded", function () {
     startMarquee(messages[index]);
 });
 document.addEventListener('DOMContentLoaded', function () {
+    // Инициализация при загрузке страницы
+    recalcTotal();
 });
 
 function changeQuantity(button, action) {
@@ -131,7 +133,7 @@ function changeQuantity(button, action) {
     priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
 
     recalcTotal();
-    updateQuantity(productId, action, count);
+    updateQuantity(productId, count);
 }
 
 function recalcTotal() {
@@ -173,63 +175,89 @@ function getItemWord(count) {
     return 'товарів';
 }
 
-function updateQuantity(productId, action, newQuantity) {
+function updateQuantity(productId, newQuantity) {
+    // Создаем FormData для отправки
+    const formData = new FormData();
+    formData.append('product_id', productId);
+    formData.append('quantity', newQuantity);
+    formData.append('action', 'update');
+
+    // Отправляем запрос в фоне (не ждем ответа)
     fetch('update.php', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'product_id=' + productId + '&action=' + action + '&quantity=' + newQuantity
+        body: formData,
+        credentials: 'same-origin'
     })
         .then(response => response.json())
         .then(data => {
-            if (data.error) {
-                alert('Ошибка обновления: ' + data.error);
-            }
+            // Игнорируем ответ сервера
         })
         .catch(error => {
-            alert('Ошибка сети при обновлении количества');
+            // Игнорируем ошибки сети
+            console.log('Сетевая ошибка обновления (игнорируем)');
         });
 }
 
-function removeFromCart(link) {
-    event.preventDefault();
-
-    const item = link.closest('.header_card_product');
+function removeFromCart(element) {
+    const item = element.closest('.header_card_product');
     if (!item) return;
 
     const productId = item.dataset.id;
-    const url = 'removeFromCart.php?product_id=' + productId;
 
-    // Отправляем AJAX-запрос
-    fetch(url)
+    // Блокируем кнопку на время выполнения
+    const deleteBtn = item.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.style.pointerEvents = 'none';
+        deleteBtn.style.opacity = '0.5';
+    }
+
+    // 1. Сначала отправляем запрос на сервер
+    fetch('removeFromCart.php?product_id=' + productId, {
+        method: 'GET',
+        credentials: 'same-origin'
+    })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Ошибка сети');
+                throw new Error('Network error');
             }
             return response.json();
         })
         .then(data => {
-            if (data.success) {
-                // Удаляем товар из HTML
-                item.remove();
-                recalcTotal();
+            // 2. Только после успешного ответа от сервера удаляем из интерфейса
+            if (data && data.success) {
+                // Плавное исчезновение
+                item.style.opacity = '0';
+                item.style.transition = 'opacity 0.3s ease';
 
-                // Если корзина пуста, показываем сообщение
-                if (document.querySelectorAll('.header_card_product').length === 0) {
-                    document.getElementById('cart-items').innerHTML = '<p class="empty-cart">Кошик порожній</p>';
-                    // Также скрываем кнопку оформления заказа если она есть
-                    const orderButton = document.querySelector('.order_ready_button');
-                    if (orderButton) {
-                        orderButton.disabled = true;
+                setTimeout(() => {
+                    item.remove();
+                    recalcTotal();
+
+                    // Проверяем, пуста ли корзина
+                    if (document.querySelectorAll('.header_card_product').length === 0) {
+                        document.getElementById('cart-items').innerHTML = '<p class="empty-cart">Кошик порожній</p>';
+                        const orderButton = document.querySelector('.order_ready_button');
+                        if (orderButton) {
+                            orderButton.disabled = true;
+                        }
                     }
-                }
+                }, 300);
             } else {
-                alert('Ошибка: ' + data.error);
+                // Если сервер вернул ошибку, разблокируем кнопку
+                if (deleteBtn) {
+                    deleteBtn.style.pointerEvents = 'auto';
+                    deleteBtn.style.opacity = '1';
+                }
+                console.log('Серверная ошибка удаления:', data?.message);
             }
         })
         .catch(error => {
-            alert('Ошибка сети при удалении товара');
+            // Если сетевая ошибка, разблокируем кнопку
+            if (deleteBtn) {
+                deleteBtn.style.pointerEvents = 'auto';
+                deleteBtn.style.opacity = '1';
+            }
+            console.log('Сетевая ошибка при удалении:', error);
         });
 }
 

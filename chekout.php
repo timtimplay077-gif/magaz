@@ -2,29 +2,23 @@
 include('data/database.php');
 include('data/baner2.php');
 include('data/category.php');
-include('data/user_data.php');
+// if (!isset($_SESSION['user_id'])) {
+//     header('Location: login.php?message=Для оформления заказа необходимо авторизоваться');
+//     exit;
+// }
 
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = 1;
-}
-$user_id = $_SESSION['user_id'];
-
-// Получаем корзину с количеством товаров - ИСПРАВЛЯЕМ ЗДЕСЬ
-$basket_sql = "SELECT b.product_id, b.count, p.name, p.price, p.productСode 
-               FROM basket b 
-               JOIN products p ON b.product_id = p.id 
-               WHERE b.user_id = '$user_id'";
-$basket_query = $db_conn->query($basket_sql);
+$user_id = $_SESSION['user_id']; 
+$user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
+$user_result = $db_conn->query($user_sql);
+$user_row = $user_result->fetch_assoc();
 $basket_items = [];
 
 while ($basket_row = $basket_query->fetch_assoc()) {
     $basket_items[$basket_row['product_id']] = [
         'count' => $basket_row['count'],
-        'productСode' => $basket_row['productСode'] // добавляем код товара
+        'productСode' => $basket_row['productСode']
     ];
 }
-
-// Получаем информацию о товарах - ИСПРАВЛЯЕМ И ЗДЕСЬ
 $basket_product_query = null;
 if (!empty($basket_items)) {
     $in = implode(',', array_map('intval', array_keys($basket_items)));
