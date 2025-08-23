@@ -162,23 +162,15 @@ $db_image_query = $db_conn->query($db_image_sql);
                 </div>
                 <?php
                 $original_price = $row['price'];
-                $discount_price = $original_price;
-
-                if (isset($_SESSION['id'])) {
-                    $user_id = $_SESSION['id'];
-                    $user_sql = "SELECT sale FROM users WHERE id = '$user_id'";
-                    $user_result = $db_conn->query($user_sql);
-                    if ($user_result && $user_result->num_rows > 0) {
-                        $user_row = $user_result->fetch_assoc();
-                        if ($user_row['sale'] > 0) {
-                            $discount_price = $original_price * (1 - $user_row['sale'] / 100);
-                        }
-                    }
+                $modifier = $row['price_modifier'] ?? 0;
+                $discount_price = $original_price * (1 + $modifier / 100);
+                if ($isLoggedIn && isset($user_row['sale']) && $user_row['sale'] > 0) {
+                    $discount_price = $discount_price * (1 - $user_row['sale'] / 100);
                 }
                 ?>
                 <div class="product_row_price">
                     <div class="price">
-                        <?= round(num: $discount_price, precision: 2) ?> ₴
+                        <?= round($discount_price, 2) ?> ₴
                     </div>
                 </div>
                 <div class="product_row_about_buy">

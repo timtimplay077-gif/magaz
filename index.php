@@ -193,10 +193,11 @@ if (!$tabl->num_rows && $page_active > 0) {
             <?php while ($row = $tabl->fetch_assoc()): ?>
                 <?php
                 $original_price = $row['price'];
+                $modifier = $row['price_modifier'] ?? 0;
+                $final_price = $original_price * (1 + $modifier / 100);
+
                 if ($isLoggedIn && isset($user_row['sale']) && $user_row['sale'] > 0) {
-                    $final_price = $original_price * (1 - $user_row['sale'] / 100);
-                } else {
-                    $final_price = $original_price;
+                    $final_price = $final_price * (1 - $user_row['sale'] / 100);
                 }
                 ?>
                 <div class="product">
