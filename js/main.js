@@ -340,53 +340,124 @@ document.addEventListener('keydown', function (event) {
 });
 
 function addToCart(productId, event) {
-    if (!event || !event.target) return;
     const buyButton = event.target.closest('.buy-btn');
     if (!buyButton) return;
-    const originalHtml = buyButton.innerHTML;
-    buyButton.textContent = '';
-    const spinner = createElement('div', { class: 'loading-spinner' });
-    buyButton.appendChild(spinner);
-    buyButton.style.pointerEvents = 'none';
+
+    if (!cartData.isLoggedIn) {
+        alert('Спочатку авторизуйтесь!');
+        return;
+    }
+
+    // Показываем спиннер и блокируем кнопку
+    const originalContent = buyButton.innerHTML;
+    buyButton.innerHTML = '<div class="loading-spinner"></div>';
+    buyButton.disabled = true;
     buyButton.style.opacity = '0.7';
+
+    // Формируем данные для отправки
     const formData = new FormData();
     formData.append('product_id', productId);
 
-    fetch('addCart.php', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-Token': getCSRFToken()
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network error');
-            }
-            return response.json();
-        })
+    fetch('addCart.php', { method: 'POST', body: formData })
+        .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                showNotification('Товар додано до кошика! ', 'success');
-                updateCartCounter(data.cart_count);
-                buyButton.classList.add('added-to-cart');
-                setTimeout(() => {
-                    buyButton.classList.remove('added-to-cart');
-                }, 1000);
+                // Обновляем cartData локально
+                let existingItem = cartData.items.find(i => i.id == productId);
+                if (existingItem) {
+                    existingItem.quantity++;
+                    existingItem.total = existingItem.price * existingItem.quantity;
+                } else {
+                    // Добавляем новый товар в cartData
+                    fetch(`getProductCard.php?id=${productId}`)
+                        .then(resp => resp.json())
+                        .then(product => {
+                            cartData.items.push({
+                                id: product.id,
+                                name: product.name,
+                                img: product.img,
+                                price: product.price,
+                                quantity: 1,
+                                total: product.price
+                            });
+                            updateCartUI();
+                        });
+                }
+
+                // Меняем кнопку на "У кошику" и делаем зелёной
+                buyButton.innerHTML = '<span>У кошику</span>';
+                buyButton.classList.add('in-cart');
+                buyButton.disabled = true;
+                buyButton.style.opacity = '1';
+
+                // Обновляем счётчик корзины
+                const counter = document.querySelector('.cart-counter');
+                if (counter) {
+                    counter.textContent = cartData.items.reduce((sum, i) => sum + i.quantity, 0);
+                }
+
+                updateCartUI();
             } else {
-                showNotification('Помилка при додаванні товару', 'error');
+                // Если ошибка на сервере
+                buyButton.innerHTML = originalContent;
+                buyButton.disabled = false;
+                buyButton.style.opacity = '1';
+                alert('Помилка при додаванні товару');
             }
         })
-        .catch(error => {
-            console.log('Помилка:', error);
-            showNotification('Помилка мережі', 'error');
-        })
-        .finally(() => {
-            buyButton.innerHTML = originalHtml;
-            buyButton.style.pointerEvents = 'auto';
+        .catch(() => {
+            // Если ошибка сети
+            buyButton.innerHTML = originalContent;
+            buyButton.disabled = false;
             buyButton.style.opacity = '1';
+            alert('Помилка мережі');
         });
 }
+
+
+function updateCartUI() {
+    const cartItems = document.getElementById('cart-items');
+    if (!cartItems) return;
+
+    cartItems.innerHTML = '';
+    if (cartData.items.length === 0) {
+        cartItems.innerHTML = '<p class="empty-cart">Кошик порожній</p>';
+        return;
+    }
+
+    cartData.items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'header_card_product';
+        div.dataset.id = item.id;
+        div.dataset.price = item.price;
+        div.innerHTML = `
+            <div class="delete-wrapper">
+                <a href="#" class="delete-btn" onclick="removeFromCart(${item.id}); return false;">
+                    <img src="img/recycle-bin.png" alt="Видалити">
+                </a>
+            </div>
+            <div class="photo-wrapper"><img src="${item.img}" alt="${item.name}"></div>
+            <div class="name-wrapper"><p>${item.name}</p></div>
+            <div class="price-wrapper"><span class="price">${item.total.toFixed(2)} ₴</span></div>
+            <div class="quantity-wrapper">
+                <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', ${item.id})">-</button>
+                <span class="count">${item.quantity}</span>
+                <button class="qty-btn plus" onclick="changeQuantity(this, 'increase', ${item.id})">+</button>
+            </div>
+        `;
+        cartItems.appendChild(div);
+    });
+
+    // Обновляем футер
+    const totalItems = cartData.items.reduce((a, i) => a + i.quantity, 0);
+    const totalSum = cartData.items.reduce((a, i) => a + i.total, 0);
+    document.getElementById('cart-count').textContent = `В кошику: ${totalItems} ${getItemWord(totalItems)}`;
+    document.getElementById('cart-total').textContent = `на суму: ${totalSum.toFixed(2)} ₴`;
+}
+
+
+
+
 function showNotification(message, type) {
     document.querySelectorAll('.notification').forEach(n => n.remove());
     const notification = createElement('div', { class: `notification ${type}` });

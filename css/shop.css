@@ -2018,6 +2018,11 @@ quantity-controls {
 
 .buy-btn {
     transition: all 0.3s ease;
+    background: black;
+    color: white;
+    padding: 10px;
+    width: 89px;
+    border-radius: 5px;
 }
 
 .buy-btn:active {
@@ -2087,4 +2092,12 @@ quantity-controls {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
+}
+
+.buy-btn.in-cart {
+    background-color: #4CAF50;
+    padding: 10px;
+    color: white;
+    cursor: default;
+    border-radius: 5px;
 }

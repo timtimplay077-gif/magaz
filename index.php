@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('productBasket.php');
 if (isset($_SESSION['logout_success'])) {
     $logout_message = $_SESSION['logout_success'];
     unset($_SESSION['logout_success']);
@@ -192,25 +193,26 @@ if (!$tabl->num_rows && $page_active > 0) {
         <?php if ($tabl->num_rows > 0): ?>
             <?php while ($row = $tabl->fetch_assoc()): ?>
                 <?php
-                $original_price = $row['price'];
-                $modifier = $row['price_modifier'] ?? 0;
-                $final_price = $original_price * (1 + $modifier / 100);
-
-                if ($isLoggedIn && isset($user_row['sale']) && $user_row['sale'] > 0) {
-                    $final_price = $final_price * (1 - $user_row['sale'] / 100);
-                }
+                $price = $row['price'];
+                if (!empty($row['price_modifier']))
+                    $price *= (1 + $row['price_modifier'] / 100);
+                if ($isLoggedIn && !empty($user_row['sale']))
+                    $price *= (1 - $user_row['sale'] / 100);
                 ?>
                 <div class="product">
                     <a href="product.php?id=<?= $row['id'] ?>" class="product_link">
                         <img class="mini_img" src="<?= $row['img'] ?>" alt="<?= htmlspecialchars($row['name']) ?>">
-                        <div class="product_info">
-                            <?= htmlspecialchars($row['name']) ?>
-                        </div>
+                        <div class="product_info"><?= htmlspecialchars($row['name']) ?></div>
                     </a>
                     <div class="price_buy">
-                        <p class="price"><?= number_format($final_price, 2) ?>₴</p>
-                        <button class="buy-btn" onclick="addToCart(<?= $row['id'] ?>, event)">
-                            <img src="contact/shopping-bag.png" alt="Купити" class="buy_button">
+                        <p class="price"><?= number_format($price, 2) ?>₴</p>
+                        <?php
+                        $product_id = $row['id'];
+                        $isInCart = in_array($product_id, array_column($basket_items, 'id'));
+                        ?>
+                        <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>"
+                            onclick="addToCart(<?= $product_id ?>, event)">
+                            <?= $isInCart ? 'У кошику' : 'Купити' ?>
                         </button>
                     </div>
                 </div>
