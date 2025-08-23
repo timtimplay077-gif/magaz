@@ -45,10 +45,10 @@ $orderInfo .= "📦 Замовлення: \n";
 foreach ($basket_items as $item) {
     $item_total = $item['price'] * $item['count'];
     $product_code = $item['productCode'] ?? 'н/д';
-    $orderInfo .= "• {$item['name']}\n  📦 Код: $product_code\n  📊 Кількість: {$item['count']} шт.\n  💰 Ціна: {$item['price']} ₴ × {$item['count']} = {$item_total} ₴\n";
+    $orderInfo .= "• {$item['name']}\n 📦 Код: *$product_code*\n  📊 Кількість: {$item['count']} шт.\n  💰 Ціна: {$item['price']} ₴ × {$item['count']} = {$item_total} ₴\n";
 }
 
-$orderInfo .= "────────────────\n✅ <b>Разом:</b>\n• Товарів: $total_items шт.\n• Загальна сума: $total_amount ₴\n────────────────";
+$orderInfo .= "────────────────\n✅ Разом:\n• Товарів: $total_items шт.\n• Загальна сума: $total_amount ₴\n────────────────";
 function sendTelegram($message)
 {
     $token = "8418965565:AAFBJEFWZkN_WiQ7yoq9wlpaqLTMnRjyVAo";
