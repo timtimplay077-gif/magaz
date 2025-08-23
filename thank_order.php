@@ -60,7 +60,7 @@ include('data/user_data.php');
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/ee9963f31c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/adaptive.css?">
-    <title>Вихід</title>
+    <title>Дякуємо за замовлення</title>
 </head>
 
 <body>
