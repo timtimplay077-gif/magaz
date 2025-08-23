@@ -51,24 +51,11 @@ foreach ($basket_items as $item) {
 $orderInfo .= "────────────────\n✅ <b>Разом:</b>\n• Товарів: $total_items шт.\n• Загальна сума: $total_amount ₴\n────────────────";
 function sendTelegram($message)
 {
-    $token = "7985968026:AAHoNcDbNimVpToWxoYlDskFoBajQ03T5Uc";
-    $chat_id = "1057434079";
-
-    $url = "https://api.telegram.org/bot$token/sendMessage";
-    $data = [
-        'chat_id' => $chat_id,
-        'text' => $message,
-        'parse_mode' => 'HTML'
-    ];
-    $options = [
-        'http' => [
-            'method' => 'POST',
-            'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-            'content' => http_build_query($data)
-        ]
-    ];
-    $context = stream_context_create($options);
-    return file_get_contents($url, false, $context) !== false;
+    $token = "8418965565:AAFBJEFWZkN_WiQ7yoq9wlpaqLTMnRjyVAo";
+    $chat_id = "8055379494";
+    $url = "https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id&text=" . urlencode($message);
+    $response = file_get_contents($url);
+    return $response !== false;
 }
 
 if (sendTelegram($orderInfo)) {
