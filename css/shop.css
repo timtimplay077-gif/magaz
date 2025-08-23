@@ -400,6 +400,7 @@ a {
     font-size: 25px;
     padding-top: 25px;
     padding-bottom: 25px;
+    margin-top: 130px;
 
 }
 
@@ -827,7 +828,7 @@ a {
 .product_photo_slider {
     object-fit: contain;
     display: flex;
-
+    overflow-y: hidden;
 }
 
 .product_photo_slider img {
@@ -993,6 +994,7 @@ a {
     margin-top: 50px;
     display: flex;
     justify-content: center;
+    margin-bottom: 30px;
 }
 
 .logaut_button {
@@ -1082,11 +1084,19 @@ a {
     padding-left: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
+    margin-top: 5px;
+}
+
+.email {
+    margin-top: 20px;
+}
+
+.password {
     margin-top: 20px;
 }
 
 .password input {
-    margin-top: 20px;
+    margin-top: 5px;
     border-radius: 10px;
     border: 1px solid lightgray;
     font-size: 18px;
@@ -1188,7 +1198,7 @@ a {
 
 .header_card_product {
     display: grid;
-    grid-template-columns: 35px 80px 1fr 100px 110px;
+    grid-template-columns: 35px 80px 1fr 115px 110px;
     align-items: center;
     gap: 10px;
     padding: 10px;
@@ -1792,7 +1802,7 @@ quantity-controls {
 }
 
 .price-wrapper .price {
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 700;
 
 }
@@ -2054,4 +2064,27 @@ quantity-controls {
     100% {
         transform: scale(1);
     }
+}
+
+.cart-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.modal.show {
+    display: block !important;
+}
+
+#overlay.show {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }

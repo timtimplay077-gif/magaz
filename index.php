@@ -1,4 +1,5 @@
 <?php
+include('data/session_start.php');
 include('data/database.php');
 if (isset($_SESSION['logout_success'])) {
     $logout_message = $_SESSION['logout_success'];
@@ -9,33 +10,83 @@ if (isset($_SESSION['logout_success'])) {
     });
     </script>';
 }
+
 include('data/baner.php');
 include('data/baner2.php');
 include('data/category.php');
-include('data/user_data.php');
-if (!isset($_SESSION['user_id']) && !isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+$isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
+if ($isLoggedIn) {
+    $user_id = $_SESSION['user_id'];
+    $user_sql = "SELECT * FROM users WHERE id = ?";
+    $user_stmt = $db_conn->prepare($user_sql);
+    $user_stmt->bind_param("i", $user_id);
+    $user_stmt->execute();
+    $user_result = $user_stmt->get_result();
+    $user_row = $user_result->fetch_assoc();
+    $user_stmt->close();
 }
 $cart_count = 0;
-if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-    $count_sql = "SELECT SUM(count) as total FROM basket WHERE user_id = '$user_id'";
-    $count_result = $db_conn->query($count_sql);
+if ($isLoggedIn) {
+    $count_sql = "SELECT SUM(count) as total FROM basket WHERE user_id = ?";
+    $count_stmt = $db_conn->prepare($count_sql);
+    $count_stmt->bind_param("i", $user_id);
+    $count_stmt->execute();
+    $count_result = $count_stmt->get_result();
     if ($count_result) {
         $count_row = $count_result->fetch_assoc();
         $cart_count = $count_row['total'] ?? 0;
     }
+    $count_stmt->close();
 } elseif (isset($_SESSION['cart'])) {
     $cart_count = array_sum($_SESSION['cart']);
 }
+$max_page = 75;
+$search_get = $_GET['search'] ?? '';
+$search_get_t = "&search=$search_get";
+$search_active = '';
+$page_active = $_GET['page'] ?? 0;
+$category_get = $_GET['category'] ?? '';
+$category_get_t = "&category=$category_get";
+$category_active = '';
+$sort_get = $_GET['sort'] ?? '';
+$sort_active = "";
+$sort_get_t = "&sort=$sort_get";
+$category_sql = "SELECT * FROM `categories`";
+$category_query = $db_conn->query($category_sql);
+$offset = isset($page_active) ? $page_active * $max_page : 0;
+
+if ($category_get) {
+    $category_active = " WHERE category=$category_get";
+}
+if ($search_get) {
+    if ($category_get) {
+        $search_active = " AND `name` LIKE '%$search_get%'";
+    } else {
+        $search_active = " WHERE `name` LIKE '%$search_get%'";
+    }
+}
+
+if ($sort_get == 'price_asc') {
+    $sort_active = " ORDER BY `products`.`price` ASC";
+} else if ($sort_get == 'price_desc') {
+    $sort_active = " ORDER BY `products`.`price` DESC";
+}
+
+$db_sql = "SELECT * FROM `products` $category_active $search_active $sort_active LIMIT $max_page OFFSET $offset";
+$tabl = $db_conn->query($db_sql);
+if (!$tabl->num_rows && $page_active > 0) {
+    $next_page_t = $page_active - 1;
+    header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
+    exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="uk">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="ваш_csrf_токен">
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -51,52 +102,6 @@ if (isset($_SESSION['user_id'])) {
 </head>
 
 <body>
-    <?php
-    $max_page = 75;
-    $search_get = $_GET['search'] ?? '';
-    $search_get_t = "&search=$search_get";
-    $search_active = '';
-    $page_active = $_GET['page'] ?? 0;
-    $category_get = $_GET['category'] ?? '';
-    $category_get_t = "&category=$category_get";
-    $category_active = '';
-    $category_sql = "SELECT * FROM `categories`";
-    $category_query = $db_conn->query($category_sql);
-    $offset = isset($page_active) ? $page_active * $max_page : 0;
-    $sort_get = $_GET['sort'] ?? '';
-    $sort_active = "";
-    $sort_get_t = "&sort=$sort_get";
-    // Временный фикс для старых сессий
-    if (isset($_SESSION['id']) && !isset($_SESSION['user_id'])) {
-        $_SESSION['user_id'] = $_SESSION['id'];
-    }
-
-    if ($category_get) {
-        $category_active = " WHERE category=$category_get";
-    }
-    if ($search_get) {
-        if ($category_get) {
-            $search_active = " AND `name` LIKE '%$search_get%'";
-        } else {
-            $search_active = " WHERE `name` LIKE '%$search_get%'";
-        }
-    }
-
-    if ($sort_get == 'price_asc') {
-        $sort_active = " ORDER BY `products`.`price` ASC";
-    } else if ($sort_get == 'price_desc') {
-        $sort_active = " ORDER BY `products`.`price` DESC";
-    }
-
-    $db_sql = "SELECT * FROM `products` $category_active $search_active $sort_active LIMIT $max_page OFFSET $offset";
-    $tabl = $db_conn->query($db_sql);
-
-    if (!$tabl->num_rows && $page_active > 0) {
-        $next_page_t = $page_active - 1;
-        header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
-    }
-    ?>
-
     <div class="head unselectable">
         <div class="block">
             <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt="KansKrop"></a>
@@ -109,19 +114,28 @@ if (isset($_SESSION['user_id'])) {
                 </label>
             </form>
             <div class="icons_head">
-                <?php if ($user_query->num_rows > 0): ?>
+                <?php if ($isLoggedIn): ?>
                     <?php include("dropdown.php") ?>
                     <button onclick="toggleMenu()"><i class="fa-regular fa-user"></i></button>
                 <?php else: ?>
                     <button onclick="openLogin()"><?php include("auth.php"); ?></button>
                 <?php endif; ?>
 
-                <button onclick="alert('Спочатку авторизуйтесь!')" class="cart-button">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <?php if ($cart_count > 0): ?>
-                        <span class="cart-counter"><?= $cart_count ?></span>
-                    <?php endif; ?>
-                </button>
+                <?php if ($isLoggedIn): ?>
+                    <button onclick="openCartModal()" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <?php if ($cart_count > 0): ?>
+                            <span class="cart-counter"><?= $cart_count ?></span>
+                        <?php endif; ?>
+                    </button>
+                <?php else: ?>
+                    <button onclick="alert('Спочатку авторизуйтесь!')" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <?php if (isset($_SESSION['cart']) && array_sum($_SESSION['cart']) > 0): ?>
+                            <span class="cart-counter"><?= array_sum($_SESSION['cart']) ?></span>
+                        <?php endif; ?>
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -179,7 +193,7 @@ if (isset($_SESSION['user_id'])) {
             <?php while ($row = $tabl->fetch_assoc()): ?>
                 <?php
                 $original_price = $row['price'];
-                if (isset($user_row['sale']) && $user_row['sale'] > 0) {
+                if ($isLoggedIn && isset($user_row['sale']) && $user_row['sale'] > 0) {
                     $final_price = $original_price * (1 - $user_row['sale'] / 100);
                 } else {
                     $final_price = $original_price;
@@ -277,6 +291,8 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 
+    <div id="authCheck" data-logged-in="<?php echo $isLoggedIn ? 'true' : 'false'; ?>" style="display: none;"></div>
+
     <script src="js/main.js"></script>
     <script>
         $(document).ready(function () {
@@ -296,9 +312,10 @@ if (isset($_SESSION['user_id'])) {
     </script>
     <?php
     include('productBasket.php');
-    include("dropdown.php");
+    if ($isLoggedIn) {
+        include("dropdown.php");
+    }
     ?>
-
 </body>
 
 </html>

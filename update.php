@@ -1,4 +1,5 @@
 <?php
+include('data/session_start.php');
 include("data/database.php");
 header('Content-Type: application/json');
 
@@ -8,7 +9,6 @@ $response = ['success' => false];
 
 if ($product_id > 0 && $new_quantity > 0) {
     if (isset($_SESSION['user_id'])) {
-        // Для авторизованных - обновляем в БД
         $user_id = $_SESSION['user_id'];
 
         $stmt = $db_conn->prepare("UPDATE basket SET count = ? WHERE user_id = ? AND product_id = ?");
@@ -20,7 +20,6 @@ if ($product_id > 0 && $new_quantity > 0) {
             $stmt->close();
         }
     } elseif (isset($_SESSION['cart'][$product_id])) {
-        // Для неавторизованных - обновляем в сессии
         $_SESSION['cart'][$product_id] = $new_quantity;
         $response = ['success' => true];
     }

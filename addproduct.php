@@ -23,37 +23,38 @@ include('data/user_data.php');
 <body>
     <div class="head unselectable">
         <div class="block">
-            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt=""></a>
-            <form class="input_head">
-                <label>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Я шукаю..." name="search">
-                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
-                </label>
+            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt="KansKrop"></a>
+            <form method="GET" class="input_head" action="index.php">
+                <a href="index.php"> <label>
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Я шукаю..." name="search" value="">
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </label></a>
+
             </form>
             <div class="icons_head">
-                <?php
-                if ($user_query->num_rows > 0) {
-                    include("dropdown.php")
-                        ?>
+                <?php if ($isLoggedIn): ?>
+                    <?php include("dropdown.php") ?>
                     <button onclick="toggleMenu()"><i class="fa-regular fa-user"></i></button>
-                    <?php
-                } else { ?>
-                    <button><?php include("auth.php"); ?></button>
-                    <?php
-                }
-                ?>
-                <?php
-                if ($user_query->num_rows > 0) {
-                    ?>
-                    <button onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i></button>
-                    <?php
-                } else {
-                    ?>
-                    <button onclick="alert('Спочатку авторизуйтесь!')"><i class="fa-solid fa-cart-shopping"></i></button>
-                    <?php
-                }
-                ?>
+                <?php else: ?>
+                    <button onclick="openLogin()"><?php include("auth.php"); ?></button>
+                <?php endif; ?>
+
+                <?php if ($isLoggedIn): ?>
+                    <button onclick="openCartModal()" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <?php if ($cart_count > 0): ?>
+                            <span class="cart-counter"><?= $cart_count ?></span>
+                        <?php endif; ?>
+                    </button>
+                <?php else: ?>
+                    <button onclick="alert('Спочатку авторизуйтесь!')" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <?php if (isset($_SESSION['cart']) && array_sum($_SESSION['cart']) > 0): ?>
+                            <span class="cart-counter"><?= array_sum($_SESSION['cart']) ?></span>
+                        <?php endif; ?>
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -152,7 +153,9 @@ include('data/user_data.php');
     </div>
     <?php
     include('productBasket.php');
-    include("dropdown.php");
+    if ($isLoggedIn) {
+        include("dropdown.php");
+    }
     ?>
     <script src="js/main.js"></script>
 </body>

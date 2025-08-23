@@ -1,13 +1,10 @@
 <?php
 include('data/database.php');
-
-// Получаем данные корзины
 $basket_items = [];
 $total_items = 0;
 $total_sum = 0;
 
 if (isset($_SESSION['user_id'])) {
-    // Для авторизованных пользователей - из БД
     $user_id = $_SESSION['user_id'];
     $basket_sql = "SELECT b.*, p.*, b.count as basket_count 
                    FROM basket b 
@@ -36,7 +33,6 @@ if (isset($_SESSION['user_id'])) {
         }
     }
 } elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-    // Для неавторизованных - из сессии
     $product_ids = array_keys($_SESSION['cart']);
     if (!empty($product_ids)) {
         $in = implode(',', array_map('intval', $product_ids));
@@ -64,14 +60,21 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 ?>
-
-<div class="modal modal-basket" id="cartModal">
+<button onclick="openCart()" class="cart-btn" data-loggedin="<?= isset($_SESSION['user_id']) ? '1' : '0' ?>">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <?php if (isset($_SESSION['user_id']) && $cart_count > 0): ?>
+        <span class="cart-counter"><?= $cart_count ?></span>
+    <?php elseif (!isset($_SESSION['user_id']) && isset($_SESSION['cart']) && array_sum($_SESSION['cart']) > 0): ?>
+        <span class="cart-counter"><?= array_sum($_SESSION['cart']) ?></span>
+    <?php endif; ?>
+</button>
+<div class="modal modal-basket" id="cartModal" style="display:none;">
     <div class="cart-header">
         <div class="flex_close">
             <div class="cart-title">
                 <p>Кошик</p>
             </div>
-            <button class="delete-button" onclick="closeCart()">
+            <button class="delete-button" onclick="closeCartModal()">
                 <img src="img/close.png" alt="Закрити">
             </button>
         </div>
@@ -118,15 +121,12 @@ if (isset($_SESSION['user_id'])) {
 </div>
 
 <script>
-    // Передаем данные из PHP в JavaScript
     const cartData = {
         items: <?= json_encode($basket_items) ?>,
         totalItems: <?= $total_items ?>,
         totalSum: <?= $total_sum ?>,
         isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>
     };
-
-    console.log('Cart data loaded:', cartData);
 </script>
 
 <?php

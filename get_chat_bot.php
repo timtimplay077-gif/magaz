@@ -1,4 +1,5 @@
 <?php
+include('data/session_start.php');
 include('data/database.php');
 
 $token = '7985968026:AAHoNcDbNimVpToWxoYlDskFoBajQ03T5Uc';

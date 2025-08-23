@@ -1,7 +1,6 @@
 <?php
+include('data/session_start.php');
 include('data/database.php');
-
-// Простая проверка авторизации
 $is_logged_in = isset($_SESSION['user_id']);
 
 if ($is_logged_in) {

@@ -33,7 +33,8 @@ if (count($errors)) {
     header("Location: registration.php");
 } else {
     header("Location: accountCreate.php");
-    $register_sql = "INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `phone`, `password` , `sale`) VALUES (NULL, '$firstName', '$lastName', '$email', '$phone', '$password' , '0')";
+    $register_sql = "INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `phone`, `password`, `sale`) 
+                 VALUES (NULL, '$firstName', '$lastName', '$email', '$phone', '$password', '0')";
     $register_query = $db_conn->query($register_sql);
 }
 

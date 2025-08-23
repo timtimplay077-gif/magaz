@@ -319,27 +319,20 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Cart initialized');
 });
 
-function openCart() {
-    const cartModal = document.getElementById('cartModal');
+function openCartModal() {
+    const modal = document.getElementById('cartModal');
     const overlay = document.getElementById('overlay');
-
-    if (cartModal && overlay) {
-        cartModal.classList.add('show');
-        overlay.classList.add('show');
-        recalcTotal();
-    }
+    modal.classList.add('show');
+    overlay.classList.add('show');
 }
 
-function closeCart() {
-    const cartModal = document.getElementById('cartModal');
+function closeCartModal() {
+    const modal = document.getElementById('cartModal');
     const overlay = document.getElementById('overlay');
-
-    if (cartModal && overlay) {
-        cartModal.classList.remove('show');
-        overlay.classList.remove('show');
-    }
+    modal.classList.remove('show');
+    overlay.classList.remove('show');
 }
-
+document.getElementById('overlay').addEventListener('click', closeCartModal);
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         closeCart();
@@ -348,27 +341,30 @@ document.addEventListener('keydown', function (event) {
 
 function addToCart(productId, event) {
     if (!event || !event.target) return;
-
     const buyButton = event.target.closest('.buy-btn');
     if (!buyButton) return;
-
     const originalHtml = buyButton.innerHTML;
     buyButton.textContent = '';
     const spinner = createElement('div', { class: 'loading-spinner' });
     buyButton.appendChild(spinner);
-
     buyButton.style.pointerEvents = 'none';
     buyButton.style.opacity = '0.7';
+    const formData = new FormData();
+    formData.append('product_id', productId);
 
-    const params = new URLSearchParams();
-    params.append('product_id', productId);
-
-    fetch('addCart.php?' + params.toString(), {
+    fetch('addCart.php', {
+        method: 'POST',
+        body: formData,
         headers: {
             'X-CSRF-Token': getCSRFToken()
         }
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network error');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
                 showNotification('Товар додано до кошика! ', 'success');
@@ -391,7 +387,6 @@ function addToCart(productId, event) {
             buyButton.style.opacity = '1';
         });
 }
-
 function showNotification(message, type) {
     document.querySelectorAll('.notification').forEach(n => n.remove());
     const notification = createElement('div', { class: `notification ${type}` });

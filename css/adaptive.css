@@ -636,12 +636,13 @@
     }
 }
 
-    @media screen and (max-width: 1500px) {
+@media screen and (max-width: 1500px) {
     .header_card_product .value-money {
         width: 20px;
 
     }
 }
+
 @media screen and (max-width: 750px) {
     .header_card_product {
         gap: 0px;
@@ -653,17 +654,18 @@
 @media screen and (max-width: 500px) {
     .header_card_product {
         gap: 0px;
-        grid-template-columns: 30px 70px 1fr 70px 100px;
+        grid-template-columns: 30px 70px 1fr 89px 100px;
 
     }
 }
 
 @media screen and (max-width: 500px) {
     .price-wrapper .price {
-      font-size: 18px;
+        font-size: 18px;
 
     }
 }
+
 @media screen and (max-width: 650px) {
     .basket_pdoruct_photo {
         width: 60px;

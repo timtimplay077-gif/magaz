@@ -1,126 +1,65 @@
 <?php
+include('data/session_start.php');
 include('data/database.php');
-// $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
-// $order_query = $db_conn->query($order_sql);
-// if ($order_query && $row = $order_query->fetch_assoc()) {
-//     $mail_to = $row['email'];
-// } else {
-//     die("Не вдалося отримати email одержувача");
-// }
-// $mail_host = "smtp.gmail.com";
-// $mail_username = "admin@kanskrop.com";
-// // $mail_to = "timtimplay077@gmail.com";
-// $firstName = $_GET['firstName'] ?? '';
-// $lastName = $_GET['lastName'] ?? '';
-// $email = $_GET['email'] ?? '';
-// $phone = $_GET['phone'] ?? '';
-// $city = $_GET['city'] ?? '';
-// $region = $_GET['region'] ?? '';
-// $adres = $_GET['adres'] ?? '';
-// $message = file_get_contents("mail/rekvisit.php");
-// $message = str_replace('{{first_name}}', $firstName, $message);
-// $message = str_replace('{{last_name}}', $lastName, $message);
-// $message = str_replace('{{email}}', $email, $message);
-// $message = str_replace('{{phone}}', $phone, $message);
-// $message = str_replace('{{city}}', $city, $message);
-// $message = str_replace('{{region}}', $region, $message);
-// $message = str_replace('{{address}}', $adres, $message);
-// print_r($message);
-// $headers = "MIME-Version: 1.0" . "\r\n";
-// $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
-// $headers .= "From: Серёжа <$mail_username>" . "\r\n";
-// $headers .= "Reply-To: $mail_username" . "\r\n";
-// $headers .= "X-Mailer: PHP/" . phpversion();
-// if (mail($mail_to, "Нове замовлення", $message, $headers)) {
-//     echo "Замовлення принято!";
-// } else {
-//     echo "Помилка при надсиланні листа.";
-// }
-// Получаем email администратора
-// Получаем email администратораа
-$order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1";
-$order_query = $db_conn->query($order_sql);
-if ($order_query && $row = $order_query->fetch_assoc()) {
-    $mail_to = $row['email'];
-} else {
-    die("Не удалось отримати email одержувача");
+if (!isset($_SESSION['user_id'])) {
+    die("Ви не авторизовані");
 }
-
-$firstName = $_GET['firstName'] ?? '';
-$lastName = $_GET['lastName'] ?? '';
-$email = $_GET['email'] ?? '';
-$phone = $_GET['phone'] ?? '';
-$city = $_GET['city'] ?? '';
-$region = $_GET['region'] ?? '';
-$adres = $_GET['adres'] ?? '';
-$user_id = $_SESSION['user_id'] ?? 1;
+$user_id = $_SESSION['user_id'];
+$firstName = trim($_POST['firstName'] ?? '');
+$lastName = trim($_POST['lastName'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$phone = trim($_POST['phone'] ?? '');
+$city = trim($_POST['city'] ?? '');
+$region = trim($_POST['region'] ?? '');
+$address = trim($_POST['address'] ?? '');
 $basket_items = [];
 $total_amount = 0;
 $total_items = 0;
 
-$basket_sql = "SELECT b.product_id, b.count, p.name, p.price, p.productСode 
+$basket_sql = "SELECT b.product_id, b.count, p.name, p.price, p.productСode AS productCode
                FROM basket b 
                JOIN products p ON b.product_id = p.id 
-               WHERE b.user_id = '$user_id'";
-$basket_result = $db_conn->query($basket_sql);
+               WHERE b.user_id = ?";
 
-if ($basket_result && $basket_result->num_rows > 0) {
-    while ($item = $basket_result->fetch_assoc()) {
-        $item_total = $item['price'] * $item['count'];
-        $basket_items[] = $item;
-        $total_amount += $item_total;
-        $total_items += $item['count'];
-    }
+$stmt = $db_conn->prepare($basket_sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($item = $result->fetch_assoc()) {
+    $basket_items[] = $item;
+    $total_items += $item['count'];
+    $total_amount += $item['price'] * $item['count'];
 }
-$orderInfo = "
-🛒 <b>Нове замовлення</b>
+$stmt->close();
 
-👤 <b>Клієнт:</b>
-• Ім'я: $firstName $lastName
-• Email: $email
-• Телефон: $phone
+if (empty($basket_items)) {
+    die("Кошик порожній");
+}
+$orderInfo = "🛒 <b>Нове замовлення</b>\n\n";
+$orderInfo .= "👤 <b>Клієнт:</b>\n";
+$orderInfo .= "• Ім'я: $firstName\n• Прізвище: $lastName\n• Email: $email\n• Телефон: $phone\n\n";
+$orderInfo .= "📍 <b>Адреса:</b>\n• Місто: $city\n• Регіон: $region\n• Адреса: $address\n\n";
+$orderInfo .= "📦 <b>Замовлення:</b>\n";
 
-📍 <b>Адреса:</b>
-• Місто: $city
-• Область: $region
-• Адреса: $adres
-
-📦 <b>Замовлення:</b>
-";
 foreach ($basket_items as $item) {
     $item_total = $item['price'] * $item['count'];
-    $product_code = !empty($item['productСode']) ? $item['productСode'] : 'н/д';
-    
-    $orderInfo .= "
-• {$item['name']}
-  📦 Код: $product_code
-  📊 Кількість: {$item['count']} шт.
-  💰 Ціна: {$item['price']} ₴ × {$item['count']} = {$item_total} ₴
-";
+    $product_code = $item['productCode'] ?? 'н/д';
+    $orderInfo .= "• {$item['name']}\n  📦 Код: $product_code\n  📊 Кількість: {$item['count']} шт.\n  💰 Ціна: {$item['price']} ₴ × {$item['count']} = {$item_total} ₴\n";
 }
 
-$orderInfo .= "
-────────────────
-✅ <b>Разом:</b>
-• Товарів: $total_items шт.
-• Загальна сума: $total_amount ₴
-────────────────
-";
-
-// ================== ОТПРАВКА В TELEGRAM ==================
+$orderInfo .= "────────────────\n✅ <b>Разом:</b>\n• Товарів: $total_items шт.\n• Загальна сума: $total_amount ₴\n────────────────";
 function sendTelegram($message)
 {
     $token = "7985968026:AAHoNcDbNimVpToWxoYlDskFoBajQ03T5Uc";
     $chat_id = "6596649217";
 
     $url = "https://api.telegram.org/bot$token/sendMessage";
-
     $data = [
         'chat_id' => $chat_id,
         'text' => $message,
         'parse_mode' => 'HTML'
     ];
-
     $options = [
         'http' => [
             'method' => 'POST',
@@ -128,19 +67,21 @@ function sendTelegram($message)
             'content' => http_build_query($data)
         ]
     ];
-
     $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
-    
-    return $result !== false;
+    return file_get_contents($url, false, $context) !== false;
 }
+
 if (sendTelegram($orderInfo)) {
-    $clear_sql = "DELETE FROM basket WHERE user_id = '$user_id'";
-    $db_conn->query($clear_sql);
-    
-        header("Location: thank_order.php");
+    // Очистка корзины
+    $clear_sql = "DELETE FROM basket WHERE user_id = ?";
+    $stmt = $db_conn->prepare($clear_sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $stmt->close();
+
+    header("Location: thank_order.php");
+    exit;
 } else {
     echo "Помилка при відправленні замовлення. Спробуйте ще раз.";
 }
-
 ?>
