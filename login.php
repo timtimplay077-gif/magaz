@@ -146,7 +146,44 @@ include('data/user_data.php');
             <?php endforeach; ?>
         </div>
     </div>
+    <div class="logo_end">
+        <div class="block">
+            <div>
+                <img src="img/kanskrop_logo.png" alt="KansKrop">
+            </div>
+            <div class="iframe">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7Qvy / 0JrQsNC90YfRgtC+0LLQsNGA0Lg!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
+                    width="450" height="300" style="border-radius: 15px; border: 1px solid lightgray;"
+                    allowfullscreen=""></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="contact unselectable">
+        <div class="block">
+            <div class="card3">
+                <p><img src="contact/phone.png" alt="Телефон" class="baner2_img">Номер телефона:
+                    <span class="phone_number">+380 500 534 408</span>
+                </p>
+                <p><img src="contact/gmail.png" alt="Email" class="baner2_img">Наша пошта:
+                    <span class="phone_number">admin@kanskrop.com</span>
+                </p>
+                <p><img src="contact/location.png" alt="Адреса" class="baner2_img">м.Кропивницький</p>
+            </div>
+            <div class="ourVT">
+                <a href="https://t.me/kanskrop" target="_blank">
+                    <img src="contact/telegram.png" alt="Telegram" class="contact_logo">
+                    <p>Telegram</p>
+                </a>
+                <a href="viber://chat?number=%2B380500534408">
+                    <img src="contact/viber.png" alt="Viber" class="contact_logo">
+                    <p>Viber</p>
+                </a>
+            </div>
+        </div>
+    </div>
 
+    <div id="authCheck" data-logged-in="<?php echo $isLoggedIn ? 'true' : 'false'; ?>" style="display: none;"></div>
     <?php
 
     if ($isLoggedIn) {
