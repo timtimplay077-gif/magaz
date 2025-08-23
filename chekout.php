@@ -74,6 +74,7 @@ if (empty($basket_items)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link

@@ -53,6 +53,7 @@ include('data/user_data.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://www.example.com/">
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
