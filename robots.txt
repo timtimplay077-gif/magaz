@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /accountCreate.php
+Disallow: /accountinfo.php
+Disallow: /addproduct.php
+Disallow: /chekout.php
+Disallow: /login.php
+Disallow: /odercheck.php
+Disallow: /product.php
+Disallow: /registration.php
+Disallow: /reset-password.php
+Disallow: /thank_order.php
+Allow: /
+
+Sitemap: https://kanskrop.com/sitemap.xml
