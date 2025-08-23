@@ -36,11 +36,11 @@ $stmt->close();
 if (empty($basket_items)) {
     die("Кошик порожній");
 }
-$orderInfo = "🛒 <b>Нове замовлення</b>\n\n";
-$orderInfo .= "👤 <b>Клієнт:</b>\n";
+$orderInfo = "🛒 Нове замовлення \n\n";
+$orderInfo .= "👤 Клієнт: \n";
 $orderInfo .= "• Ім'я: $firstName\n• Прізвище: $lastName\n• Email: $email\n• Телефон: $phone\n\n";
-$orderInfo .= "📍 <b>Адреса:</b>\n• Місто: $city\n• Регіон: $region\n• Адреса: $address\n\n";
-$orderInfo .= "📦 <b>Замовлення:</b>\n";
+$orderInfo .= "📍 Адреса: \n• Місто: $city\n• Регіон: $region\n• Адреса: $address\n\n";
+$orderInfo .= "📦 Замовлення: \n";
 
 foreach ($basket_items as $item) {
     $item_total = $item['price'] * $item['count'];
