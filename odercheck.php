@@ -52,7 +52,7 @@ $orderInfo .= "────────────────\n✅ <b>Разо
 function sendTelegram($message)
 {
     $token = "7985968026:AAHoNcDbNimVpToWxoYlDskFoBajQ03T5Uc";
-    $chat_id = "6596649217";
+    $chat_id = "1057434079";
 
     $url = "https://api.telegram.org/bot$token/sendMessage";
     $data = [
@@ -72,7 +72,6 @@ function sendTelegram($message)
 }
 
 if (sendTelegram($orderInfo)) {
-    // Очистка корзины
     $clear_sql = "DELETE FROM basket WHERE user_id = ?";
     $stmt = $db_conn->prepare($clear_sql);
     $stmt->bind_param("i", $user_id);
