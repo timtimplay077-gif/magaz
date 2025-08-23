@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('productBasket.php');
 if (isset($_SESSION['logout_success'])) {
     $logout_message = $_SESSION['logout_success'];
     unset($_SESSION['logout_success']);
@@ -62,6 +63,7 @@ $db_image_query = $db_conn->query($db_image_sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -174,7 +176,7 @@ $db_image_query = $db_conn->query($db_image_sql);
                     </div>
                 </div>
                 <div class="product_row_about_buy">
-                    <button class="buy-btn" onclick="addToCart(<?= $row['id'] ?>, event)">
+                    <button class="buy-btn" style="width:190px;" onclick="addToCart(<?= $row['id'] ?>, event)">
                         <img src="contact/shopping-bag.png" alt="Купити" class="buy_button">Купити
                     </button>
                 </div>
@@ -282,7 +284,6 @@ $db_image_query = $db_conn->query($db_image_sql);
     </div>
     <script src="js/main.js"></script>
     <?php
-    include('productBasket.php');
     if ($isLoggedIn) {
         include("dropdown.php");
     }

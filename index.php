@@ -314,7 +314,6 @@ if (!$tabl->num_rows && $page_active > 0) {
         });
     </script>
     <?php
-    include('productBasket.php');
     if ($isLoggedIn) {
         include("dropdown.php");
     }

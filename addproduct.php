@@ -3,6 +3,7 @@ session_start();
 include('data/baner.php');
 include('data/baner2.php');
 include('data/user_data.php');
+include('productBasket.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +11,7 @@ include('data/user_data.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -152,7 +154,6 @@ include('data/user_data.php');
         </div>
     </div>
     <?php
-    include('productBasket.php');
     if ($isLoggedIn) {
         include("dropdown.php");
     }

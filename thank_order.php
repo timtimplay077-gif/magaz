@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('productBasket.php');
 if (isset($_SESSION['logout_success'])) {
     $logout_message = $_SESSION['logout_success'];
     unset($_SESSION['logout_success']);
@@ -50,6 +51,7 @@ include('data/user_data.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -166,7 +168,9 @@ include('data/user_data.php');
         </div>
     </div>
     <?php
-    include("dropdown.php");
+    if ($isLoggedIn) {
+        include("dropdown.php");
+    }
     ?>
     <script src="js/main.js"></script>
 </body>
