@@ -864,3 +864,19 @@
         margin-right: 29px;
     }
 }
+
+@media screen and (max-width: 365px) {
+    .icons_head i {
+        padding: 5px;
+    }
+}
+@media screen and (max-width: 350px) {
+    .icons_head i {
+        padding: 3px;
+    }
+}
+@media screen and (max-width: 345px) {
+    .icons_head i {
+        padding: 1px;
+    }
+}

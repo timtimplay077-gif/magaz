@@ -101,6 +101,17 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
+    <div class="whatWeHave unselectable">
+        <div class="block">
+            <div class="whatWeHave_kans">
+                <img src="categoty/school-material.png" alt="">
+                <a href="index.php">Канцелярія</a>
+            </div>
+            <div class="marquee">
+                <span id="marqueeText"></span>
+            </div>
+        </div>
+    </div>
     <div class="h2_login block">
         <h2>Авторизація</h2>
     </div>

@@ -74,7 +74,7 @@ if (empty($basket_items)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    
+
     <link rel="stylesheet" href="css/shop.css?">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -86,7 +86,7 @@ if (empty($basket_items)) {
 </head>
 
 <body>
-     <div class="head unselectable">
+    <div class="head unselectable">
         <div class="block">
             <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt="KansKrop"></a>
             <form method="GET" class="input_head" action="index.php">
@@ -165,7 +165,6 @@ if (empty($basket_items)) {
                         </div>
                     </div>
                 </div>
-
                 <div class="adres_label">
                     <h2>Адреса доставки</h2>
                     <div class="label_adres">
@@ -182,12 +181,10 @@ if (empty($basket_items)) {
                     </div>
                 </div>
             </div>
-
             <div class="your_oder">
                 <?php
                 $total = 0;
                 $total_items = 0;
-
                 foreach ($basket_items as $product_id => $item_data) {
                     $product_sql = "SELECT * FROM products WHERE id = '$product_id'";
                     $product_result = $db_conn->query($product_sql);
@@ -195,12 +192,13 @@ if (empty($basket_items)) {
                     if ($product_result && $product_result->num_rows > 0) {
                         $product = $product_result->fetch_assoc();
                         $original_price = $product['price'];
-                        if (isset($user_row['sale']) && $user_row['sale'] > 0) {
-                            $final_price = $original_price * (1 - $user_row['sale'] / 100);
-                        } else {
-                            $final_price = $original_price;
+                        $final_price = $original_price;
+                        if (!empty($product['price_modifier'])) {
+                            $final_price *= (1 + $product['price_modifier'] / 100);
                         }
-
+                        if (!empty($user_row['sale']) && $user_row['sale'] > 0) {
+                            $final_price *= (1 - $user_row['sale'] / 100);
+                        }
                         $quantity = $item_data['count'];
                         $item_total = $final_price * $quantity;
                         $total += $item_total;
@@ -222,7 +220,6 @@ if (empty($basket_items)) {
                 }
                 ?>
             </div>
-
             <p class="oder_total">Загальна сума: <b><?= number_format($total, 2) ?> ₴</b></p>
             <h3 class="oder_total">Ваше замовлення (<?= $total_items ?> товарів)</h3>
 

@@ -1290,12 +1290,10 @@ a {
 }
 
 .container {
-    padding: 30px;
     background: white;
     display: flex;
     gap: 20px;
     width: 1600px;
-    margin-top: 130px;
 }
 
 .h2_login h2 {
@@ -2096,4 +2094,8 @@ quantity-controls {
     color: white;
     cursor: default;
     border-radius: 5px;
+}
+
+.h2_login {
+    margin-bottom: 30px;
 }
