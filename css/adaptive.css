@@ -858,3 +858,9 @@
         font-size: 16px;
     }
 }
+
+@media screen and (max-width: 390px) {
+    .quantity-wrapper {
+        margin-right: 29px;
+    }
+}
