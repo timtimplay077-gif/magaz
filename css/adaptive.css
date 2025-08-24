@@ -131,6 +131,13 @@
     }
 }
 
+@media screen and (max-width: 540px) {
+    .head .block {
+        grid-template-columns: auto auto auto;
+    }
+}
+
+
 @media screen and (max-width: 420px) {
     .input_head label {
         width: 190px;
@@ -632,7 +639,7 @@
 @media screen and (max-width: 500px) {
     .header_card_product p {
         width: 70px;
-
+        font-size: 12px;
     }
 }
 
@@ -661,7 +668,7 @@
 
 @media screen and (max-width: 500px) {
     .price-wrapper .price {
-        font-size: 18px;
+        font-size: 15px;
 
     }
 }
@@ -681,12 +688,6 @@
     }
 }
 
-@media screen and (max-width: 430px) {
-    .icons_head i {
-        padding: 3px;
-
-    }
-}
 
 @media screen and (max-width: 1300px) {
     .text-slider {
@@ -849,5 +850,11 @@
 @media screen and (max-width: 420px) {
     .label_adres input {
         width: 250px;
+    }
+}
+
+@media screen and (max-width: 475px) {
+    .product .price {
+        font-size: 16px;
     }
 }
