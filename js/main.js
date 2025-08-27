@@ -203,6 +203,7 @@ function changeQuantity(button, action, productId) {
     priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
     updateQuantity(productId, count);
     recalcTotal();
+    updateGlobalCartCount();
 }
 
 function recalcTotal() {
@@ -224,6 +225,7 @@ function recalcTotal() {
     });
 
     updateCartFooter(totalItems, totalSum);
+    updateCartCounterGlobally(totalItems);
 }
 
 function updateCartFooter(totalItems, totalSum) {
@@ -238,14 +240,12 @@ function updateCartFooter(totalItems, totalSum) {
         totalFooter.textContent = 'на суму: ' + totalSum.toFixed(2) + ' ₴';
     }
 }
-
 function getItemWord(count) {
     if (count === 0) return 'товарів';
     if (count % 10 === 1 && count % 100 !== 11) return 'товар';
     if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'товари';
     return 'товарів';
 }
-
 function updateQuantity(productId, newQuantity) {
     const params = new URLSearchParams();
     params.append('product_id', productId);
@@ -264,8 +264,6 @@ function updateQuantity(productId, newQuantity) {
 }
 
 function removeFromCart(productId) {
-    if (!confirm('Видалити товар з кошика?')) return;
-
     const item = document.querySelector('.header_card_product[data-id="' + productId + '"]');
     if (!item) return;
 
@@ -347,72 +345,45 @@ function addToCart(productId, event) {
         alert('Спочатку авторизуйтесь!');
         return;
     }
-
-    // Показываем спиннер и блокируем кнопку
     const originalContent = buyButton.innerHTML;
     buyButton.innerHTML = '<div class="loading-spinner"></div>';
     buyButton.disabled = true;
     buyButton.style.opacity = '0.7';
-
-    // Формируем данные для отправки
     const formData = new FormData();
     formData.append('product_id', productId);
-
     fetch('addCart.php', { method: 'POST', body: formData })
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                // Обновляем cartData локально
                 let existingItem = cartData.items.find(i => i.id == productId);
                 if (existingItem) {
-                    existingItem.quantity++;
-                    existingItem.total = existingItem.price * existingItem.quantity;
+                    existingItem.quantity = data.item.quantity;
+                    existingItem.total = data.item.total;
                 } else {
-                    // Добавляем новый товар в cartData
-                    fetch(`getProductCard.php?id=${productId}`)
-                        .then(resp => resp.json())
-                        .then(product => {
-                            cartData.items.push({
-                                id: product.id,
-                                name: product.name,
-                                img: product.img,
-                                price: product.price,
-                                quantity: 1,
-                                total: product.price
-                            });
-                            updateCartUI();
-                        });
+                    cartData.items.push(data.item);
                 }
-
-                // Меняем кнопку на "У кошику" и делаем зелёной
                 buyButton.innerHTML = '<span>У кошику</span>';
                 buyButton.classList.add('in-cart');
                 buyButton.disabled = true;
                 buyButton.style.opacity = '1';
 
-                // Обновляем счётчик корзины
-                const counter = document.querySelector('.cart-counter');
-                if (counter) {
-                    counter.textContent = cartData.items.reduce((sum, i) => sum + i.quantity, 0);
-                }
-
+                updateCartCounterGlobally(data.cart_count);
                 updateCartUI();
             } else {
-                // Если ошибка на сервере
                 buyButton.innerHTML = originalContent;
                 buyButton.disabled = false;
                 buyButton.style.opacity = '1';
-                alert('Помилка при додаванні товару');
+                alert('Помилка при додаванні товару: ' + data.message);
             }
         })
         .catch(() => {
-            // Если ошибка сети
             buyButton.innerHTML = originalContent;
             buyButton.disabled = false;
             buyButton.style.opacity = '1';
             alert('Помилка мережі');
         });
 }
+
 
 
 function updateCartUI() {
@@ -447,8 +418,6 @@ function updateCartUI() {
         `;
         cartItems.appendChild(div);
     });
-
-    // Обновляем футер
     const totalItems = cartData.items.reduce((a, i) => a + i.quantity, 0);
     const totalSum = cartData.items.reduce((a, i) => a + i.total, 0);
     document.getElementById('cart-count').textContent = `В кошику: ${totalItems} ${getItemWord(totalItems)}`;
@@ -650,3 +619,92 @@ window.fetch = function (...args) {
             throw error;
         });
 };
+function updateCartCounterGlobally(count) {
+    const counters = document.querySelectorAll('.cart-counter');
+
+    if (count > 0) {
+        if (counters.length > 0) {
+            counters.forEach(counter => {
+                counter.textContent = count;
+                counter.classList.add('update');
+                setTimeout(() => counter.classList.remove('update'), 300);
+            });
+        } else {
+            const cartButtons = document.querySelectorAll('.cart-btn');
+            cartButtons.forEach(btn => {
+                const newCounter = document.createElement('span');
+                newCounter.className = 'cart-counter';
+                newCounter.textContent = count;
+                btn.appendChild(newCounter);
+
+                newCounter.style.opacity = '0';
+                newCounter.style.transform = 'scale(0.5)';
+
+                setTimeout(() => {
+                    newCounter.style.opacity = '1';
+                    newCounter.style.transform = 'scale(1)';
+                    newCounter.style.transition = 'all 0.3s ease';
+                }, 10);
+            });
+        }
+    } else {
+        counters.forEach(counter => {
+            counter.style.opacity = '0';
+            counter.style.transform = 'scale(0.5)';
+
+            setTimeout(() => {
+                if (counter.parentElement) {
+                    counter.remove();
+                }
+            }, 300);
+        });
+    }
+    const userMenuCounter = document.querySelector('.user-menu-cart-count');
+    if (userMenuCounter) {
+        userMenuCounter.textContent = count > 0 ? count : '';
+    }
+}
+function updateGlobalCartCount() {
+    let totalItems = 0;
+    const items = document.querySelectorAll('.header_card_product');
+
+    items.forEach(function (item) {
+        const count = parseInt(item.querySelector('.count').textContent) || 0;
+        totalItems += count;
+    });
+    updateCartCounterGlobally(totalItems);
+    syncCartCountWithServer(totalItems);
+}
+function syncCartCountWithServer(totalCount) {
+    const params = new URLSearchParams();
+    params.append('total_count', totalCount);
+
+    fetch('updateCartCount.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-Token': getCSRFToken()
+        },
+        body: params.toString()
+    }).catch(error => {
+        console.log('Ошибка синхронизации счёта корзины:', error);
+    });
+}
+function updateProductButtons() {
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+        const productId = btn.getAttribute('onclick').match(/\d+/)[0];
+        const isInCart = cartData.items.some(item => item.id == productId);
+
+        if (isInCart) {
+            btn.innerHTML = '<span>У кошику</span>';
+            btn.classList.add('in-cart');
+            btn.disabled = true;
+            btn.style.opacity = '1';
+        } else {
+            btn.innerHTML = '<span>Купити</span>';
+            btn.classList.remove('in-cart');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+    });
+}

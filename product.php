@@ -176,9 +176,14 @@ $db_image_query = $db_conn->query($db_image_sql);
                     </div>
                 </div>
                 <div class="product_row_about_buy">
-                    <button class="buy-btn" style="width:190px;" onclick="addToCart(<?= $row['id'] ?>, event)">
-                        <img src="contact/shopping-bag.png" alt="Купити" class="buy_button">Купити
-                    </button>
+                    <?php
+                        $product_id = $row['id'];
+                        $isInCart = in_array($product_id, array_column($basket_items, 'id'));
+                        ?>
+                        <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>"
+                            onclick="addToCart(<?= $product_id ?>, event)" style="width:190px;">
+                            <?= $isInCart ? 'У кошику' : 'Купити' ?>
+                        </button>
                 </div>
             </div>
         </div>

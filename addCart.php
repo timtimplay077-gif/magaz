@@ -23,8 +23,6 @@ if ($product_id <= 0) {
     echo json_encode($response);
     exit;
 }
-
-// Проверка авторизации
 if (!isset($_SESSION['user_id'])) {
     $response['message'] = 'not_logged_in';
     echo json_encode($response);
@@ -34,7 +32,6 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Проверяем, есть ли такой продукт
     $stmt = $db_conn->prepare("SELECT * FROM products WHERE id = ?");
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
@@ -46,21 +43,17 @@ try {
     }
     $product = $product_result->fetch_assoc();
     $stmt->close();
-
-    // Проверяем, есть ли товар уже в корзине
     $stmt = $db_conn->prepare("SELECT count FROM basket WHERE user_id = ? AND product_id = ?");
     $stmt->bind_param("ii", $user_id, $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        // Увеличиваем количество
         $update = $db_conn->prepare("UPDATE basket SET count = count + 1 WHERE user_id = ? AND product_id = ?");
         $update->bind_param("ii", $user_id, $product_id);
         $update->execute();
         $update->close();
         $quantity = $result->fetch_assoc()['count'] + 1;
     } else {
-        // Добавляем новый товар
         $insert = $db_conn->prepare("INSERT INTO basket (user_id, product_id, count) VALUES (?, ?, 1)");
         $insert->bind_param("ii", $user_id, $product_id);
         $insert->execute();
@@ -68,16 +61,12 @@ try {
         $quantity = 1;
     }
     $stmt->close();
-
-    // Получаем актуальное количество товаров в корзине
     $stmt = $db_conn->prepare("SELECT SUM(count) as total FROM basket WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $count_result = $stmt->get_result()->fetch_assoc();
     $cart_count = $count_result['total'] ?? 0;
     $stmt->close();
-
-    // Считаем цену с модификатором
     $modifier = $product['price_modifier'] ?? 0;
     $price = $product['price'] * (1 + $modifier / 100);
 

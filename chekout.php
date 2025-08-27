@@ -277,7 +277,7 @@ if (empty($basket_items)) {
             </div>
         </div>
     </div>
-
+    <script src="js/main.js"></script>
     <?php
     if ($isLoggedIn) {
         include("dropdown.php");

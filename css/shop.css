@@ -538,14 +538,13 @@ a {
 }
 
 .product_row_about_buy button {
-    font-size: 30px;
-    display: flex;
-    align-items: center;
     background-color: black;
+    padding: 10px;
     color: white;
-    padding-right: 13px;
-    border-radius: 20px;
-    cursor: pointer;
+    cursor: default;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 25px;
 }
 
 
@@ -2098,4 +2097,28 @@ quantity-controls {
 
 .h2_login {
     margin-bottom: 30px;
+}
+
+.cart-counter.update {
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.empty-cart {
+    margin-top: 10px;
+    font-size: 19px;
+    color: gray;
 }

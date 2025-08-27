@@ -1,8 +1,6 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
-
-// Проверка авторизации и получение данных пользователя
 $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
 $user_row = [];
 if ($isLoggedIn) {
@@ -19,8 +17,6 @@ if ($isLoggedIn) {
 $basket_items = [];
 $total_items = 0;
 $total_sum = 0;
-
-// Если пользователь авторизован
 if ($isLoggedIn) {
     $basket_sql = "SELECT b.*, p.*, b.count as basket_count 
                    FROM basket b 
@@ -34,10 +30,8 @@ if ($isLoggedIn) {
     if ($basket_query && $basket_query->num_rows > 0) {
         while ($item = $basket_query->fetch_assoc()) {
             $price = $item['price'];
-            $modifier = $item['price_modifier'] ?? 0; // % скидки/наценки
+            $modifier = $item['price_modifier'] ?? 0;
             $final_price = $price * (1 + $modifier / 100);
-
-            // Применяем скидку пользователя
             if (isset($user_row['sale']) && $user_row['sale'] > 0) {
                 $final_price = $final_price * (1 - $user_row['sale'] / 100);
             }
@@ -59,9 +53,7 @@ if ($isLoggedIn) {
         }
     }
     $stmt->close();
-}
-// Если пользователь не авторизован, берём корзину из сессии
-elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+} elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     $product_ids = array_keys($_SESSION['cart']);
     if (!empty($product_ids)) {
         $in = implode(',', array_map('intval', $product_ids));
@@ -73,7 +65,6 @@ elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                 $quantity = $_SESSION['cart'][$product['id']];
                 $modifier = $product['price_modifier'] ?? 0;
                 $final_price = $product['price'] * (1 + $modifier / 100);
-                // Для гостей скидка пользователя не применяется
                 $item_total = $final_price * $quantity;
 
                 $basket_items[] = [
@@ -92,7 +83,6 @@ elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     }
 }
 
-// Функция склонения слова "товар"
 function getItemWord($count)
 {
     if ($count == 0)
@@ -104,8 +94,6 @@ function getItemWord($count)
     return 'товарів';
 }
 ?>
-
-<!-- Кнопка корзины -->
 <button onclick="openCart()" class="cart-btn" data-loggedin="<?= $isLoggedIn ? '1' : '0' ?>">
     <i class="fa-solid fa-cart-shopping"></i>
     <?php if ($total_items > 0): ?>
@@ -113,7 +101,6 @@ function getItemWord($count)
     <?php endif; ?>
 </button>
 
-<!-- Модальное окно корзины -->
 <div class="modal modal-basket" id="cartModal" style="display:none;">
     <div class="cart-header">
         <div class="flex_close">
@@ -160,10 +147,7 @@ function getItemWord($count)
         <span id="cart-count">В кошику: <?= $total_items ?> <?= getItemWord($total_items) ?></span>
         <span id="cart-total">на суму: <?= number_format($total_sum, 2) ?> ₴</span>
     </div>
-
-    <?php if (!empty($basket_items)): ?>
-        <a href="chekout.php" class="buy-button">Оформити замовлення</a>
-    <?php endif; ?>
+    <a href="chekout.php" class="buy-button">Оформити замовлення</a>
 </div>
 
 <script>
