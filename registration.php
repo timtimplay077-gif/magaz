@@ -163,11 +163,11 @@ include('data/user_data.php');
                     <h3>Ваш пароль</h3>
 
                     <label for="password">* Пароль</label><br>
-                    <input type="password" id="password" name="password" placeholder="Пароль"
+                    <input type="text" id="password" name="password" placeholder="Пароль"
                         value="<?= isset($_SESSION['get']['password']) ? $_SESSION['get']['password'] : '' ?>"><br><br>
 
                     <label for="confirmPassword">* Підтвердіть пароль</label><br>
-                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Підтвердіть пароль"
+                    <input type="text" id="confirmPassword" name="confirmPassword" placeholder="Підтвердіть пароль"
                         value="<?= isset($_SESSION['get']['confirmPassword']) ? $_SESSION['get']['confirmPassword'] : '' ?>"> <?php
                               if (isset($_SESSION["errors"]['password'])) {
                                   ?>
