@@ -47,9 +47,9 @@ $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
 $headers .= "From: Серёжа <$mail_username>" . "\r\n";
 $headers .= "Reply-To: $mail_username" . "\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
-// if (mail($mail_to, "Нове замовлення", $message, $headers)) {
-//     echo "Замовлення принято!";
-// } else {
-//     echo "Помилка при надсиланні листа.";
-// }
+if (mail($mail_to, "Нове замовлення", $message, $headers)) {
+    echo "Замовлення принято!";
+} else {
+    echo "Помилка при надсиланні листа.";
+}
 unlink($f_name);
