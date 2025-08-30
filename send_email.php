@@ -1,5 +1,41 @@
 <?php
 include('data/database.php');
+// use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\Exception;
+
+// require 'PHPMailer/src/Exception.php';
+// require 'PHPMailer/src/PHPMailer.php';
+// require 'PHPMailer/src/SMTP.php';
+// $mail_username = "pykpykdaun69@gmail.com";
+// $mail_to = "kanskrop@gmail.com";
+// // Adminkanskrop2025!
+// try {
+//     // Настройки сервера
+//     $mail->isSMTP();
+//     $mail->Host = 'smtp.gmail.com'; // SMTP сервер
+//     $mail->SMTPAuth = true;
+//     $mail->Username = $mail_to; // Твоя почта
+//     $mail->Password = 'твой_app_password';   // Пароль приложения (Google, Яндекс и т.д.)
+//     $mail->SMTPSecure = 'tls';
+//     $mail->Port = 587;
+
+//     // От кого
+//     $mail->setFrom('твоя_почта@gmail.com', 'Твой сайт');
+//     // Кому
+//     $mail->addAddress('получатель@mail.com', 'Имя получателя');
+
+//     // Контент
+//     $mail->isHTML(true);
+//     $mail->Subject = 'Письмо через PHPMailer';
+//     $mail->Body = '<h2>Привет, Серёжа!</h2><p>Это письмо ушло через <b>SMTP</b> без Composer.</p>';
+//     $mail->AltBody = 'Это письмо ушло через SMTP (без HTML).';
+
+//     $mail->send();
+//     echo 'Письмо успешно отправлено!';
+// } catch (Exception $e) {
+//     echo "Ошибка при отправке: {$mail->ErrorInfo}";
+// }
+// $mail = new PHPMailer(true);
 $data = [
     ["name", "product_name", "price"],
     ["Max", "обоська", "67779"],
@@ -23,8 +59,8 @@ if ($order_query && $row = $order_query->fetch_assoc()) {
     die("Не вдалося отримати email одержувача");
 }
 $mail_host = "smtp.gmail.com";
-$mail_username = "pykpykdaun69@gmail.com";
-$mail_to = "kanskrop@gmail.com";
+$mail_username = "timtimplay077@gmail.com";
+$mail_to = "timtimplay077@gmail.com";
 $firstName = $_GET['firstName'] ?? '';
 $lastName = $_GET['lastName'] ?? '';
 $email = $_GET['email'] ?? '';
