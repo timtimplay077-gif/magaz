@@ -8,7 +8,7 @@ require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
-// Получаем данные из сессии вместо GET/POST
+// Получаем данные из сессии
 if (!isset($_SESSION['order_data'])) {
     die("Данные заказа не найдены. Вернитесь к оформлению заказа.");
 }
@@ -23,7 +23,10 @@ $region = $order_data['region'] ?? '';
 $adres = $order_data['adres'] ?? '';
 $basket_items = $order_data['basket_items'] ?? [];
 $total_amount = $order_data['total_amount'] ?? 0;
-$toEmail = 'admin@kanskrop.com'; // фиксированный email получателя
+$user_sale = $order_data['user_sale'] ?? 0;
+
+// Возвращаем хостинговую почту
+$toEmail = 'admin@kanskrop.com'; // получатель - хостинговая почта
 
 // Проверяем обязательные поля
 if (empty($firstName) || empty($lastName) || empty($email) || empty($phone)) {
@@ -54,8 +57,16 @@ $products_html = '
       <table width="600" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.08);margin-top:20px;">
         <tr>
           <td style="padding:20px 24px;border-bottom:1px solid #eef0f2;">
-            <h2 style="margin:0;font-size:20px;color:#0f1724;">Деталі замовлення</h2>
-            <p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні.</p>
+            <h2 style="margin:0;font-size:20px;color:#0f1724;">Деталі замовлення</h2>';
+
+// Добавляем информацию о скидках
+if (!empty($user_sale)) {
+    $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні (зі знижкою '.$user_sale.'%)</p>';
+} else {
+    $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні</p>';
+}
+
+$products_html .= '
           </td>
         </tr>
         <tr>
@@ -69,17 +80,32 @@ $products_html = '
                 <td style="padding:12px;border-bottom:2px solid #e9ecef;font-weight:bold;text-align:right;">Сума</td>
               </tr>';
 
-foreach ($basket_items as $item) {
-    $item_total = $item['price'] * $item['count'];
-    $product_code = $item['productCode'] ?? 'н/д';
-    
-    $products_html .= '
+if (!empty($basket_items)) {
+    foreach ($basket_items as $item) {
+        $item_total = $item['final_price'] * $item['count'];
+        $product_code = $item['productCode'] ?? 'н/д';
+        
+        $products_html .= '
               <tr>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;font-weight:bold;color:#0b66ff;">' . htmlspecialchars($product_code) . '</td>
-                <td style="padding:12px;border-bottom:1px solid #eef0f2;">' . htmlspecialchars($item['name']) . '</td>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;">' . htmlspecialchars($item['name']);
+        
+        // Добавляем информацию о скидках товара
+        if (!empty($item['price_modifier'])) {
+            $modifier_type = $item['price_modifier'] > 0 ? "надбавка" : "знижка";
+            $products_html .= '<br><small style="color:#667085;">(' . $modifier_type . ': ' . abs($item['price_modifier']) . '%)</small>';
+        }
+        
+        $products_html .= '</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:center;">' . $item['count'] . ' шт.</td>
-                <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;">' . number_format($item['price'], 2) . ' ₴</td>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;">' . number_format($item['final_price'], 2) . ' ₴</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;font-weight:bold;">' . number_format($item_total, 2) . ' ₴</td>
+              </tr>';
+    }
+} else {
+    $products_html .= '
+              <tr>
+                <td colspan="5" style="padding:12px;text-align:center;color:#667085;">Немає даних про товари</td>
               </tr>';
 }
 
@@ -104,20 +130,20 @@ $products_html .= '
 // Добавляем товары после основной информации (в конец письма)
 $message = str_replace('</body>', $products_html . '</body>', $message);
 
-// создаём CSV совместимый с Excel с кодом продукта
+// создаём CSV совместимый с Excel с кодом продукта (уже со скидками)
 $data = [
-    ["Код товара", "Наименование товара", "Количество", "Цена за шт.", "Итого"],
+    ["Код товара", "Наименование товара", "Количество", "Цена за шт. (со скидкой)", "Итого"],
 ];
 
 foreach ($basket_items as $item) {
-    $item_total = $item['price'] * $item['count'];
+    $item_total = $item['final_price'] * $item['count'];
     $product_code = $item['productCode'] ?? 'н/д';
     
     $data[] = [
         $product_code,
         $item['name'],
         $item['count'],
-        $item['price'],
+        $item['final_price'],
         $item_total
     ];
 }
@@ -142,6 +168,8 @@ fclose($fp);
 
 try {
     $mail = new PHPMailer(true);
+    
+    // Возвращаем настройки для хостинговой почты
     $mail->isSMTP();
     $mail->Host = 'smtp.hostinger.com';
     $mail->SMTPAuth = true;
@@ -150,8 +178,8 @@ try {
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
 
-    $mail->setFrom('admin@kanskrop.com', 'Мой сайт');
-    $mail->addAddress($toEmail, 'Получатель');
+    $mail->setFrom('admin@kanskrop.com', 'Kanskrop Shop');
+    $mail->addAddress($toEmail, 'Admin');
     $mail->addReplyTo($email, $firstName . ' ' . $lastName);
 
     $mail->CharSet = 'UTF-8';
