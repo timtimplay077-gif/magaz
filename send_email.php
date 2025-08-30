@@ -1,41 +1,40 @@
 <?php
 include('data/database.php');
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-// require 'PHPMailer/src/Exception.php';
-// require 'PHPMailer/src/PHPMailer.php';
-// require 'PHPMailer/src/SMTP.php';
-// $mail_username = "pykpykdaun69@gmail.com";
-// $mail_to = "kanskrop@gmail.com";
-// // Adminkanskrop2025!
-// try {
-//     // Настройки сервера
-//     $mail->isSMTP();
-//     $mail->Host = 'smtp.gmail.com'; // SMTP сервер
-//     $mail->SMTPAuth = true;
-//     $mail->Username = $mail_to; // Твоя почта
-//     $mail->Password = 'твой_app_password';   // Пароль приложения (Google, Яндекс и т.д.)
-//     $mail->SMTPSecure = 'tls';
-//     $mail->Port = 587;
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-//     // От кого
-//     $mail->setFrom('твоя_почта@gmail.com', 'Твой сайт');
-//     // Кому
-//     $mail->addAddress('получатель@mail.com', 'Имя получателя');
+$mail = new PHPMailer(true);
 
-//     // Контент
-//     $mail->isHTML(true);
-//     $mail->Subject = 'Письмо через PHPMailer';
-//     $mail->Body = '<h2>Привет, Серёжа!</h2><p>Это письмо ушло через <b>SMTP</b> без Composer.</p>';
-//     $mail->AltBody = 'Это письмо ушло через SMTP (без HTML).';
+try {
+    // Сервер
+    $mail->isSMTP();
+    $mail->Host = 'smtp.hostinger.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'admin@kanskrop.com'; // почта Hostinger
+    $mail->Password = 'Adminkanskrop2025!';        // пароль
+    $mail->SMTPSecure = 'ssl'; // можно 'tls', но чаще ssl
+    $mail->Port = 465;
 
-//     $mail->send();
-//     echo 'Письмо успешно отправлено!';
-// } catch (Exception $e) {
-//     echo "Ошибка при отправке: {$mail->ErrorInfo}";
-// }
-// $mail = new PHPMailer(true);
+    // Отправитель
+    $mail->setFrom('noreply@kanskrop.com', 'Мой сайт');
+    // Получатель
+    $mail->addAddress('admin@kanskrop.com', 'Сергей');
+
+    // Контент
+    $mail->isHTML(true);
+    $mail->Subject = 'Тестовое письмо с Hostinger';
+    $mail->Body = '<h2>Привет, Серёжа!</h2><p>Это письмо пришло через SMTP Hostinger 🚀</p>';
+    $mail->AltBody = 'Это тестовое письмо с Hostinger (без HTML).';
+
+    $mail->send();
+    echo 'Письмо успешно отправлено!';
+} catch (Exception $e) {
+    echo "Ошибка: {$mail->ErrorInfo}";
+}
 $data = [
     ["name", "product_name", "price"],
     ["Max", "обоська", "67779"],
@@ -49,6 +48,7 @@ foreach ($data as $key => $value) {
 
 }
 fclose($fp);
+// Adminkanskrop2025!
 //----------------------------------ОТПРАВКА НА ПОЧТУ-----------------------------------//
 $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
 $order_query = $db_conn->query($order_sql);
