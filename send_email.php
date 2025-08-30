@@ -43,6 +43,7 @@ $message = str_replace('{{city}}', $city, $message);
 $message = str_replace('{{region}}', $region, $message);
 $message = str_replace('{{address}}', $adres, $message);
 print_r($message);
+print_r("ghbdtn");
 // $headers = "MIME-Version: 1.0" . "\r\n";
 // $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
 // $headers .= "From: Серёжа <$mail_username>" . "\r\n";
