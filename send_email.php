@@ -19,6 +19,7 @@ fclose($fp);
 
 $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
 $order_query = $db_conn->query($order_sql);
+print_r("ghbdtn");
 if ($order_query && $row = $order_query->fetch_assoc()) {
     $mail_to = $row['email'];
 } else {
