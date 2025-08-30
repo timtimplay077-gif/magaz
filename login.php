@@ -164,9 +164,9 @@ include('data/user_data.php');
             </div>
             <div class="iframe">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d554.1606144377334!2d32.284208611360036!3d48.519159446434855!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d05d0008bb3049%3A0x75b540cf193b012!2z0JrQsNC90YbQmtGA0L7Qvy / 0JrQsNC90YfRgtC+0LLQsNGA0Lg!5e1!3m2!1suk!2snl!4v1754843009070!5m2!1suk!2snl"
+                    src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d195.92550423792767!2d32.28413667954254!3d48.51912323100282!3m2!1i1024!2i768!4f13.1!5e1!3m2!1suk!2sua!4v1756587377844!5m2!1suk!2sua"
                     width="450" height="300" style="border-radius: 15px; border: 1px solid lightgray;"
-                    allowfullscreen=""></iframe>
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </div>
