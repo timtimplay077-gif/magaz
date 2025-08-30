@@ -34,7 +34,9 @@ $phone = $_GET['phone'] ?? '';
 $city = $_GET['city'] ?? '';
 $region = $_GET['region'] ?? '';
 $adres = $_GET['adres'] ?? '';
+print_r("ghbdtn");
 $message = file_get_contents("mail/rekvisit.php");
+print_r("ghbdtn");
 $message = str_replace('{{first_name}}', $firstName, $message);
 $message = str_replace('{{last_name}}', $lastName, $message);
 $message = str_replace('{{email}}', $email, $message);
@@ -43,7 +45,7 @@ $message = str_replace('{{city}}', $city, $message);
 $message = str_replace('{{region}}', $region, $message);
 $message = str_replace('{{address}}', $adres, $message);
 print_r($message);
-print_r("ghbdtn");
+
 // $headers = "MIME-Version: 1.0" . "\r\n";
 // $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
 // $headers .= "From: Серёжа <$mail_username>" . "\r\n";
