@@ -12,14 +12,14 @@ foreach ($data as $key => $value) {
     fputcsv($fp, $value);
 
 }
+print_r("1");
 fclose($fp);
-
+print_r("2");
 
 //----------------------------------ОТПРАВКА НА ПОЧТУ-----------------------------------//
-
 $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
 $order_query = $db_conn->query($order_sql);
-print_r("ghbdtn");
+print_r("3");
 if ($order_query && $row = $order_query->fetch_assoc()) {
     $mail_to = $row['email'];
 } else {
