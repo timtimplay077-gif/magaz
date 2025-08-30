@@ -1,6 +1,10 @@
 <?php
 include('data/database.php');
-$data = [
+
+
+try {
+    
+    $data = [
     ["name", "product_name", "price"],
     ["Max", "обоська", "67779"],
     ["Укроп", "чашка", "666788"],
@@ -18,6 +22,9 @@ foreach ($data as $key => $value) {
 
 fclose($fp);
 print_r("2");
+} catch (\Throwable $th) {
+    print_r('asdf');
+}
 
 //----------------------------------ОТПРАВКА НА ПОЧТУ-----------------------------------//
 $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
