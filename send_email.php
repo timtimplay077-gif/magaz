@@ -1,4 +1,5 @@
 <?php
+include('data/session_start.php');
 include('data/database.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -7,106 +8,187 @@ require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
-$mail = new PHPMailer(true);
+// Получаем данные из сессии вместо GET/POST
+if (!isset($_SESSION['order_data'])) {
+    die("Данные заказа не найдены. Вернитесь к оформлению заказа.");
+}
 
-$firstName = $_GET['firstName'] ?? '';
-$lastName = $_GET['lastName'] ?? '';
-$email = $_GET['email'] ?? '';
-$phone = $_GET['phone'] ?? '';
-$city = $_GET['city'] ?? '';
-$region = $_GET['region'] ?? '';
-$adres = $_GET['adres'] ?? '';
+$order_data = $_SESSION['order_data'];
+$firstName = $order_data['firstName'] ?? '';
+$lastName = $order_data['lastName'] ?? '';
+$email = $order_data['email'] ?? '';
+$phone = $order_data['phone'] ?? '';
+$city = $order_data['city'] ?? '';
+$region = $order_data['region'] ?? '';
+$adres = $order_data['adres'] ?? '';
+$basket_items = $order_data['basket_items'] ?? [];
+$total_amount = $order_data['total_amount'] ?? 0;
+$toEmail = 'admin@kanskrop.com'; // фиксированный email получателя
+
+// Проверяем обязательные поля
+if (empty($firstName) || empty($lastName) || empty($email) || empty($phone)) {
+    die("Заполните обязательные поля: имя, фамилия, email, телефон");
+}
+
 $message = file_get_contents("mail/rekvisit.php");
-$message = str_replace('{{first_name}}', $firstName, $message);
-$message = str_replace('{{last_name}}', $lastName, $message);
-$message = str_replace('{{email}}', $email, $message);
-$message = str_replace('{{phone}}', $phone, $message);
-$message = str_replace('{{city}}', $city, $message);
-$message = str_replace('{{region}}', $region, $message);
-$message = str_replace('{{address}}', $adres, $message);
+if ($message === false) {
+    die("Не удалось загрузить шаблон письма");
+}
+
+// Заменяем плейсхолдеры
+$message = str_replace('{{first_name}}', htmlspecialchars($firstName), $message);
+$message = str_replace('{{last_name}}', htmlspecialchars($lastName), $message);
+$message = str_replace('{{email}}', htmlspecialchars($email), $message);
+$message = str_replace('{{email_raw}}', htmlspecialchars($email), $message);
+$message = str_replace('{{phone}}', htmlspecialchars($phone), $message);
+$message = str_replace('{{phone_raw}}', htmlspecialchars(preg_replace('/[^0-9+]/', '', $phone)), $message);
+$message = str_replace('{{city}}', htmlspecialchars($city), $message);
+$message = str_replace('{{region}}', htmlspecialchars($region), $message);
+$message = str_replace('{{address}}', htmlspecialchars($adres), $message);
+
+// Добавляем информацию о товарах в стиле шаблона
+$products_html = '
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f4f6f8;padding:20px 0;font-family:Arial, sans-serif;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.08);margin-top:20px;">
+        <tr>
+          <td style="padding:20px 24px;border-bottom:1px solid #eef0f2;">
+            <h2 style="margin:0;font-size:20px;color:#0f1724;">Деталі замовлення</h2>
+            <p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:18px 24px;">
+            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="font-size:14px;color:#101828;">
+              <tr style="background-color:#f8f9fa;">
+                <td style="padding:12px;border-bottom:2px solid #e9ecef;font-weight:bold;">Код</td>
+                <td style="padding:12px;border-bottom:2px solid #e9ecef;font-weight:bold;">Товар</td>
+                <td style="padding:12px;border-bottom:2px solid #e9ecef;font-weight:bold;text-align:center;">Кількість</td>
+                <td style="padding:12px;border-bottom:2px solid #e9ecef;font-weight:bold;text-align:right;">Ціна</td>
+                <td style="padding:12px;border-bottom:2px solid #e9ecef;font-weight:bold;text-align:right;">Сума</td>
+              </tr>';
+
+foreach ($basket_items as $item) {
+    $item_total = $item['price'] * $item['count'];
+    $product_code = $item['productCode'] ?? 'н/д';
+    
+    $products_html .= '
+              <tr>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;font-weight:bold;color:#0b66ff;">' . htmlspecialchars($product_code) . '</td>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;">' . htmlspecialchars($item['name']) . '</td>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:center;">' . $item['count'] . ' шт.</td>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;">' . number_format($item['price'], 2) . ' ₴</td>
+                <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;font-weight:bold;">' . number_format($item_total, 2) . ' ₴</td>
+              </tr>';
+}
+
+$products_html .= '
+              <tr>
+                <td colspan="4" style="padding:12px;text-align:right;font-weight:bold;border-top:2px solid #e9ecef;">Загальна сума:</td>
+                <td style="padding:12px;text-align:right;font-weight:bold;border-top:2px solid #e9ecef;color:#0b66ff;">' . number_format($total_amount, 2) . ' ₴</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:14px 24px;background:#fafafa;border-top:1px solid #eef0f2;">
+            <p style="margin:0;font-size:12px;color:#98a2b3;">Це авто-згенерований лист. Будь ласка, не відповідайте на нього.</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>';
+
+// Добавляем товары после основной информации (в конец письма)
+$message = str_replace('</body>', $products_html . '</body>', $message);
+
+// создаём CSV совместимый с Excel с кодом продукта
+$data = [
+    ["Код товара", "Наименование товара", "Количество", "Цена за шт.", "Итого"],
+];
+
+foreach ($basket_items as $item) {
+    $item_total = $item['price'] * $item['count'];
+    $product_code = $item['productCode'] ?? 'н/д';
+    
+    $data[] = [
+        $product_code,
+        $item['name'],
+        $item['count'],
+        $item['price'],
+        $item_total
+    ];
+}
+$data[] = ["", "", "", "Общая сумма:", $total_amount];
+
+// Создаем папку cards если не существует
+if (!file_exists('cards')) {
+    mkdir('cards', 0777, true);
+}
+
+$f_name = "cards/card" . time() . ".csv";
+$fp = fopen($f_name, "w");
+
+// Добавляем BOM для правильного отображения кириллицы в Excel
+fwrite($fp, "\xEF\xBB\xBF");
+
+foreach ($data as $value) {
+    // Используем точку с запятой как разделитель
+    fputcsv($fp, $value, ';');
+}
+fclose($fp);
 
 try {
-    // Сервер
+    $mail = new PHPMailer(true);
     $mail->isSMTP();
     $mail->Host = 'smtp.hostinger.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'admin@kanskrop.com'; // логин почты
-    $mail->Password = 'Adminkanskrop2025!'; // пароль от почты
+    $mail->Username = 'admin@kanskrop.com';
+    $mail->Password = 'Adminkanskrop2025!';
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
 
-    // Отправитель (должен совпадать с Username!)
     $mail->setFrom('admin@kanskrop.com', 'Мой сайт');
+    $mail->addAddress($toEmail, 'Получатель');
+    $mail->addReplyTo($email, $firstName . ' ' . $lastName);
 
-    // Получатель (может быть любым)
-    $mail->addAddress('kanskrop@gmail.com', 'Сергей');
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
     $mail->isHTML(true);
-    // Контент
-    $mail->isHTML(true);
-    $mail->Subject = 'Тестовое письмо с Hostinger';
-    $mail->Body = $message;
-    $mail->AltBody = $message;
 
-    $mail->send();
-    echo 'Письмо успешно отправлено!';
+    $mail->Subject = 'Новый заказ от ' . $firstName . ' ' . $lastName;
+    $mail->Body = $message;
+    $mail->AltBody = strip_tags($message);
+
+    // прикрепляем файл
+    if (file_exists($f_name)) {
+        $mail->addAttachment($f_name, 'заказ_' . date('Y-m-d') . '.csv');
+    }
+
+    if ($mail->send()) {
+        echo 'Письмо успешно отправлено!';
+        // Очищаем данные заказа из сессии
+        unset($_SESSION['order_data']);
+        // Перенаправляем на страницу благодарности
+        header("Location: thank_order.php");
+        exit;
+    } else {
+        echo "Ошибка при отправке письма";
+    }
+    
+    // Удаляем временный файл
+    if (file_exists($f_name)) {
+        unlink($f_name);
+    }
+    
 } catch (Exception $e) {
     echo "Ошибка: {$mail->ErrorInfo}";
-}
-$data = [
-    ["name", "product_name", "price"],
-    ["Max", "обоська", "67779"],
-    ["Укроп", "чашка", "666788"],
-];
-$f_name = "cards/card" . time() . ".csv";
-print_r($f_name);
-$fp = fopen($f_name, "w");
-foreach ($data as $key => $value) {
-    fputcsv($fp, $value);
-
-}
-fclose($fp);
-// Adminkanskrop2025!
-//----------------------------------ОТПРАВКА НА ПОЧТУ-----------------------------------//
-if (false) {
-    $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
-    $order_query = $db_conn->query($order_sql);
-    print_r("3");
-    if ($order_query && $row = $order_query->fetch_assoc()) {
-        $mail_to = $row['email'];
-    } else {
-        die("Не вдалося отримати email одержувача");
-    }
-    $mail_host = "pop.hostinger.com";
-    $mail_username = "admin@kanskrop.com";
-    $mail_to = "admin@kanskrop.com";
-    $firstName = $_GET['firstName'] ?? '';
-    $lastName = $_GET['lastName'] ?? '';
-    $email = $_GET['email'] ?? '';
-    $phone = $_GET['phone'] ?? '';
-    $city = $_GET['city'] ?? '';
-    $region = $_GET['region'] ?? '';
-    $adres = $_GET['adres'] ?? '';
-    $message = file_get_contents("mail/rekvisit.php");
-    $message = str_replace('{{first_name}}', $firstName, $message);
-    $message = str_replace('{{last_name}}', $lastName, $message);
-    $message = str_replace('{{email}}', $email, $message);
-    $message = str_replace('{{phone}}', $phone, $message);
-    $message = str_replace('{{city}}', $city, $message);
-    $message = str_replace('{{region}}', $region, $message);
-    $message = str_replace('{{address}}', $adres, $message);
-    print_r($message);
-
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
-    $headers .= "From: Серёжа <$mail_username>" . "\r\n";
-    $headers .= "Reply-To: $mail_username" . "\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
-    if (mail($mail_to, "Нове замовлення", $message, $headers)) {
-        echo "Замовлення принято!";
-    } else {
-        echo "Помилка при надсиланні листа.";
+    
+    // Удаляем временный файл даже при ошибке
+    if (file_exists($f_name)) {
+        unlink($f_name);
     }
 }
-unlink($f_name);
+?>
