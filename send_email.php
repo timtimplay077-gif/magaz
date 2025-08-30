@@ -1,31 +1,18 @@
 <?php
 include('data/database.php');
-
-
-try {
-    
-    $data = [
+$data = [
     ["name", "product_name", "price"],
     ["Max", "обоська", "67779"],
     ["Укроп", "чашка", "666788"],
 ];
 $f_name = "cards/card" . time() . ".csv";
 print_r($f_name);
-
 $fp = fopen($f_name, "w");
-print_r("0");
 foreach ($data as $key => $value) {
-    print_r("1");
     fputcsv($fp, $value);
 
 }
-
 fclose($fp);
-print_r("2");
-} catch (\Throwable $th) {
-    print_r('asdf');
-}
-
 //----------------------------------ОТПРАВКА НА ПОЧТУ-----------------------------------//
 $order_sql = "SELECT * FROM admins WHERE id = 1 LIMIT 1 ";
 $order_query = $db_conn->query($order_sql);
@@ -45,9 +32,7 @@ $phone = $_GET['phone'] ?? '';
 $city = $_GET['city'] ?? '';
 $region = $_GET['region'] ?? '';
 $adres = $_GET['adres'] ?? '';
-print_r("ghbdtn");
 $message = file_get_contents("mail/rekvisit.php");
-print_r("ghbdtn");
 $message = str_replace('{{first_name}}', $firstName, $message);
 $message = str_replace('{{last_name}}', $lastName, $message);
 $message = str_replace('{{email}}', $email, $message);
@@ -57,11 +42,11 @@ $message = str_replace('{{region}}', $region, $message);
 $message = str_replace('{{address}}', $adres, $message);
 print_r($message);
 
-// $headers = "MIME-Version: 1.0" . "\r\n";
-// $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
-// $headers .= "From: Серёжа <$mail_username>" . "\r\n";
-// $headers .= "Reply-To: $mail_username" . "\r\n";
-// $headers .= "X-Mailer: PHP/" . phpversion();
+$headers = "MIME-Version: 1.0" . "\r\n";
+$headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
+$headers .= "From: Серёжа <$mail_username>" . "\r\n";
+$headers .= "Reply-To: $mail_username" . "\r\n";
+$headers .= "X-Mailer: PHP/" . phpversion();
 // if (mail($mail_to, "Нове замовлення", $message, $headers)) {
 //     echo "Замовлення принято!";
 // } else {
