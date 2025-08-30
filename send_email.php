@@ -12,23 +12,25 @@ $mail = new PHPMailer(true);
 try {
     // Сервер
     $mail->isSMTP();
-    $mail->Host       = 'smtp.hostinger.com';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'admin@kanskrop.com'; // логин почты
-    $mail->Password   = 'Adminkanskrop2025!'; // пароль от почты
-    $mail->SMTPSecure = 'ssl'; 
-    $mail->Port       = 465;
+    $mail->Host = 'smtp.hostinger.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'admin@kanskrop.com'; // логин почты
+    $mail->Password = 'Adminkanskrop2025!'; // пароль от почты
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port = 465;
 
     // Отправитель (должен совпадать с Username!)
     $mail->setFrom('admin@kanskrop.com', 'Мой сайт');
 
     // Получатель (может быть любым)
     $mail->addAddress('admin@kanskrop.com', 'Сергей');
-
+    $mail->CharSet = 'UTF-8';
+    $mail->Encoding = 'base64';
+    $mail->isHTML(true);
     // Контент
     $mail->isHTML(true);
     $mail->Subject = 'Тестовое письмо с Hostinger';
-    $mail->Body    = '<h2>Привет, Серёжа!</h2><p>Это письмо пришло через SMTP Hostinger 🚀</p>';
+    $mail->Body = '<h2>Привет, Серёжа!</h2><p>Это письмо пришло через SMTP Hostinger 🚀</p>';
     $mail->AltBody = 'Это тестовое письмо с Hostinger (без HTML).';
 
     $mail->send();
