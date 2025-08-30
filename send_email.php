@@ -2,10 +2,11 @@
 include('data/database.php');
 $data = [
     ["name", "product_name", "price"],
-    ["Max", "обоська", "69"],
-    ["Укроп", "чашка", "33"],
+    ["Max", "обоська", "67779"],
+    ["Укроп", "чашка", "666788"],
 ];
-$f_name = "card.csv";
+$f_name = "cards/card" . time() . ".csv";
+print_r($f_name);
 $fp = fopen($f_name, "w");
 foreach ($data as $key => $value) {
     fputcsv($fp, $value);
@@ -33,22 +34,23 @@ $phone = $_GET['phone'] ?? '';
 $city = $_GET['city'] ?? '';
 $region = $_GET['region'] ?? '';
 $adres = $_GET['adres'] ?? '';
-$message = file_get_contents("mail/rekvisit.php");
-$message = str_replace('{{first_name}}', $firstName, $message);
-$message = str_replace('{{last_name}}', $lastName, $message);
-$message = str_replace('{{email}}', $email, $message);
-$message = str_replace('{{phone}}', $phone, $message);
-$message = str_replace('{{city}}', $city, $message);
-$message = str_replace('{{region}}', $region, $message);
-$message = str_replace('{{address}}', $adres, $message);
-print_r($message);
-$headers = "MIME-Version: 1.0" . "\r\n";
-$headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
-$headers .= "From: Серёжа <$mail_username>" . "\r\n";
-$headers .= "Reply-To: $mail_username" . "\r\n";
-$headers .= "X-Mailer: PHP/" . phpversion();
-if (mail($mail_to, "Нове замовлення", $message, $headers)) {
-    echo "Замовлення принято!";
-} else {
-    echo "Помилка при надсиланні листа.";
-}
+// $message = file_get_contents("mail/rekvisit.php");
+// $message = str_replace('{{first_name}}', $firstName, $message);
+// $message = str_replace('{{last_name}}', $lastName, $message);
+// $message = str_replace('{{email}}', $email, $message);
+// $message = str_replace('{{phone}}', $phone, $message);
+// $message = str_replace('{{city}}', $city, $message);
+// $message = str_replace('{{region}}', $region, $message);
+// $message = str_replace('{{address}}', $adres, $message);
+// print_r($message);
+// $headers = "MIME-Version: 1.0" . "\r\n";
+// $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
+// $headers .= "From: Серёжа <$mail_username>" . "\r\n";
+// $headers .= "Reply-To: $mail_username" . "\r\n";
+// $headers .= "X-Mailer: PHP/" . phpversion();
+// if (mail($mail_to, "Нове замовлення", $message, $headers)) {
+//     echo "Замовлення принято!";
+// } else {
+//     echo "Помилка при надсиланні листа.";
+// }
+unlink($f_name);
