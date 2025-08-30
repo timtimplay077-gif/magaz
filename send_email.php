@@ -7,6 +7,7 @@ $data = [
 ];
 $f_name = "cards/card" . time() . ".csv";
 print_r($f_name);
+print_r("0");
 $fp = fopen($f_name, "w");
 foreach ($data as $key => $value) {
     fputcsv($fp, $value);
