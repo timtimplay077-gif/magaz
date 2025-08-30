@@ -24,7 +24,7 @@ if ($order_query && $row = $order_query->fetch_assoc()) {
 }
 $mail_host = "smtp.gmail.com";
 $mail_username = "timtimplay077@gmail.com";
-// $mail_to = "timtimplay077@gmail.com";
+$mail_to = "timtimplay077@gmail.com";
 $firstName = $_GET['firstName'] ?? '';
 $lastName = $_GET['lastName'] ?? '';
 $email = $_GET['email'] ?? '';
