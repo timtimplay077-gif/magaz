@@ -36,11 +36,10 @@ if (count($errors)) {
     header("Location: registration.php");
     exit;
 } else {
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $register_sql = "INSERT INTO `users` (`firstName`, `lastName`, `email`, `phone`, `password`, `sale`) 
                      VALUES (?, ?, ?, ?, ?, '0')";
     $stmt = $db_conn->prepare($register_sql);
-    $stmt->bind_param("sssss", $firstName, $lastName, $email, $phone, $hashedPassword);
+    $stmt->bind_param("sssss", $firstName, $lastName, $email, $phone, $password);
 
     if ($stmt->execute()) {
         $stmt->close();
