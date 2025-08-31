@@ -35,11 +35,12 @@ if ($result->num_rows === 0) {
 }
 
 $user = $result->fetch_assoc();
-if ($user['password'] !== $password) {
+if (!password_verify($password, $user['password'])) {
     $_SESSION['login_error'] = "Невірний пароль.";
     header("Location: login.php");
     exit();
 }
+
 $_SESSION['user_id'] = $user['id'];
 $_SESSION['email'] = $user['email'];
 $_SESSION['firstName'] = $user['firstName'] ?? '';

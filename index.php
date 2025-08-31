@@ -104,6 +104,18 @@ if (!$tabl->num_rows && $page_active > 0) {
     header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
     exit;
 }
+function getCategoryName($category_id)
+{
+    global $db_conn;
+    $sql = "SELECT name FROM categories WHERE id = ?";
+    $stmt = $db_conn->prepare($sql);
+    $stmt->bind_param("i", $category_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $category = $result->fetch_assoc();
+    $stmt->close();
+    return $category ? $category['name'] : '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -123,6 +135,9 @@ if (!$tabl->num_rows && $page_active > 0) {
     <script src="./slick/slick.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://kit.fontawesome.com/ee9963f31c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/adaptive.css?">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
     <title>Інтернет-Магазин КанцКроп</title>
 </head>
 
@@ -170,16 +185,19 @@ if (!$tabl->num_rows && $page_active > 0) {
             <div class="whatWeHave_kans">
                 <img src="categoty/school-material.png" alt="Канцелярские товары">
                 <div class="categories">
-                    <button class="categories-button" onclick="toggleCategories(this)">Категорії</button>
+                    <button class="categories-button" onclick="toggleCategories(this)">
+                        Категорії<?php echo $category_get ? ': ' . htmlspecialchars(getCategoryName($category_get)) : ''; ?>
+                    </button>
                     <div class="categories-menu">
-                        <?php while ($category_row = $category_query->fetch_assoc()): ?>
+                        <?php
+                        $category_query->data_seek(0);
+                        while ($category_row = $category_query->fetch_assoc()): ?>
                             <a href="index.php?category=<?= $category_row['id'] ?>" class="category_link">
                                 <?= htmlspecialchars($category_row['name']) ?>
                             </a>
                         <?php endwhile; ?>
                     </div>
                 </div>
-
                 <div class="text-slider">
                     <div class="marquee">
                         <span id="marqueeText"></span>
@@ -250,7 +268,8 @@ if (!$tabl->num_rows && $page_active > 0) {
                         $product_id = $row['id'];
                         $isInCart = in_array($product_id, array_column($basket_items, 'id'));
                         ?>
-                        <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>" onclick="addToCart(<?= $product_id ?>, event)">
+                        <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>"
+                            onclick="addToCart(<?= $product_id ?>, event)">
                             <?= $isInCart ? 'У кошику' : 'Купити' ?>
                         </button>
                     </div>
@@ -275,7 +294,7 @@ if (!$tabl->num_rows && $page_active > 0) {
             <?php
             $start_page = max(1, $current_page - 2);
             $end_page = min($total_pages, $start_page + 4);
-            
+
             if ($end_page - $start_page < 4) {
                 $start_page = max(1, $end_page - 4);
             }
@@ -290,8 +309,8 @@ if (!$tabl->num_rows && $page_active > 0) {
             <?php endif; ?>
 
             <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                <a href="index.php?page=<?= $i - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>" 
-                   class="<?= $i == $current_page ? 'active' : '' ?>">
+                <a href="index.php?page=<?= $i - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>"
+                    class="<?= $i == $current_page ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
