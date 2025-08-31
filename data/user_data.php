@@ -16,10 +16,17 @@ if ($user_id > 0) {
             $user_query = $stmt->get_result();
             $user_row = $user_query->fetch_assoc();
             $is_logged_in = ($user_query->num_rows > 0);
+            if ($is_logged_in && $user_row['sale'] != 10) {
+                $update_stmt = $db_conn->prepare("UPDATE users SET sale = 10 WHERE id = ?");
+                $update_stmt->bind_param("i", $user_id);
+                $update_stmt->execute();
+                $update_stmt->close();
+                $user_row['sale'] = 10;
+            }
         }
         $stmt->close();
     }
 }
 
-error_log("User ID: $user_id, Logged in: " . ($is_logged_in ? 'YES' : 'NO'));
+error_log("User ID: $user_id, Logged in: " . ($is_logged_in ? 'YES' : 'NO') . ", Sale: " . ($user_row['sale'] ?? 0) . "%");
 ?>

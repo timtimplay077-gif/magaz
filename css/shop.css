@@ -519,6 +519,7 @@ a {
 .product_row_about_buy {
     display: flex;
     justify-content: center;
+    margin-top: 270px;
 }
 
 .product_row_about_buy img {
@@ -1138,32 +1139,31 @@ a {
     overflow-y: auto;
     z-index: 1000;
     transform: translateX(100%);
+    transition: transform 0.3s ease, opacity 0.3s ease;
     opacity: 0;
-    visibility: hidden;
 }
 
 .modal-basket.show {
-    transform: translate(0, 0);
+    transform: translateX(0);
     opacity: 1;
-    visibility: visible;
 }
 
 .overlay {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 999;
     opacity: 0;
-    transition: 0.3s ease;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
 }
 
 .overlay.show {
-    display: block;
     opacity: 1;
+    visibility: visible;
 }
 
 .modal-header {
@@ -2121,4 +2121,113 @@ quantity-controls {
     margin-top: 10px;
     font-size: 19px;
     color: gray;
+}
+
+/* Стили для отображения цен со скидкой */
+.price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.new-price {
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.new-price.discounted {
+    color: #e74c3c;
+    font-size: 25px;
+}
+
+.discount-badge {
+    background: #e74c3c;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .old-price {
+        font-size: 12px;
+    }
+
+    .new-price {
+        font-size: 16px;
+    }
+
+    .new-price.discounted {
+        font-size: 18px;
+    }
+
+    .discount-badge {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+}
+
+@media (max-width: 960px) {
+    .product_row_about_buy {
+        margin-top: 50px;
+    }
+}
+
+/* Для карточек товаров */
+.product .price_buy .price-container {
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.product .old-price {
+    font-size: 18px;
+}
+
+.product .new-price {
+    font-size: 16px;
+}
+
+.product .new-price.discounted {
+    font-size: 22px;
+    color: #e74c3c;
+}
+
+/* Стили для корзины */
+.header_card_product .price-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.header_card_product .old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 16px;
+}
+
+.header_card_product .price.discounted {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.price_product_row {
+    border-bottom: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+    padding-top: 30px;
+    padding-bottom: 30px;
 }

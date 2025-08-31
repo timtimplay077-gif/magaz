@@ -28,7 +28,17 @@ $user_stmt->close();
 if (empty($firstName) || empty($lastName) || empty($email) || empty($phone) || empty($address)) {
     die("Заповніть обов'язкові поля: ім'я, прізвище, email, телефон, адреса");
 }
+$user_sale = $user_row['sale'] ?? 0;
 
+
+if ($isLoggedIn && $user_sale != 10) {
+    $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
+    $update_stmt = $db_conn->prepare($update_sql);
+    $update_stmt->bind_param("i", $user_id);
+    $update_stmt->execute();
+    $update_stmt->close();
+    $user_sale = 10;
+}
 $basket_sql = "SELECT b.product_id, b.count, p.name, p.price, p.price_modifier, p.productСode AS productCode
                FROM basket b 
                JOIN products p ON b.product_id = p.id 
@@ -38,24 +48,26 @@ $stmt = $db_conn->prepare($basket_sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
+if (!empty($user_sale)) {
+    $orderInfo .= "🎫 Ваша скидка: $user_sale%\n\n";
+}
 while ($item = $result->fetch_assoc()) {
     // Рассчитываем итоговую цену со всеми скидками
     $price = $item['price'];
-    
+
     // Применяем модификатор цены товара (если есть)
     if (!empty($item['price_modifier'])) {
         $price *= (1 + $item['price_modifier'] / 100);
     }
-    
+
     // Применяем скидку пользователя (если есть)
     if (!empty($user_sale)) {
         $price *= (1 - $user_sale / 100);
     }
-    
+
     $item['final_price'] = $price;
     $item_total = $price * $item['count'];
-    
+
     $basket_items[] = $item;
     $total_items += $item['count'];
     $total_amount += $item_total;
@@ -81,20 +93,21 @@ $orderInfo .= "📦 Замовлення: \n";
 foreach ($basket_items as $item) {
     $item_total = $item['final_price'] * $item['count'];
     $product_code = $item['productCode'] ?? 'н/д';
-    
+
     // Добавляем информацию о скидках товара
     $discount_info = "";
     if (!empty($item['price_modifier'])) {
         $modifier_type = $item['price_modifier'] > 0 ? "надбавка" : "скидка";
         $discount_info = " ($modifier_type: " . abs($item['price_modifier']) . "%)";
     }
-    
+
     $orderInfo .= "• {$item['name']}$discount_info\n   📦 Код: *$product_code*\n   📊 Кількість: {$item['count']} шт.\n   💰 Ціна: {$item['final_price']} ₴ × {$item['count']} = {$item_total} ₴\n\n";
 }
 
 $orderInfo .= "────────────────\n✅ Разом:\n• Товарів: $total_items шт.\n• Загальна сума: $total_amount ₴\n────────────────";
 
-function sendTelegram($message) {
+function sendTelegram($message)
+{
     $token = "8418965565:AAFBJEFWZkN_WiQ7yoq9wlpaqLTMnRjyVAo";
     $chat_id = "8055379494";
     $url = "https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id&text=" . urlencode($message);

@@ -55,7 +55,15 @@ function dd($data): void
 }
 $db_image_sql = "SELECT * FROM `productimages` WHERE `product_Id` = $id";
 $db_image_query = $db_conn->query($db_image_sql);
-
+if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
+    // Обновляем скидку на 10%
+    $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
+    $update_stmt = $db_conn->prepare($update_sql);
+    $update_stmt->bind_param("i", $user_id);
+    $update_stmt->execute();
+    $update_stmt->close();
+    $user_row['sale'] = 10;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -171,12 +179,35 @@ $db_image_query = $db_conn->query($db_image_sql);
                 }
                 ?>
                 <div class="product_row_price">
-                    <div class="price">
-                        <?= round($discount_price, 2) ?> ₴
-                    </div>
-                </div>
-                <div class="product_row_about_buy">
                     <?php
+                    $original_price = $row['price'];
+                    $modifier = $row['price_modifier'] ?? 0;
+                    $base_price = $original_price * (1 + $modifier / 100);
+                    $discount_price = $base_price;
+                    $has_discount = false;
+
+                    if ($isLoggedIn && isset($user_row['sale']) && $user_row['sale'] > 0) {
+                        $discount_price = $base_price * (1 - $user_row['sale'] / 100);
+                        $has_discount = true;
+                    }
+                    ?>
+                    <div class="price_product_row">
+                        <div class="price-container">
+                            <?php if ($has_discount): ?>
+                                <span class="old-price"><?= number_format($base_price, 2) ?> ₴</span>
+                            <?php endif; ?>
+                            <div style="display:flex; align-items: center;">
+                                <span class="new-price <?= $has_discount ? 'discounted' : '' ?>">
+                                    <?= number_format($discount_price, 2) ?> ₴
+                                </span>
+                                <?php if ($has_discount): ?>
+                                    <span class="discount-badge">-<?= $user_row['sale'] ?>%</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product_row_about_buy">
+                        <?php
                         $product_id = $row['id'];
                         $isInCart = in_array($product_id, array_column($basket_items, 'id'));
                         ?>
@@ -184,10 +215,10 @@ $db_image_query = $db_conn->query($db_image_sql);
                             onclick="addToCart(<?= $product_id ?>, event)" style="width:190px;">
                             <?= $isInCart ? 'У кошику' : 'Купити' ?>
                         </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <div class="product_delivery_payment unselectable">
         <div class="block">
@@ -259,7 +290,7 @@ $db_image_query = $db_conn->query($db_image_sql);
                 <img src="img/kanskrop_logo.png" alt="">
             </div>
             <div class="iframe" id="location">
-            <iframe
+                <iframe
                     src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d195.92550423792767!2d32.28413667954254!3d48.51912323100282!3m2!1i1024!2i768!4f13.1!5e1!3m2!1suk!2sua!4v1756587377844!5m2!1suk!2sua"
                     width="450" height="300" style="border-radius: 15px; border: 1px solid lightgray;"
                     referrerpolicy="no-referrer-when-downgrade"></iframe>

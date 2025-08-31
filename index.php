@@ -80,6 +80,15 @@ if (!$tabl->num_rows && $page_active > 0) {
     header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
     exit;
 }
+if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
+    // Обновляем скидку на 10%
+    $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
+    $update_stmt = $db_conn->prepare($update_sql);
+    $update_stmt->bind_param("i", $user_id);
+    $update_stmt->execute();
+    $update_stmt->close();
+    $user_row['sale'] = 10;
+}
 ?>
 
 <!DOCTYPE html>
@@ -193,11 +202,20 @@ if (!$tabl->num_rows && $page_active > 0) {
         <?php if ($tabl->num_rows > 0): ?>
             <?php while ($row = $tabl->fetch_assoc()): ?>
                 <?php
-                $price = $row['price'];
-                if (!empty($row['price_modifier']))
-                    $price *= (1 + $row['price_modifier'] / 100);
-                if ($isLoggedIn && !empty($user_row['sale']))
-                    $price *= (1 - $user_row['sale'] / 100);
+                $original_price = $row['price'];
+                $modifier = $row['price_modifier'] ?? 0;
+
+                // Применяем модификатор цены
+                $base_price = $original_price * (1 + $modifier / 100);
+
+                // Применяем скидку пользователя
+                $discount_price = $base_price;
+                $has_discount = false;
+
+                if ($isLoggedIn && !empty($user_row['sale'])) {
+                    $discount_price = $base_price * (1 - $user_row['sale'] / 100);
+                    $has_discount = true;
+                }
                 ?>
                 <div class="product">
                     <a href="product.php?id=<?= $row['id'] ?>" class="product_link">
@@ -205,7 +223,14 @@ if (!$tabl->num_rows && $page_active > 0) {
                         <div class="product_info"><?= htmlspecialchars($row['name']) ?></div>
                     </a>
                     <div class="price_buy">
-                        <p class="price"><?= number_format($price, 2) ?>₴</p>
+                        <div class="price-container">
+                            <?php if ($has_discount): ?>
+                                <span class="old-price"><?= number_format($base_price, 2) ?>₴</span>
+                            <?php endif; ?>
+                            <span class="new-price <?= $has_discount ? 'discounted' : '' ?>">
+                                <?= number_format($discount_price, 2) ?>₴
+                            </span>
+                        </div>
                         <?php
                         $product_id = $row['id'];
                         $isInCart = in_array($product_id, array_column($basket_items, 'id'));

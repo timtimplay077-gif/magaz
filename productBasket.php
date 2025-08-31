@@ -11,6 +11,15 @@ if ($isLoggedIn) {
     $user_stmt->execute();
     $user_result = $user_stmt->get_result();
     $user_row = $user_result->fetch_assoc();
+    if ($user_row && $user_row['sale'] != 10) {
+        $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
+        $update_stmt = $db_conn->prepare($update_sql);
+        $update_stmt->bind_param("i", $user_id);
+        $update_stmt->execute();
+        $update_stmt->close();
+        $user_row['sale'] = 10;
+    }
+
     $user_stmt->close();
 }
 
@@ -32,8 +41,14 @@ if ($isLoggedIn) {
             $price = $item['price'];
             $modifier = $item['price_modifier'] ?? 0;
             $final_price = $price * (1 + $modifier / 100);
+
+            // Проверяем есть ли скидка у пользователя
+            $has_discount = false;
+            $original_price = $final_price;
+
             if (isset($user_row['sale']) && $user_row['sale'] > 0) {
                 $final_price = $final_price * (1 - $user_row['sale'] / 100);
+                $has_discount = true;
             }
 
             $quantity = $item['basket_count'];
@@ -44,15 +59,19 @@ if ($isLoggedIn) {
                 'name' => $item['name'],
                 'img' => $item['img'],
                 'price' => $final_price,
+                'original_price' => $original_price, // Цена без скидки пользователя
                 'quantity' => $quantity,
-                'total' => $item_total
+                'total' => $item_total,
+                'has_discount' => $has_discount // Добавляем флаг скидки
             ];
 
             $total_items += $quantity;
             $total_sum += $item_total;
         }
     }
-    $stmt->close();
+
+    // ... для неавторизованных пользователей ...
+
 } elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     $product_ids = array_keys($_SESSION['cart']);
     if (!empty($product_ids)) {
@@ -72,8 +91,10 @@ if ($isLoggedIn) {
                     'name' => $product['name'],
                     'img' => $product['img'],
                     'price' => $final_price,
+                    'original_price' => $final_price, // Для неавторизованных цены одинаковые
                     'quantity' => $quantity,
-                    'total' => $item_total
+                    'total' => $item_total,
+                    'has_discount' => false // У неавторизованных нет скидки
                 ];
 
                 $total_items += $quantity;
@@ -129,7 +150,12 @@ function getItemWord($count)
                         <p><?= htmlspecialchars($item['name']) ?></p>
                     </div>
                     <div class="price-wrapper">
-                        <span class="price"><?= number_format($item['total'], 2) ?> ₴</span>
+                        <?php if (isset($item['has_discount']) && $item['has_discount']): ?>
+                            <span class="old-price"><?= number_format($item['original_price'] * $item['quantity'], 2) ?> ₴</span>
+                        <?php endif; ?>
+                        <span class="price <?= (isset($item['has_discount']) && $item['has_discount']) ? 'discounted' : '' ?>">
+                            <?= number_format($item['total'], 2) ?> ₴
+                        </span>
                     </div>
                     <div class="quantity-wrapper">
                         <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', <?= $item['id'] ?>)">-</button>

@@ -186,6 +186,7 @@ function changeQuantity(button, action, productId) {
 
     const countEl = item.querySelector('.count');
     const priceElement = item.querySelector('.price');
+    const oldPriceElement = item.querySelector('.old-price');
     const pricePerUnit = parseFloat(item.dataset.price) || 0;
 
     let count = parseInt(countEl.textContent) || 0;
@@ -200,12 +201,29 @@ function changeQuantity(button, action, productId) {
 
     countEl.textContent = count;
     const totalPrice = pricePerUnit * count;
-    priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
+
+    // Обновляем цены
+    if (priceElement) {
+        priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
+    }
+
+    // Обновляем старую цену если есть скидка
+    if (oldPriceElement) {
+        const originalPricePerUnit = pricePerUnit / 0.9; // Восстанавливаем оригинальную цену
+        oldPriceElement.textContent = (originalPricePerUnit * count).toFixed(2) + ' ₴';
+    }
+
+    // Находим элемент в cartData и обновляем его
+    const cartItem = cartData.items.find(i => i.id == productId);
+    if (cartItem) {
+        cartItem.quantity = count;
+        cartItem.total = totalPrice;
+    }
+
     updateQuantity(productId, count);
     recalcTotal();
     updateGlobalCartCount();
 }
-
 function recalcTotal() {
     let totalSum = 0;
     let totalItems = 0;
@@ -345,30 +363,51 @@ function addToCart(productId, event) {
         alert('Спочатку авторизуйтесь!');
         return;
     }
+
     const originalContent = buyButton.innerHTML;
     buyButton.innerHTML = '<div class="loading-spinner"></div>';
     buyButton.disabled = true;
     buyButton.style.opacity = '0.7';
+
     const formData = new FormData();
     formData.append('product_id', productId);
+
     fetch('addCart.php', { method: 'POST', body: formData })
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
+                // Применяем скидку 10% для авторизованных пользователей
+                let itemPrice = data.item.price;
+                let itemTotal = data.item.total;
+
+                // Если пользователь авторизован, применяем скидку
+                if (cartData.isLoggedIn) {
+                    itemPrice = itemPrice * 0.9; // 10% скидка
+                    itemTotal = itemPrice * data.item.quantity;
+                }
+
                 let existingItem = cartData.items.find(i => i.id == productId);
                 if (existingItem) {
                     existingItem.quantity = data.item.quantity;
-                    existingItem.total = data.item.total;
+                    existingItem.price = itemPrice;
+                    existingItem.total = itemTotal;
                 } else {
-                    cartData.items.push(data.item);
+                    const discountedItem = {
+                        ...data.item,
+                        price: itemPrice,
+                        total: itemTotal,
+                        has_discount: cartData.isLoggedIn
+                    };
+                    cartData.items.push(discountedItem);
                 }
+
                 buyButton.innerHTML = '<span>У кошику</span>';
                 buyButton.classList.add('in-cart');
                 buyButton.disabled = true;
                 buyButton.style.opacity = '1';
 
                 updateCartCounterGlobally(data.cart_count);
-                updateCartUI();
+                updateCartUI(); // Обновляем отображение корзины с новыми ценами
             } else {
                 buyButton.innerHTML = originalContent;
                 buyButton.disabled = false;
@@ -401,6 +440,17 @@ function updateCartUI() {
         div.className = 'header_card_product';
         div.dataset.id = item.id;
         div.dataset.price = item.price;
+
+        // Добавляем отображение старой цены если есть скидка
+        const priceHTML = item.has_discount ?
+            `<div class="price-wrapper">
+                <span class="old-price">${(item.price / 0.9 * item.quantity).toFixed(2)} ₴</span>
+                <span class="price discounted">${item.total.toFixed(2)} ₴</span>
+            </div>` :
+            `<div class="price-wrapper">
+                <span class="price">${item.total.toFixed(2)} ₴</span>
+            </div>`;
+
         div.innerHTML = `
             <div class="delete-wrapper">
                 <a href="#" class="delete-btn" onclick="removeFromCart(${item.id}); return false;">
@@ -409,7 +459,7 @@ function updateCartUI() {
             </div>
             <div class="photo-wrapper"><img src="${item.img}" alt="${item.name}"></div>
             <div class="name-wrapper"><p>${item.name}</p></div>
-            <div class="price-wrapper"><span class="price">${item.total.toFixed(2)} ₴</span></div>
+            ${priceHTML}
             <div class="quantity-wrapper">
                 <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', ${item.id})">-</button>
                 <span class="count">${item.quantity}</span>
@@ -418,15 +468,13 @@ function updateCartUI() {
         `;
         cartItems.appendChild(div);
     });
+
     const totalItems = cartData.items.reduce((a, i) => a + i.quantity, 0);
     const totalSum = cartData.items.reduce((a, i) => a + i.total, 0);
+
     document.getElementById('cart-count').textContent = `В кошику: ${totalItems} ${getItemWord(totalItems)}`;
     document.getElementById('cart-total').textContent = `на суму: ${totalSum.toFixed(2)} ₴`;
 }
-
-
-
-
 function showNotification(message, type) {
     document.querySelectorAll('.notification').forEach(n => n.remove());
     const notification = createElement('div', { class: `notification ${type}` });
@@ -675,6 +723,32 @@ function updateGlobalCartCount() {
     updateCartCounterGlobally(totalItems);
     syncCartCountWithServer(totalItems);
 }
+function applyDiscountToCart() {
+    if (cartData.isLoggedIn) {
+        // Применяем скидку 10% ко всем товарам в корзине
+        cartData.items.forEach(item => {
+            if (!item.has_discount) {
+                const originalPrice = item.price / 0.9; // Сохраняем оригинальную цену
+                item.price = originalPrice * 0.9; // Применяем скидку
+                item.total = item.price * item.quantity;
+                item.has_discount = true;
+            }
+        });
+
+        // Пересчитываем общую сумму
+        cartData.totalSum = cartData.items.reduce((sum, item) => sum + item.total, 0);
+
+        // Обновляем UI
+        updateCartUI();
+    }
+}
+
+// Вызываем эту функцию при загрузке страницы
+document.addEventListener('DOMContentLoaded', function () {
+    if (cartData.isLoggedIn) {
+        applyDiscountToCart();
+    }
+});
 function syncCartCountWithServer(totalCount) {
     const params = new URLSearchParams();
     params.append('total_count', totalCount);
