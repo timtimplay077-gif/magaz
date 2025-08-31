@@ -117,7 +117,7 @@ include('data/user_data.php');
     <div class="registration_users block">
         <div class="register_content unselectable">
             <h3>Контактні дані</h3>
-            <form action="registercheck.php">
+            <form action="registercheck.php" method="POST">
                 <div class="register_label">
                     <label for="firstName">* Ім’я</label><br>
                     <input type="text" id="firstName" name="firstName" placeholder="Ім’я"

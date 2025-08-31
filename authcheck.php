@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: login.php");
     exit();
 }
+
 $email = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
 
@@ -17,6 +18,7 @@ if (empty($email) || empty($password)) {
     header("Location: login.php");
     exit();
 }
+
 $stmt = $db_conn->prepare("SELECT * FROM users WHERE email = ?");
 if (!$stmt) {
     $_SESSION['login_error'] = "Помилка сервера. Спробуйте пізніше.";
@@ -28,6 +30,7 @@ $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
+
 if ($result->num_rows === 0) {
     $_SESSION['login_error'] = "Такий e-mail не зареєстрований.";
     header("Location: login.php");
@@ -35,7 +38,9 @@ if ($result->num_rows === 0) {
 }
 
 $user = $result->fetch_assoc();
-if (!password_verify($password, $user['password'])) {
+
+// УБИРАЕМ password_verify() - просто сравниваем пароли
+if ($password !== $user['password']) {
     $_SESSION['login_error'] = "Невірний пароль.";
     header("Location: login.php");
     exit();
