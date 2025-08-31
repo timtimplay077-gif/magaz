@@ -153,7 +153,7 @@ function getItemWord($count)
     <div class="cart-footer">
         <span id="cart-count">В кошику: <?= $total_items ?> <?= getItemWord($total_items) ?></span>
         <?php if ($total_sum_without_discount > $total_sum): ?>
-            <span class="old-price">Без знижки: <?= number_format($total_sum_without_discount, 2) ?> ₴</span>
+ 
         <?php endif; ?>
         <span id="cart-total">на суму: <?= number_format($total_sum, 2) ?> ₴</span>
     </div>
