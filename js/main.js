@@ -267,7 +267,7 @@ function updateCartFooter(totalItems, totalSum) {
     }
 
     if (totalFooter) {
-        totalFooter.textContent = 'на суму: ' + totalSum.toFixed(2) + ' ₴';
+        totalFooter.textContent = '⠀на суму: ' + totalSum.toFixed(2) + ' ₴';
     }
 }
 function getItemWord(count) {
@@ -314,6 +314,12 @@ function removeFromCart(productId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Удаляем элемент из cartData
+                const itemIndex = cartData.items.findIndex(i => i.id == productId);
+                if (itemIndex !== -1) {
+                    cartData.items.splice(itemIndex, 1);
+                }
+
                 item.style.opacity = '0';
                 item.style.transition = 'opacity 0.3s ease';
 
@@ -324,6 +330,9 @@ function removeFromCart(productId) {
                     if (cartItems && document.querySelectorAll('.header_card_product').length === 0) {
                         cartItems.innerHTML = '<p class="empty-cart">Кошик порожній</p>';
                     }
+
+                    // Обновляем глобальный счетчик
+                    updateCartCounterGlobally(cartData.items.reduce((total, item) => total + item.quantity, 0));
                 }, 300);
             } else {
                 if (deleteBtn) {
@@ -341,7 +350,6 @@ function removeFromCart(productId) {
             console.log('Ошибка сети:', error);
         });
 }
-
 document.addEventListener('DOMContentLoaded', function () {
     recalcTotal();
     console.log('Cart initialized');
@@ -463,7 +471,6 @@ function updateCartUI() {
         // Добавляем отображение старой цены если есть скидка
         const priceHTML = item.has_discount && item.original_price ?
             `<div class="price-wrapper">
-                <span class="old-price">${(item.original_price * item.quantity).toFixed(2)} ₴</span>
                 <span class="price discounted">${item.total.toFixed(2)} ₴</span>
             </div>` :
             `<div class="price-wrapper">
@@ -490,18 +497,19 @@ function updateCartUI() {
 
     const totalItems = cartData.items.reduce((a, i) => a + i.quantity, 0);
     const totalSum = cartData.items.reduce((a, i) => a + i.total, 0);
-    const totalSumWithoutDiscount = cartData.items.reduce((a, i) => a + ((i.original_price || i.price) * i.quantity), 0);
+    const totalSumWithoutDiscount = cartData.items.reduce((a, i) =>
+        a + ((i.original_price || i.price) * i.quantity), 0);
 
     document.getElementById('cart-count').textContent = `В кошику: ${totalItems} ${getItemWord(totalItems)}`;
 
     // Обновляем отображение общей суммы с учетом скидки
+    const totalFooter = document.getElementById('cart-total');
     if (totalSumWithoutDiscount > totalSum) {
-        document.getElementById('cart-total').innerHTML = `
-            <span class="old-price">${totalSumWithoutDiscount.toFixed(2)} ₴</span>
+        totalFooter.innerHTML = `
             <span>${totalSum.toFixed(2)} ₴</span>
         `;
     } else {
-        document.getElementById('cart-total').textContent = `на суму: ${totalSum.toFixed(2)} ₴`;
+        totalFooter.textContent = `⠀на суму: ${totalSum.toFixed(2)} ₴`;
     }
 }
 function showNotification(message, type) {
@@ -760,31 +768,25 @@ function applyDiscountToCart() {
 
         // Применяем скидку ко всем товарам в корзине
         cartData.items.forEach(item => {
-            if (!item.has_discount) {
-                const originalPrice = item.price / discountMultiplier; // Сохраняем оригинальную цену
-                item.original_price = originalPrice;
-                item.price = originalPrice * discountMultiplier; // Применяем скидку
-                item.total = item.price * item.quantity;
-                item.has_discount = true;
-                item.discount_percent = discountPercent;
-            }
+            // Всегда пересчитываем цену с учетом скидки
+            const originalPrice = item.price / discountMultiplier;
+            item.original_price = originalPrice;
+            item.price = originalPrice * discountMultiplier;
+            item.total = item.price * item.quantity;
+            item.has_discount = true;
+            item.discount_percent = discountPercent;
         });
 
         // Пересчитываем общую сумму
         cartData.totalSum = cartData.items.reduce((sum, item) => sum + item.total, 0);
-        cartData.totalSumWithoutDiscount = cartData.items.reduce((sum, item) => sum + (item.original_price * item.quantity), 0);
+        cartData.totalSumWithoutDiscount = cartData.items.reduce((sum, item) =>
+            sum + (item.original_price * item.quantity), 0);
 
         // Обновляем UI
         updateCartUI();
     }
-}
 
-// Вызываем эту функцию при загрузке страницы
-document.addEventListener('DOMContentLoaded', function () {
-    if (cartData.isLoggedIn) {
-        applyDiscountToCart();
-    }
-});
+}
 function syncCartCountWithServer(totalCount) {
     const params = new URLSearchParams();
     params.append('total_count', totalCount);
@@ -818,4 +820,12 @@ function updateProductButtons() {
         }
     });
 }
+document.addEventListener('DOMContentLoaded', function () {
+    recalcTotal();
+    console.log('Cart initialized');
 
+    // Применяем скидку при загрузке страницы
+    if (cartData.isLoggedIn && cartData.discountPercent > 0) {
+        applyDiscountToCart();
+    }
+});

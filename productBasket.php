@@ -117,8 +117,7 @@ function getItemWord($count)
                 <div class="header_card_product" data-id="<?= $item['id'] ?>" data-basket-id="<?= $item['basket_id'] ?>"
                     data-price="<?= $item['price'] ?>" data-discount="<?= $item['discount_percent'] ?>">
                     <div class="delete-wrapper">
-                        <a href="#" class="delete-btn"
-                            onclick="removeFromCart(<?= $item['basket_id'] ?>, <?= $item['id'] ?>); return false;">
+                        <a href="#" class="delete-btn" onclick="removeFromCart(<?= $item['id'] ?>); return false;">
                             <img src="img/recycle-bin.png" alt="Видалити">
                         </a>
                     </div>
@@ -130,7 +129,7 @@ function getItemWord($count)
                     </div>
                     <div class="price-wrapper">
                         <?php if (isset($item['has_discount']) && $item['has_discount']): ?>
-                            <span class="old-price"><?= number_format($item['total_without_discount'], 2) ?> ₴</span>
+                    
                         <?php endif; ?>
                         <span class="price <?= (isset($item['has_discount']) && $item['has_discount']) ? 'discounted' : '' ?>">
                             <?= number_format($item['total'], 2) ?> ₴
@@ -153,9 +152,8 @@ function getItemWord($count)
     <div class="cart-footer">
         <span id="cart-count">В кошику: <?= $total_items ?> <?= getItemWord($total_items) ?></span>
         <?php if ($total_sum_without_discount > $total_sum): ?>
- 
         <?php endif; ?>
-        <span id="cart-total">на суму: <?= number_format($total_sum, 2) ?> ₴</span>
+        <span id="cart-total">⠀на суму: <?= number_format($total_sum, 2) ?> ₴</span>
     </div>
     <a href="chekout.php" class="buy-button">Оформити замовлення</a>
 </div>
