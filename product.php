@@ -159,7 +159,6 @@ $db_image_query = $db_conn->query($db_image_sql);
                     <p class="stock_status">В наявності</p>
                 </div>
                 <div class="product_manufacturer">
-
                     <p>Код: <?php print_r($row["productСode"]) ?></p>
                 </div>
                 <?php
@@ -198,6 +197,11 @@ $db_image_query = $db_conn->query($db_image_sql);
                             </div>
                         </div>
                     </div>
+                    <?php if (!empty($row['count']) && $row['count'] > 0): ?>
+                        <div class="product-count-info" style="margin-top: 20px; font-size: 18px; color: #666;">
+                            Упаковка: <?= htmlspecialchars($row['count']) ?> шт.
+                        </div>
+                    <?php endif; ?>
                     <div class="product_row_about_buy">
                         <?php
                         $product_id = $row['id'];

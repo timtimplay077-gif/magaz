@@ -34,8 +34,6 @@ if ($isLoggedIn) {
             $price = $item['price'];
             $modifier = $item['price_modifier'] ?? 0;
             $final_price = $price * (1 + $modifier / 100);
-
-            // Проверяем есть ли скидка у пользователя
             $has_discount = false;
             $original_price = $final_price;
 

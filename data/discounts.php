@@ -2,10 +2,8 @@
 if (!function_exists('calculateFinalPrice')) {
     function calculateFinalPrice($productPrice, $productModifier = 0, $userSale = 0)
     {
-        // 1. Сначала применяем модификатор товара (надбавка/скидка)
         $price = $productPrice * (1 + $productModifier / 100);
 
-        // 2. Затем применяем скидку пользователя
         if ($userSale > 0) {
             $price = $price * (1 - $userSale / 100);
         }

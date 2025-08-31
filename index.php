@@ -30,8 +30,6 @@ if ($isLoggedIn) {
     $user_stmt->close();
 
     $userSale = $user_row['sale'] ?? 0;
-
-    // Если у пользователя нет индивидуальной скидки - даем стандартные 10%
     if ($userSale == 0) {
         $userSale = 10;
     }
@@ -65,8 +63,6 @@ $sort_get_t = "&sort=$sort_get";
 $category_sql = "SELECT * FROM `categories`";
 $category_query = $db_conn->query($category_sql);
 $offset = isset($page_active) ? $page_active * $max_page : 0;
-
-// Текущая страница (начинается с 1 для пользователя)
 $current_page = $page_active + 1;
 
 if ($category_get) {
@@ -86,7 +82,6 @@ if ($sort_get == 'price_asc') {
     $sort_active = " ORDER BY `products`.`price` DESC";
 }
 
-// Получаем общее количество товаров для пагинации
 $count_sql = "SELECT COUNT(*) as total FROM `products` $category_active $search_active";
 $count_result = $db_conn->query($count_sql);
 if ($count_result) {
@@ -96,8 +91,6 @@ if ($count_result) {
     $total_products = 0;
 }
 $total_pages = ceil($total_products / $max_page);
-
-// Защита от выхода за пределы страниц
 if ($total_pages > 0 && $page_active >= $total_pages) {
     $page_active = $total_pages - 1;
     header("Location: index.php?page=$page_active$category_get_t$search_get_t$sort_get_t");
@@ -226,11 +219,7 @@ if (!$tabl->num_rows && $page_active > 0) {
                 <?php
                 $original_price = $row['price'];
                 $modifier = $row['price_modifier'] ?? 0;
-
-                // 1. Сначала применяем модификатор цены товара
                 $base_price = $original_price * (1 + $modifier / 100);
-
-                // 2. Затем применяем скидку пользователя
                 $discount_price = $base_price;
                 $has_discount = false;
 
@@ -277,7 +266,6 @@ if (!$tabl->num_rows && $page_active > 0) {
     <?php if ($tabl->num_rows > 0 && $total_pages > 1): ?>
         <div class="pagination">
             <?php
-            // Показываем кнопку "Назад" если не на первой странице
             if ($current_page > 1): ?>
                 <a href="index.php?page=<?= $page_active - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <i class="fa-solid fa-chevron-left"></i>
@@ -285,18 +273,15 @@ if (!$tabl->num_rows && $page_active > 0) {
             <?php endif; ?>
 
             <?php
-            // Определяем диапазон страниц для отображения
             $start_page = max(1, $current_page - 2);
             $end_page = min($total_pages, $start_page + 4);
             
-            // Корректируем начало если接近 концу
             if ($end_page - $start_page < 4) {
                 $start_page = max(1, $end_page - 4);
             }
             ?>
 
             <?php
-            // Показываем первую страницу если нужно
             if ($start_page > 1): ?>
                 <a href="index.php?page=0<?= $category_get_t . $sort_get_t . $search_get_t ?>">1</a>
                 <?php if ($start_page > 2): ?>
@@ -312,7 +297,6 @@ if (!$tabl->num_rows && $page_active > 0) {
             <?php endfor; ?>
 
             <?php
-            // Показываем последнюю страницу если нужно
             if ($end_page < $total_pages): ?>
                 <?php if ($end_page < $total_pages - 1): ?>
                     <span class="pagination-ellipsis">...</span>
@@ -323,7 +307,6 @@ if (!$tabl->num_rows && $page_active > 0) {
             <?php endif; ?>
 
             <?php
-            // Показываем кнопку "Вперед" если не на последней странице
             if ($current_page < $total_pages): ?>
                 <a href="index.php?page=<?= $page_active + 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <i class="fa-solid fa-chevron-right"></i>

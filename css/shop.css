@@ -425,36 +425,119 @@ a {
     text-decoration: wavy;
     color: black;
 }
-
-.arrow_l1 {
-    border-radius: 100px;
-    background-color: lightgray;
-    width: 40px;
-    height: 40px;
-    display: grid;
+.arrow_l1,
+.arrow_r1 {
+    border-radius: 50px;
+    width: 50px;
+    height: 50px;
+    display: flex;
     align-items: center;
-    justify-items: center;
-    left: 50px;
-    top: 50%;
+    justify-content: center;
     position: absolute;
+    top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.arrow_l1 {
+    left: 20px;
 }
 
 .arrow_r1 {
-    border-radius: 100px;
-    background-color: lightgray;
-    width: 40px;
-    height: 40px;
-    display: grid;
-    align-items: center;
-    justify-items: center;
-    top: 50%;
-    position: absolute;
-    right: 50px;
-    transform: translateY(-50%);
-    cursor: pointer;
+    right: 20px;
+}
 
+.arrow_l1:hover,
+.arrow_r1:hover {
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.arrow_l1:active,
+.arrow_r1:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.arrow_l1 i,
+.arrow_r1 i {
+    font-size: 20px;
+    color: #2c3e50;
+    transition: transform 0.2s ease;
+}
+
+.arrow_l1:hover i,
+.arrow_r1:hover i {
+    color: #e74c3c;
+}
+
+.arrow_l1:hover i {
+    transform: translateX(-2px);
+}
+
+.arrow_r1:hover i {
+    transform: translateX(2px);
+}
+
+.alt-arrow {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+}
+
+.alt-arrow i {
+    color: white;
+}
+
+.alt-arrow:hover {
+    background: linear-gradient(135deg, #5a4fcf, #9088f0);
+}
+
+@media (max-width: 768px) {
+
+    .arrow_l1,
+    .arrow_r1 {
+        width: 40px;
+        height: 40px;
+    }
+
+    .arrow_l1 {
+        left: 10px;
+    }
+
+    .arrow_r1 {
+        right: 10px;
+    }
+
+    .arrow_l1 i,
+    .arrow_r1 i {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .arrow_l1,
+    .arrow_r1 {
+        width: 35px;
+        height: 35px;
+    }
+
+    .arrow_l1 {
+        left: 5px;
+    }
+
+    .arrow_r1 {
+        right: 5px;
+    }
+
+    .arrow_l1 i,
+    .arrow_r1 i {
+        font-size: 14px;
+    }
 }
 
 .slider_product {
@@ -2293,4 +2376,14 @@ quantity-controls {
         height: 30px;
         font-size: 12px;
     }
+}
+
+.product-count-info {
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+    padding: 4px 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    display: inline-block;
 }
