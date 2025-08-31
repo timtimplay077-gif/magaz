@@ -126,13 +126,58 @@ function openLogin() {
 }
 
 function toggleCategories(button) {
-    if (button && button.closest) {
-        const categoriesBlock = button.closest('.categories');
-        if (categoriesBlock) {
-            categoriesBlock.classList.toggle('show');
+    const menu = button.nextElementSibling;
+    const isVisible = menu.classList.contains('show');
+
+    // Закрываем все другие открытые меню
+    document.querySelectorAll('.categories-menu.show').forEach(otherMenu => {
+        if (otherMenu !== menu) {
+            otherMenu.classList.remove('show');
+            otherMenu.previousElementSibling.classList.remove('active');
         }
+    });
+
+    // Переключаем текущее меню
+    menu.classList.toggle('show');
+    button.classList.toggle('active');
+
+    // Закрытие при клике вне меню
+    if (menu.classList.contains('show')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeCategoriesMenu);
+        }, 0);
+    } else {
+        document.removeEventListener('click', closeCategoriesMenu);
     }
 }
+
+function closeCategoriesMenu(event) {
+    const categoriesContainers = document.querySelectorAll('.categories');
+    let isClickInside = false;
+
+    categoriesContainers.forEach(container => {
+        if (container.contains(event.target)) {
+            isClickInside = true;
+        }
+    });
+
+    if (!isClickInside) {
+        document.querySelectorAll('.categories-menu.show').forEach(menu => {
+            menu.classList.remove('show');
+            menu.previousElementSibling.classList.remove('active');
+        });
+        document.removeEventListener('click', closeCategoriesMenu);
+    }
+}
+
+// Закрытие меню при ресайзе
+window.addEventListener('resize', () => {
+    document.querySelectorAll('.categories-menu.show').forEach(menu => {
+        menu.classList.remove('show');
+        menu.previousElementSibling.classList.remove('active');
+    });
+    document.removeEventListener('click', closeCategoriesMenu);
+});
 
 window.addEventListener('click', (event) => {
     if (!event.target.closest('.categories')) {
@@ -827,5 +872,93 @@ document.addEventListener('DOMContentLoaded', function () {
     // Применяем скидку при загрузке страницы
     if (cartData.isLoggedIn && cartData.discountPercent > 0) {
         applyDiscountToCart();
+    }
+});
+// Обработка поля телефона в авторизации
+document.addEventListener('DOMContentLoaded', function () {
+    const loginInput = document.getElementById('login');
+    const phonePrefix = document.querySelector('.phone-prefix');
+
+    if (loginInput) {
+        loginInput.addEventListener('input', function (e) {
+            // Если пользователь начинает вводить цифры, предполагаем что это телефон
+            if (/^\d+$/.test(e.target.value)) {
+                // Автоматически добавляем +380 если его нет
+                if (!e.target.value.startsWith('+380')) {
+                    // Убираем все нецифровые символы
+                    let cleanValue = e.target.value.replace(/\D/g, '');
+
+                    // Если номер начинается с 380, добавляем +
+                    if (cleanValue.startsWith('380')) {
+                        e.target.value = '+' + cleanValue;
+                    }
+                    // Если номер начинается с 80 (старый формат)
+                    else if (cleanValue.startsWith('80')) {
+                        e.target.value = '+3' + cleanValue;
+                    }
+                    // Если номер начинается с 0
+                    else if (cleanValue.startsWith('0')) {
+                        e.target.value = '+38' + cleanValue;
+                    }
+                    // Любые другие цифры
+                    else if (cleanValue.length > 0) {
+                        e.target.value = '+380' + cleanValue;
+                    }
+                }
+            }
+        });
+
+        // Показываем подсказку при фокусе
+        loginInput.addEventListener('focus', function () {
+            if (!this.value.includes('@')) {
+                phonePrefix.style.display = 'block';
+            } else {
+                phonePrefix.style.display = 'none';
+            }
+        });
+
+        loginInput.addEventListener('blur', function () {
+            phonePrefix.style.display = 'none';
+        });
+
+        // Определяем тип ввода при изменении
+        loginInput.addEventListener('change', function () {
+            if (this.value.includes('@')) {
+                phonePrefix.style.display = 'none';
+            } else {
+                phonePrefix.style.display = 'block';
+                // Форматируем телефон
+                if (this.value && !this.value.startsWith('+380') && /^\d+$/.test(this.value)) {
+                    this.value = '+380' + this.value;
+                }
+            }
+        });
+    }
+});
+
+// Валидация формы авторизации
+document.getElementById('authForm')?.addEventListener('submit', function (e) {
+    const loginInput = document.getElementById('login');
+    const passwordInput = document.getElementById('password');
+
+    if (loginInput && passwordInput) {
+        let loginValue = loginInput.value.trim();
+        if (!loginValue.includes('@') && loginValue) {
+            if (!loginValue.startsWith('+380')) {
+                let cleanValue = loginValue.replace(/\D/g, '');
+
+                if (cleanValue.startsWith('380')) {
+                    loginValue = '+' + cleanValue;
+                } else if (cleanValue.startsWith('80')) {
+                    loginValue = '+3' + cleanValue;
+                } else if (cleanValue.startsWith('0')) {
+                    loginValue = '+38' + cleanValue;
+                } else {
+                    loginValue = '+380' + cleanValue;
+                }
+
+                loginInput.value = loginValue;
+            }
+        }
     }
 });

@@ -119,8 +119,11 @@ include('data/user_data.php');
         <div class="form-section">
             <h2>Постійний покупець</h2>
             <form action="authcheck.php" method="POST">
-                <label for="email">* E-Mail адреса</label>
-                <input type="email" id="email" name="email" placeholder="E-Mail адреса" required>
+                <label for="login">* Телефон</label>
+                <div class="phone-input-container">
+                    <span class="phone-prefix1">+380</span>
+                    <input type="text" id="login" name="login" placeholder="XXXXXXXXX" required>
+                </div>
                 <br>
                 <label for="password">* Пароль</label>
                 <input type="password" id="password" name="password" placeholder="Пароль" required>

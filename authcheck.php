@@ -10,36 +10,51 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-$email = trim($_POST['email'] ?? '');
+$login = trim($_POST['login'] ?? '');
 $password = trim($_POST['password'] ?? '');
 
-if (empty($email) || empty($password)) {
+if (empty($login) || empty($password)) {
     $_SESSION['login_error'] = "Будь ласка, заповніть всі поля.";
     header("Location: login.php");
     exit();
 }
 
-$stmt = $db_conn->prepare("SELECT * FROM users WHERE email = ?");
+// Определяем, это email или телефон
+if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+    // Это email
+    $stmt = $db_conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $login);
+} else {
+    // Это телефон - добавляем префикс +380
+    $phone = $login;
+    if (strpos($phone, '+380') === false) {
+        $phone = '+380' . preg_replace('/^38?0?/', '', $phone);
+    }
+    $phone = preg_replace('/[^0-9+]/', '', $phone);
+
+    $stmt = $db_conn->prepare("SELECT * FROM users WHERE phone = ?");
+    $stmt->bind_param("s", $phone);
+}
+
 if (!$stmt) {
     $_SESSION['login_error'] = "Помилка сервера. Спробуйте пізніше.";
     header("Location: login.php");
     exit();
 }
 
-$stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
 if ($result->num_rows === 0) {
-    $_SESSION['login_error'] = "Такий e-mail не зареєстрований.";
+    $_SESSION['login_error'] = "Такий номер телефону не зареєстрований.";
     header("Location: login.php");
     exit();
 }
 
 $user = $result->fetch_assoc();
 
-// УБИРАЕМ password_verify() - просто сравниваем пароли
+// Просто сравниваем пароли
 if ($password !== $user['password']) {
     $_SESSION['login_error'] = "Невірний пароль.";
     header("Location: login.php");
@@ -48,6 +63,7 @@ if ($password !== $user['password']) {
 
 $_SESSION['user_id'] = $user['id'];
 $_SESSION['email'] = $user['email'];
+$_SESSION['phone'] = $user['phone'];
 $_SESSION['firstName'] = $user['firstName'] ?? '';
 $_SESSION['lastName'] = $user['lastName'] ?? '';
 header("Location: index.php");

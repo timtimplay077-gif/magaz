@@ -34,10 +34,37 @@ if (strlen($lastName) < 1 || strlen($lastName) > 32) {
     $errors["lastName"] = true;
 }
 
-if (strlen($phone) < 9 || strlen($phone) > 12) {
+// Исправляем проверку телефона
+$phone = $_POST['phone'];
+
+// Убедимся что телефон начинается с +380
+if (!str_starts_with($phone, '+380')) {
+    // Добавляем +380 если его нет
+    $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+    if (str_starts_with($cleanPhone, '380')) {
+        $phone = '+' . $cleanPhone;
+    } else {
+        $phone = '+380' . $cleanPhone;
+    }
+}
+
+// Проверяем длину (+380 = 4 символа + 9 цифр = 13 символов)
+if (strlen($phone) !== 13 || !preg_match('/^\+380\d{9}$/', $phone)) {
     $errors["phone"] = true;
 }
 
+// Также проверяем уникальность телефона
+$db_sql_phone = "SELECT * FROM users WHERE phone = ?";
+$stmt = $db_conn->prepare($db_sql_phone);
+$stmt->bind_param("s", $phone);
+$stmt->execute();
+$result = $stmt->get_result();
+$phone_row = $result->fetch_assoc();
+$stmt->close();
+
+if ($phone_row) {
+    $errors["phone"] = true;
+}
 if (count($errors)) {
     $_SESSION["errors"] = $errors;
     header("Location: registration.php");

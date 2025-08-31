@@ -3,10 +3,13 @@
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Авторизація</h2>
-        <form action="authcheck.php" method="POST">
-            <div class="email">
-                <label for="email">* E-mail</label>
-                <input type="email" id="email" name="email" placeholder="E-mail" required>
+        <form action="authcheck.php" method="POST" id="authForm">
+            <div class="input-group">
+                <label for="login">* Телефон</label>
+                <div class="phone-input-container">
+                    <span class="phone-prefix">+380</span>
+                    <input type="text" id="login" name="login" placeholder="XXXXXXXXX" required>
+                </div>
             </div>
             <div class="password">
                 <label for="password">* Пароль</label>

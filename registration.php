@@ -150,12 +150,15 @@ include('data/user_data.php');
                     ?><br><br>
 
                     <label for="phone">* Телефон</label><br>
-                    <input type="tel" id="phone" name="phone" placeholder="Телефон"
-                        value="<?= isset($_SESSION['get']['phone']) ? $_SESSION['get']['phone'] : '' ?>">
+                    <div class="phone-input-container">
+                        <span class="phone-prefix">+380</span>
+                        <input type="tel" id="phone" name="phone" placeholder="XXXXXXXXX"
+                            value="<?= isset($_SESSION['get']['phone']) ? $_SESSION['get']['phone'] : '' ?>">
+                    </div>
                     <?php
                     if (isset($_SESSION["errors"]['phone'])) {
                         ?>
-                        <p class="incorect_pass">Номер телефону має містити від 3 до 32 символів</p>
+                        <p class="incorect_pass">Номер телефону має містити 9 цифр після +380</p>
                     <?php }
                     ?>
                     <br><br>
