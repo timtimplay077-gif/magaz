@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('data/discounts.php');
 include('productBasket.php');
 if (isset($_SESSION['logout_success'])) {
     $logout_message = $_SESSION['logout_success'];
@@ -55,15 +56,6 @@ function dd($data): void
 }
 $db_image_sql = "SELECT * FROM `productimages` WHERE `product_Id` = $id";
 $db_image_query = $db_conn->query($db_image_sql);
-if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
-    // Обновляем скидку на 10%
-    $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
-    $update_stmt = $db_conn->prepare($update_sql);
-    $update_stmt->bind_param("i", $user_id);
-    $update_stmt->execute();
-    $update_stmt->close();
-    $user_row['sale'] = 10;
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">

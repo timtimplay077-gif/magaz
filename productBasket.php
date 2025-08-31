@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('data/discounts.php');
 $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
 $user_row = [];
 if ($isLoggedIn) {
@@ -11,14 +12,6 @@ if ($isLoggedIn) {
     $user_stmt->execute();
     $user_result = $user_stmt->get_result();
     $user_row = $user_result->fetch_assoc();
-    if ($user_row && $user_row['sale'] != 10) {
-        $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
-        $update_stmt = $db_conn->prepare($update_sql);
-        $update_stmt->bind_param("i", $user_id);
-        $update_stmt->execute();
-        $update_stmt->close();
-        $user_row['sale'] = 10;
-    }
 
     $user_stmt->close();
 }

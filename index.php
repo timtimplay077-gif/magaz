@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('data/discounts.php');
 include('productBasket.php');
 if (isset($_SESSION['logout_success'])) {
     $logout_message = $_SESSION['logout_success'];
@@ -16,6 +17,8 @@ include('data/baner.php');
 include('data/baner2.php');
 include('data/category.php');
 $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
+$userSale = 0;
+
 if ($isLoggedIn) {
     $user_id = $_SESSION['user_id'];
     $user_sql = "SELECT * FROM users WHERE id = ?";
@@ -25,6 +28,13 @@ if ($isLoggedIn) {
     $user_result = $user_stmt->get_result();
     $user_row = $user_result->fetch_assoc();
     $user_stmt->close();
+
+    $userSale = $user_row['sale'] ?? 0;
+
+    // Если у пользователя нет индивидуальной скидки - даем стандартные 10%
+    if ($userSale == 0) {
+        $userSale = 10;
+    }
 }
 $cart_count = 0;
 if ($isLoggedIn) {
@@ -41,7 +51,7 @@ if ($isLoggedIn) {
 } elseif (isset($_SESSION['cart'])) {
     $cart_count = array_sum($_SESSION['cart']);
 }
-$max_page = 75;
+$max_page = 70;
 $search_get = $_GET['search'] ?? '';
 $search_get_t = "&search=$search_get";
 $search_active = '';
@@ -55,6 +65,9 @@ $sort_get_t = "&sort=$sort_get";
 $category_sql = "SELECT * FROM `categories`";
 $category_query = $db_conn->query($category_sql);
 $offset = isset($page_active) ? $page_active * $max_page : 0;
+
+// Текущая страница (начинается с 1 для пользователя)
+$current_page = $page_active + 1;
 
 if ($category_get) {
     $category_active = " WHERE category=$category_get";
@@ -73,21 +86,30 @@ if ($sort_get == 'price_asc') {
     $sort_active = " ORDER BY `products`.`price` DESC";
 }
 
+// Получаем общее количество товаров для пагинации
+$count_sql = "SELECT COUNT(*) as total FROM `products` $category_active $search_active";
+$count_result = $db_conn->query($count_sql);
+if ($count_result) {
+    $total_data = $count_result->fetch_assoc();
+    $total_products = $total_data['total'];
+} else {
+    $total_products = 0;
+}
+$total_pages = ceil($total_products / $max_page);
+
+// Защита от выхода за пределы страниц
+if ($total_pages > 0 && $page_active >= $total_pages) {
+    $page_active = $total_pages - 1;
+    header("Location: index.php?page=$page_active$category_get_t$search_get_t$sort_get_t");
+    exit;
+}
+
 $db_sql = "SELECT * FROM `products` $category_active $search_active $sort_active LIMIT $max_page OFFSET $offset";
 $tabl = $db_conn->query($db_sql);
 if (!$tabl->num_rows && $page_active > 0) {
     $next_page_t = $page_active - 1;
     header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
     exit;
-}
-if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
-    // Обновляем скидку на 10%
-    $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
-    $update_stmt = $db_conn->prepare($update_sql);
-    $update_stmt->bind_param("i", $user_id);
-    $update_stmt->execute();
-    $update_stmt->close();
-    $user_row['sale'] = 10;
 }
 ?>
 
@@ -205,18 +227,19 @@ if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
                 $original_price = $row['price'];
                 $modifier = $row['price_modifier'] ?? 0;
 
-                // Применяем модификатор цены
+                // 1. Сначала применяем модификатор цены товара
                 $base_price = $original_price * (1 + $modifier / 100);
 
-                // Применяем скидку пользователя
+                // 2. Затем применяем скидку пользователя
                 $discount_price = $base_price;
                 $has_discount = false;
 
-                if ($isLoggedIn && !empty($user_row['sale'])) {
-                    $discount_price = $base_price * (1 - $user_row['sale'] / 100);
+                if ($isLoggedIn && $userSale > 0) {
+                    $discount_price = $base_price * (1 - $userSale / 100);
                     $has_discount = true;
                 }
                 ?>
+
                 <div class="product">
                     <a href="product.php?id=<?= $row['id'] ?>" class="product_link">
                         <img class="mini_img" src="<?= $row['img'] ?>" alt="<?= htmlspecialchars($row['name']) ?>">
@@ -230,13 +253,15 @@ if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
                             <span class="new-price <?= $has_discount ? 'discounted' : '' ?>">
                                 <?= number_format($discount_price, 2) ?>₴
                             </span>
+                            <?php if ($has_discount && $userSale > 0): ?>
+                                <small style="color: green; font-size: 12px;">Ваша скидка: <?= $userSale ?>%</small>
+                            <?php endif; ?>
                         </div>
                         <?php
                         $product_id = $row['id'];
                         $isInCart = in_array($product_id, array_column($basket_items, 'id'));
                         ?>
-                        <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>"
-                            onclick="addToCart(<?= $product_id ?>, event)">
+                        <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>" onclick="addToCart(<?= $product_id ?>, event)">
                             <?= $isInCart ? 'У кошику' : 'Купити' ?>
                         </button>
                     </div>
@@ -249,20 +274,58 @@ if ($isLoggedIn && $user_row && $user_row['sale'] != 10) {
         <?php endif; ?>
     </div>
 
-    <?php if ($tabl->num_rows > 0): ?>
+    <?php if ($tabl->num_rows > 0 && $total_pages > 1): ?>
         <div class="pagination">
             <?php
-            $prev_page = $page_active > 0 ? $page_active - 1 : null;
-            $next_page = $tabl->num_rows >= $max_page ? $page_active + 1 : null;
-            ?>
-            <?php if ($prev_page !== null): ?>
-                <a href="index.php?page=<?= $prev_page ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+            // Показываем кнопку "Назад" если не на первой странице
+            if ($current_page > 1): ?>
+                <a href="index.php?page=<?= $page_active - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <i class="fa-solid fa-chevron-left"></i>
                 </a>
             <?php endif; ?>
 
-            <?php if ($next_page !== null): ?>
-                <a href="index.php?page=<?= $next_page ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+            <?php
+            // Определяем диапазон страниц для отображения
+            $start_page = max(1, $current_page - 2);
+            $end_page = min($total_pages, $start_page + 4);
+            
+            // Корректируем начало если接近 концу
+            if ($end_page - $start_page < 4) {
+                $start_page = max(1, $end_page - 4);
+            }
+            ?>
+
+            <?php
+            // Показываем первую страницу если нужно
+            if ($start_page > 1): ?>
+                <a href="index.php?page=0<?= $category_get_t . $sort_get_t . $search_get_t ?>">1</a>
+                <?php if ($start_page > 2): ?>
+                    <span class="pagination-ellipsis">...</span>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                <a href="index.php?page=<?= $i - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>" 
+                   class="<?= $i == $current_page ? 'active' : '' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+            <?php
+            // Показываем последнюю страницу если нужно
+            if ($end_page < $total_pages): ?>
+                <?php if ($end_page < $total_pages - 1): ?>
+                    <span class="pagination-ellipsis">...</span>
+                <?php endif; ?>
+                <a href="index.php?page=<?= $total_pages - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+                    <?= $total_pages ?>
+                </a>
+            <?php endif; ?>
+
+            <?php
+            // Показываем кнопку "Вперед" если не на последней странице
+            if ($current_page < $total_pages): ?>
+                <a href="index.php?page=<?= $page_active + 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <i class="fa-solid fa-chevron-right"></i>
                 </a>
             <?php endif; ?>

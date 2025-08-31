@@ -1,6 +1,7 @@
 <?php
 include('data/session_start.php');
 include('data/database.php');
+include('data/discounts.php');
 
 if (!isset($_SESSION['user_id'])) {
     die("Ви не авторизовані");
@@ -31,14 +32,6 @@ if (empty($firstName) || empty($lastName) || empty($email) || empty($phone) || e
 $user_sale = $user_row['sale'] ?? 0;
 
 
-if ($isLoggedIn && $user_sale != 10) {
-    $update_sql = "UPDATE users SET sale = 10 WHERE id = ?";
-    $update_stmt = $db_conn->prepare($update_sql);
-    $update_stmt->bind_param("i", $user_id);
-    $update_stmt->execute();
-    $update_stmt->close();
-    $user_sale = 10;
-}
 $basket_sql = "SELECT b.product_id, b.count, p.name, p.price, p.price_modifier, p.productСode AS productCode
                FROM basket b 
                JOIN products p ON b.product_id = p.id 
