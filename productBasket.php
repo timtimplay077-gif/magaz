@@ -19,8 +19,11 @@ if ($isLoggedIn) {
 $basket_items = [];
 $total_items = 0;
 $total_sum = 0;
+$total_sum_without_discount = 0; // Добавим переменную для суммы без скидки
+
 if ($isLoggedIn) {
-    $basket_sql = "SELECT b.*, p.*, b.count as basket_count 
+    $basket_sql = "SELECT b.id as basket_id, b.user_id, b.product_id, b.count as basket_count, 
+                          p.id as product_id, p.name, p.img, p.price, p.price_modifier
                    FROM basket b 
                    JOIN products p ON b.product_id = p.id 
                    WHERE b.user_id = ?";
@@ -37,6 +40,9 @@ if ($isLoggedIn) {
             $has_discount = false;
             $original_price = $final_price;
 
+            // Сохраняем оригинальную цену без скидки
+            $price_without_discount = $final_price;
+
             if (isset($user_row['sale']) && $user_row['sale'] > 0) {
                 $final_price = $final_price * (1 - $user_row['sale'] / 100);
                 $has_discount = true;
@@ -44,55 +50,35 @@ if ($isLoggedIn) {
 
             $quantity = $item['basket_count'];
             $item_total = $final_price * $quantity;
+            $item_total_without_discount = $price_without_discount * $quantity; // Сумма без скидки
 
             $basket_items[] = [
-                'id' => $item['id'],
+                'id' => $item['product_id'],
+                'basket_id' => $item['basket_id'],
                 'name' => $item['name'],
                 'img' => $item['img'],
                 'price' => $final_price,
-                'original_price' => $original_price, // Цена без скидки пользователя
+                'original_price' => $original_price,
+                'price_without_discount' => $price_without_discount, // Сохраняем цену без скидки
                 'quantity' => $quantity,
                 'total' => $item_total,
-                'has_discount' => $has_discount // Добавляем флаг скидки
+                'total_without_discount' => $item_total_without_discount, // Сохраняем сумму без скидки
+                'has_discount' => $has_discount,
+                'discount_percent' => isset($user_row['sale']) ? $user_row['sale'] : 0 // Сохраняем процент скидки
             ];
 
             $total_items += $quantity;
             $total_sum += $item_total;
+            $total_sum_without_discount += $item_total_without_discount; // Добавляем к общей сумме без скидки
         }
     }
+}
 
-    // ... для неавторизованных пользователей ...
-
-} elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-    $product_ids = array_keys($_SESSION['cart']);
-    if (!empty($product_ids)) {
-        $in = implode(',', array_map('intval', $product_ids));
-        $products_sql = "SELECT * FROM products WHERE id IN ($in)";
-        $products_query = $db_conn->query($products_sql);
-
-        if ($products_query && $products_query->num_rows > 0) {
-            while ($product = $products_query->fetch_assoc()) {
-                $quantity = $_SESSION['cart'][$product['id']];
-                $modifier = $product['price_modifier'] ?? 0;
-                $final_price = $product['price'] * (1 + $modifier / 100);
-                $item_total = $final_price * $quantity;
-
-                $basket_items[] = [
-                    'id' => $product['id'],
-                    'name' => $product['name'],
-                    'img' => $product['img'],
-                    'price' => $final_price,
-                    'original_price' => $final_price, // Для неавторизованных цены одинаковые
-                    'quantity' => $quantity,
-                    'total' => $item_total,
-                    'has_discount' => false // У неавторизованных нет скидки
-                ];
-
-                $total_items += $quantity;
-                $total_sum += $item_total;
-            }
-        }
-    }
+// Сохраняем информацию о скидке в сессии, чтобы она сохранялась после обновления страницы
+if ($isLoggedIn && isset($user_row['sale'])) {
+    $_SESSION['user_discount'] = $user_row['sale'];
+} elseif (!$isLoggedIn) {
+    unset($_SESSION['user_discount']);
 }
 
 function getItemWord($count)
@@ -128,9 +114,11 @@ function getItemWord($count)
     <div id="cart-items">
         <?php if (!empty($basket_items)): ?>
             <?php foreach ($basket_items as $item): ?>
-                <div class="header_card_product" data-id="<?= $item['id'] ?>" data-price="<?= $item['price'] ?>">
+                <div class="header_card_product" data-id="<?= $item['id'] ?>" data-basket-id="<?= $item['basket_id'] ?>"
+                    data-price="<?= $item['price'] ?>" data-discount="<?= $item['discount_percent'] ?>">
                     <div class="delete-wrapper">
-                        <a href="#" class="delete-btn" onclick="removeFromCart(<?= $item['id'] ?>); return false;">
+                        <a href="#" class="delete-btn"
+                            onclick="removeFromCart(<?= $item['basket_id'] ?>, <?= $item['id'] ?>); return false;">
                             <img src="img/recycle-bin.png" alt="Видалити">
                         </a>
                     </div>
@@ -142,16 +130,18 @@ function getItemWord($count)
                     </div>
                     <div class="price-wrapper">
                         <?php if (isset($item['has_discount']) && $item['has_discount']): ?>
-                            <span class="old-price"><?= number_format($item['original_price'] * $item['quantity'], 2) ?> ₴</span>
+                            <span class="old-price"><?= number_format($item['total_without_discount'], 2) ?> ₴</span>
                         <?php endif; ?>
                         <span class="price <?= (isset($item['has_discount']) && $item['has_discount']) ? 'discounted' : '' ?>">
                             <?= number_format($item['total'], 2) ?> ₴
                         </span>
                     </div>
                     <div class="quantity-wrapper">
-                        <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', <?= $item['id'] ?>)">-</button>
+                        <button class="qty-btn minus"
+                            onclick="changeQuantity(this, 'decrease', <?= $item['id'] ?>, <?= $item['discount_percent'] ?>)">-</button>
                         <span class="count"><?= $item['quantity'] ?></span>
-                        <button class="qty-btn plus" onclick="changeQuantity(this, 'increase', <?= $item['id'] ?>)">+</button>
+                        <button class="qty-btn plus"
+                            onclick="changeQuantity(this, 'increase', <?= $item['id'] ?>, <?= $item['discount_percent'] ?>)">+</button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -162,6 +152,9 @@ function getItemWord($count)
 
     <div class="cart-footer">
         <span id="cart-count">В кошику: <?= $total_items ?> <?= getItemWord($total_items) ?></span>
+        <?php if ($total_sum_without_discount > $total_sum): ?>
+            <span class="old-price">Без знижки: <?= number_format($total_sum_without_discount, 2) ?> ₴</span>
+        <?php endif; ?>
         <span id="cart-total">на суму: <?= number_format($total_sum, 2) ?> ₴</span>
     </div>
     <a href="chekout.php" class="buy-button">Оформити замовлення</a>
@@ -172,6 +165,15 @@ function getItemWord($count)
         items: <?= json_encode($basket_items) ?>,
         totalItems: <?= $total_items ?>,
         totalSum: <?= $total_sum ?>,
-        isLoggedIn: <?= $isLoggedIn ? 'true' : 'false' ?>
+        totalSumWithoutDiscount: <?= $total_sum_without_discount ?>,
+        isLoggedIn: <?= $isLoggedIn ? 'true' : 'false' ?>,
+        discountPercent: <?= isset($_SESSION['user_discount']) ? $_SESSION['user_discount'] : 0 ?>
     };
+
+    function applyDiscount(price, discountPercent) {
+        if (discountPercent > 0) {
+            return price * (1 - discountPercent / 100);
+        }
+        return price;
+    }
 </script>

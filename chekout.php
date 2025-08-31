@@ -48,20 +48,50 @@ $user_id = $_SESSION['user_id'];
 $user_sql = "SELECT * FROM users WHERE id = '$user_id'";
 $user_result = $db_conn->query($user_sql);
 $user_row = $user_result->fetch_assoc();
+
+// Получаем товары из корзины (используем тот же подход, что и в productBasket.php)
 $basket_items = [];
-$basket_sql = "SELECT b.*, p.* FROM basket b 
+$total = 0;
+$total_items = 0;
+
+$basket_sql = "SELECT b.*, p.*, b.count as basket_count 
+               FROM basket b 
                JOIN products p ON b.product_id = p.id 
                WHERE b.user_id = '$user_id'";
 $basket_query = $db_conn->query($basket_sql);
 
 if ($basket_query && $basket_query->num_rows > 0) {
-    while ($basket_row = $basket_query->fetch_assoc()) {
-        $basket_items[$basket_row['product_id']] = [
-            'count' => $basket_row['count'],
-            'productCode' => $basket_row['productCode'] ?? ''
+    while ($item = $basket_query->fetch_assoc()) {
+        $price = $item['price'];
+        $modifier = $item['price_modifier'] ?? 0;
+        $final_price = $price * (1 + $modifier / 100);
+        $has_discount = false;
+        $original_price = $final_price;
+        if (isset($user_row['sale']) && $user_row['sale'] > 0) {
+            $final_price = $final_price * (1 - $user_row['sale'] / 100);
+            $has_discount = true;
+        }
+
+        $quantity = $item['basket_count'];
+        $item_total = $final_price * $quantity;
+
+        $basket_items[] = [
+            'id' => $item['product_id'],
+            'name' => $item['name'],
+            'img' => $item['img'],
+            'price' => $final_price,
+            'original_price' => $original_price,
+            'quantity' => $quantity,
+            'total' => $item_total,
+            'has_discount' => $has_discount,
+            'productCode' => $item['productCode'] ?? ''
         ];
+
+        $total_items += $quantity;
+        $total += $item_total;
     }
 }
+
 if (empty($basket_items)) {
     header('Location: index.php?message=Кошик порожній');
     exit;
@@ -183,47 +213,34 @@ if (empty($basket_items)) {
             </div>
             <div class="your_oder">
                 <?php
-                $total = 0;
-                $total_items = 0;
-                foreach ($basket_items as $product_id => $item_data) {
-                    $product_sql = "SELECT * FROM products WHERE id = '$product_id'";
-                    $product_result = $db_conn->query($product_sql);
-
-                    if ($product_result && $product_result->num_rows > 0) {
-                        $product = $product_result->fetch_assoc();
-                        $original_price = $product['price'];
-                        $final_price = $original_price;
-                        if (!empty($product['price_modifier'])) {
-                            $final_price *= (1 + $product['price_modifier'] / 100);
-                        }
-                        if (!empty($user_row['sale']) && $user_row['sale'] > 0) {
-                            $final_price *= (1 - $user_row['sale'] / 100);
-                        }
-                        $quantity = $item_data['count'];
-                        $item_total = $final_price * $quantity;
-                        $total += $item_total;
-                        $total_items += $quantity;
-                        ?>
-                        <div class="oder_item">
-                            <a href="product.php?id=<?= $product['id'] ?>">
-                                <img src="<?= $product['img'] ?>" alt="<?= $product['name'] ?>">
-                                <p class="order_name"><?= $product['name'] ?></p>
-                                <p class="order_code">Код: <?= $item_data['productCode'] ?></p>
-                                <p class="order_quantity">Кількість: <?= $quantity ?> шт.</p>
-                                <p class="order_price"><?= number_format($final_price, 2) ?> ₴ ×
-                                    <?= $quantity ?> = <?= number_format($item_total, 2) ?> ₴
-                                </p>
-                            </a>
-                        </div>
-                        <?php
-                    }
-                }
+                foreach ($basket_items as $item):
+                    ?>
+                    <div class="oder_item">
+                        <a href="product.php?id=<?= $item['id'] ?>">
+                            <img src="<?= $item['img'] ?>" alt="<?= $item['name'] ?>">
+                            <p class="order_name"><?= $item['name'] ?></p>
+                            <p class="order_code">Код: <?= $item['productCode'] ?></p>
+                            <p class="order_quantity">Кількість: <?= $item['quantity'] ?> шт.</p>
+                            <p class="order_price">
+                                <?php if ($item['has_discount']): ?>
+                                    <span style="text-decoration: line-through; color: #999;">
+                                        <?= number_format($item['original_price'] * $item['quantity'], 2) ?> ₴
+                                    </span><br>
+                                <?php endif; ?>
+                                <?= number_format($item['price'], 2) ?> ₴ ×
+                                <?= $item['quantity'] ?> = <?= number_format($item['total'], 2) ?> ₴
+                            </p>
+                        </a>
+                    </div>
+                    <?php
+                endforeach;
                 ?>
             </div>
             <p class="oder_total">Загальна сума: <b><?= number_format($total, 2) ?> ₴</b></p>
             <h3 class="oder_total">Ваше замовлення (<?= $total_items ?> товарів)</h3>
-
             <div class="order_ready">
+                <input type="hidden" name="total_amount" value="<?= $total ?>">
+                <input type="hidden" name="total_items" value="<?= $total_items ?>">
                 <button type="submit" class="order_ready_button">Оформлення замовлення</button>
             </div>
         </form>
