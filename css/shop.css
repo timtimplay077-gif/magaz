@@ -2197,7 +2197,8 @@ quantity-controls {
 }
 
 .product .new-price {
-    font-size: 16px;
+    font-size: 22px;
+    font-weight: 700;
 }
 
 .product .new-price.discounted {
