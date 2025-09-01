@@ -2525,7 +2525,7 @@ quantity-controls {
 
 #login {
     padding-left: 70px;
-    width: 100%;
+    width: 260px;
     height: 40px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
@@ -2551,11 +2551,6 @@ quantity-controls {
         left: 10px;
         padding: 8px 10px;
         font-size: 14px;
-        height: 38px;
-    }
-
-    #login {
-        padding-left: 60px;
         height: 38px;
     }
 
@@ -2598,10 +2593,10 @@ quantity-controls {
 /* Адаптивность */
 @media (max-width: 768px) {
     .phone-prefix {
-        left: 10px;
         padding: 8px 10px;
         font-size: 14px;
         height: 38px;
+        left: revert-layer;
     }
 
     #phone {
@@ -2610,4 +2605,3 @@ quantity-controls {
         font-size: 14px;
     }
 }
-

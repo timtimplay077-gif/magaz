@@ -516,12 +516,6 @@
     }
 }
 
-@media screen and (max-width: 1100px) {
-    .container .form-section input {
-        width: 500px;
-
-    }
-}
 
 @media screen and (max-width: 700px) {
     .container .form-section {
@@ -856,13 +850,26 @@
         padding: 5px;
     }
 }
+
 @media screen and (max-width: 350px) {
     .icons_head i {
         padding: 3px;
     }
 }
+
 @media screen and (max-width: 345px) {
     .icons_head i {
         padding: 1px;
+    }
+}
+
+@media screen and (max-width: 840px) {
+    .categories-menu {
+        max-height: 400px;
+    }
+}
+@media screen and (max-width: 500px) {
+    .categories-menu {
+        max-height: 300px;
     }
 }
