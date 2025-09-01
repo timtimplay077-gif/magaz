@@ -45,15 +45,12 @@ if (!empty($user_sale)) {
     $orderInfo .= "🎫 Ваша скидка: $user_sale%\n\n";
 }
 while ($item = $result->fetch_assoc()) {
-    // Рассчитываем итоговую цену со всеми скидками
     $price = $item['price'];
 
-    // Применяем модификатор цены товара (если есть)
     if (!empty($item['price_modifier'])) {
         $price *= (1 + $item['price_modifier'] / 100);
     }
 
-    // Применяем скидку пользователя (если есть)
     if (!empty($user_sale)) {
         $price *= (1 - $user_sale / 100);
     }
@@ -76,7 +73,6 @@ $orderInfo .= "👤 Клієнт: \n";
 $orderInfo .= "• Ім'я: $firstName\n• Прізвище: $lastName\n• Email: $email\n• Телефон: $phone\n\n";
 $orderInfo .= "📍 Адреса: \n• Місто: $city\n• Регіон: $region\n• Адреса: $address\n\n";
 
-// Добавляем информацию о скидках
 if (!empty($user_sale)) {
     $orderInfo .= "🎫 Скидка пользователя: $user_sale%\n\n";
 }
@@ -87,7 +83,6 @@ foreach ($basket_items as $item) {
     $item_total = $item['final_price'] * $item['count'];
     $product_code = $item['productCode'] ?? 'н/д';
 
-    // Добавляем информацию о скидках товара
     $discount_info = "";
     if (!empty($item['price_modifier'])) {
         $modifier_type = $item['price_modifier'] > 0 ? "надбавка" : "скидка";
@@ -109,7 +104,6 @@ function sendTelegram($message)
 }
 
 if (sendTelegram($orderInfo)) {
-    // Сохраняем данные в сессии для send_email.php (с учетом скидок)
     $_SESSION['order_data'] = [
         'firstName' => $firstName,
         'lastName' => $lastName,
@@ -122,15 +116,12 @@ if (sendTelegram($orderInfo)) {
         'total_amount' => $total_amount,
         'user_sale' => $user_sale
     ];
-
-    // Очищаем корзину
     $clear_sql = "DELETE FROM basket WHERE user_id = ?";
     $stmt = $db_conn->prepare($clear_sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $stmt->close();
 
-    // Перенаправляем на отправку email
     header("Location: send_email.php");
     exit;
 } else {

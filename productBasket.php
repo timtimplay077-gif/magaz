@@ -19,7 +19,7 @@ if ($isLoggedIn) {
 $basket_items = [];
 $total_items = 0;
 $total_sum = 0;
-$total_sum_without_discount = 0; // Добавим переменную для суммы без скидки
+$total_sum_without_discount = 0;
 
 if ($isLoggedIn) {
     $basket_sql = "SELECT b.id as basket_id, b.user_id, b.product_id, b.count as basket_count, 
@@ -39,8 +39,6 @@ if ($isLoggedIn) {
             $final_price = $price * (1 + $modifier / 100);
             $has_discount = false;
             $original_price = $final_price;
-
-            // Сохраняем оригинальную цену без скидки
             $price_without_discount = $final_price;
 
             if (isset($user_row['sale']) && $user_row['sale'] > 0) {
@@ -50,7 +48,7 @@ if ($isLoggedIn) {
 
             $quantity = $item['basket_count'];
             $item_total = $final_price * $quantity;
-            $item_total_without_discount = $price_without_discount * $quantity; // Сумма без скидки
+            $item_total_without_discount = $price_without_discount * $quantity; 
 
             $basket_items[] = [
                 'id' => $item['product_id'],
@@ -59,22 +57,20 @@ if ($isLoggedIn) {
                 'img' => $item['img'],
                 'price' => $final_price,
                 'original_price' => $original_price,
-                'price_without_discount' => $price_without_discount, // Сохраняем цену без скидки
+                'price_without_discount' => $price_without_discount,
                 'quantity' => $quantity,
                 'total' => $item_total,
-                'total_without_discount' => $item_total_without_discount, // Сохраняем сумму без скидки
+                'total_without_discount' => $item_total_without_discount, 
                 'has_discount' => $has_discount,
-                'discount_percent' => isset($user_row['sale']) ? $user_row['sale'] : 0 // Сохраняем процент скидки
+                'discount_percent' => isset($user_row['sale']) ? $user_row['sale'] : 0 
             ];
 
             $total_items += $quantity;
             $total_sum += $item_total;
-            $total_sum_without_discount += $item_total_without_discount; // Добавляем к общей сумме без скидки
+            $total_sum_without_discount += $item_total_without_discount;
         }
     }
 }
-
-// Сохраняем информацию о скидке в сессии, чтобы она сохранялась после обновления страницы
 if ($isLoggedIn && isset($user_row['sale'])) {
     $_SESSION['user_discount'] = $user_row['sale'];
 } elseif (!$isLoggedIn) {

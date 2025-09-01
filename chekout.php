@@ -49,7 +49,6 @@ $user_sql = "SELECT * FROM users WHERE id = '$user_id'";
 $user_result = $db_conn->query($user_sql);
 $user_row = $user_result->fetch_assoc();
 
-// Получаем товары из корзины (используем тот же подход, что и в productBasket.php)
 $basket_items = [];
 $total = 0;
 $total_items = 0;

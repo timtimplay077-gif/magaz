@@ -25,10 +25,8 @@ $basket_items = $order_data['basket_items'] ?? [];
 $total_amount = $order_data['total_amount'] ?? 0;
 $user_sale = $order_data['user_sale'] ?? 0;
 
-// Возвращаем хостинговую почту
 $toEmail = 'admin@kanskrop.com'; // получатель - хостинговая почта
 
-// Проверяем обязательные поля
 if (empty($firstName) || empty($lastName) || empty($email) || empty($phone)) {
     die("Заполните обязательные поля: имя, фамилия, email, телефон");
 }
@@ -38,7 +36,6 @@ if ($message === false) {
     die("Не удалось загрузить шаблон письма");
 }
 
-// Заменяем плейсхолдеры
 $message = str_replace('{{first_name}}', htmlspecialchars($firstName), $message);
 $message = str_replace('{{last_name}}', htmlspecialchars($lastName), $message);
 $message = str_replace('{{email}}', htmlspecialchars($email), $message);
@@ -49,7 +46,6 @@ $message = str_replace('{{city}}', htmlspecialchars($city), $message);
 $message = str_replace('{{region}}', htmlspecialchars($region), $message);
 $message = str_replace('{{address}}', htmlspecialchars($adres), $message);
 
-// Добавляем информацию о товарах в стиле шаблона
 $products_html = '
 <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f4f6f8;padding:20px 0;font-family:Arial, sans-serif;">
   <tr>
@@ -58,8 +54,6 @@ $products_html = '
         <tr>
           <td style="padding:20px 24px;border-bottom:1px solid #eef0f2;">
             <h2 style="margin:0;font-size:20px;color:#0f1724;">Деталі замовлення</h2>';
-
-// Добавляем информацию о скидках
 if (!empty($user_sale)) {
     $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні (зі знижкою '.$user_sale.'%)</p>';
 } else {
@@ -90,7 +84,6 @@ if (!empty($basket_items)) {
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;font-weight:bold;color:#0b66ff;">' . htmlspecialchars($product_code) . '</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;">' . htmlspecialchars($item['name']);
         
-        // Добавляем информацию о скидках товара
         if (!empty($item['price_modifier'])) {
             $modifier_type = $item['price_modifier'] > 0 ? "надбавка" : "знижка";
             $products_html .= '<br><small style="color:#667085;">(' . $modifier_type . ': ' . abs($item['price_modifier']) . '%)</small>';
@@ -126,11 +119,8 @@ $products_html .= '
     </td>
   </tr>
 </table>';
-
-// Добавляем товары после основной информации (в конец письма)
 $message = str_replace('</body>', $products_html . '</body>', $message);
 
-// создаём CSV совместимый с Excel с кодом продукта (уже со скидками)
 $data = [
     ["Код товара", "Наименование товара", "Количество", "Цена за шт. (со скидкой)", "Итого"],
 ];
@@ -149,7 +139,6 @@ foreach ($basket_items as $item) {
 }
 $data[] = ["", "", "", "Общая сумма:", $total_amount];
 
-// Создаем папку cards если не существует
 if (!file_exists('cards')) {
     mkdir('cards', 0777, true);
 }
@@ -157,11 +146,9 @@ if (!file_exists('cards')) {
 $f_name = "cards/card" . time() . ".csv";
 $fp = fopen($f_name, "w");
 
-// Добавляем BOM для правильного отображения кириллицы в Excel
 fwrite($fp, "\xEF\xBB\xBF");
 
 foreach ($data as $value) {
-    // Используем точку с запятой как разделитель
     fputcsv($fp, $value, ';');
 }
 fclose($fp);
@@ -169,7 +156,6 @@ fclose($fp);
 try {
     $mail = new PHPMailer(true);
     
-    // Возвращаем настройки для хостинговой почты
     $mail->isSMTP();
     $mail->Host = 'smtp.hostinger.com';
     $mail->SMTPAuth = true;
@@ -189,24 +175,19 @@ try {
     $mail->Subject = 'Новый заказ от ' . $firstName . ' ' . $lastName;
     $mail->Body = $message;
     $mail->AltBody = strip_tags($message);
-
-    // прикрепляем файл
     if (file_exists($f_name)) {
         $mail->addAttachment($f_name, 'заказ_' . date('Y-m-d') . '.csv');
     }
 
     if ($mail->send()) {
         echo 'Письмо успешно отправлено!';
-        // Очищаем данные заказа из сессии
         unset($_SESSION['order_data']);
-        // Перенаправляем на страницу благодарности
         header("Location: thank_order.php");
         exit;
     } else {
         echo "Ошибка при отправке письма";
     }
     
-    // Удаляем временный файл
     if (file_exists($f_name)) {
         unlink($f_name);
     }
@@ -214,7 +195,6 @@ try {
 } catch (Exception $e) {
     echo "Ошибка: {$mail->ErrorInfo}";
     
-    // Удаляем временный файл даже при ошибке
     if (file_exists($f_name)) {
         unlink($f_name);
     }

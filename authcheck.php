@@ -19,13 +19,10 @@ if (empty($login) || empty($password)) {
     exit();
 }
 
-// Определяем, это email или телефон
 if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-    // Это email
     $stmt = $db_conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $login);
 } else {
-    // Это телефон - добавляем префикс +380
     $phone = $login;
     if (strpos($phone, '+380') === false) {
         $phone = '+380' . preg_replace('/^38?0?/', '', $phone);
@@ -53,8 +50,6 @@ if ($result->num_rows === 0) {
 }
 
 $user = $result->fetch_assoc();
-
-// Просто сравниваем пароли
 if ($password !== $user['password']) {
     $_SESSION['login_error'] = "Невірний пароль.";
     header("Location: login.php");

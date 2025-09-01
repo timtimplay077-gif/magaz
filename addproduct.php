@@ -1,4 +1,5 @@
 <?php
+//ЭТОТ ФАЙЛ НЕ РАБОТАЕТ ЕСЛИ ЧТО
 session_start();
 include('data/baner.php');
 include('data/baner2.php');
