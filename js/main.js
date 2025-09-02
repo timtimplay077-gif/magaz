@@ -108,19 +108,26 @@ function openLogin() {
 function toggleCategories(button) {
     const menu = button.nextElementSibling;
     const isVisible = menu.classList.contains('show');
+
+    // Закрываем все другие открытые меню
     document.querySelectorAll('.categories-menu.show').forEach(otherMenu => {
         if (otherMenu !== menu) {
             otherMenu.classList.remove('show');
             otherMenu.previousElementSibling.classList.remove('active');
         }
     });
+
+    // Переключаем текущее меню
     menu.classList.toggle('show');
     button.classList.toggle('active');
+
     if (menu.classList.contains('show')) {
+        // Добавляем обработчик для закрытия при клике вне меню
         setTimeout(() => {
             document.addEventListener('click', closeCategoriesMenu);
         }, 0);
     } else {
+        // Убираем обработчик если меню закрыто
         document.removeEventListener('click', closeCategoriesMenu);
     }
 }
@@ -143,6 +150,7 @@ function closeCategoriesMenu(event) {
         document.removeEventListener('click', closeCategoriesMenu);
     }
 }
+
 window.addEventListener('resize', () => {
     document.querySelectorAll('.categories-menu.show').forEach(menu => {
         menu.classList.remove('show');
@@ -361,16 +369,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function openCartModal() {
     const modal = document.getElementById('cartModal');
-    const overlay = document.getElementById('overlay');
-    modal.classList.add('show');
-    overlay.classList.add('show');
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    overlay.className = 'overlay';
+    overlay.onclick = closeCartModal;
+    document.body.appendChild(overlay);
+
+    modal.style.display = 'block';
+    setTimeout(() => {
+        overlay.classList.add('show');
+        modal.classList.add('show');
+    }, 10);
 }
 
 function closeCartModal() {
     const modal = document.getElementById('cartModal');
     const overlay = document.getElementById('overlay');
-    modal.classList.remove('show');
-    overlay.classList.remove('show');
+
+    if (overlay) {
+        overlay.classList.remove('show');
+        modal.classList.remove('show');
+
+        setTimeout(() => {
+            if (overlay && overlay.parentElement) {
+                overlay.parentElement.removeChild(overlay);
+            }
+            modal.style.display = 'none';
+        }, 300);
+    }
 }
 document.getElementById('overlay').addEventListener('click', closeCartModal);
 document.addEventListener('keydown', function (event) {

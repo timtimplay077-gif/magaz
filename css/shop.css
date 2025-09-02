@@ -1570,12 +1570,13 @@ a {
     max-height: 600px;
     overflow-y: auto;
     z-index: 999;
-    display: none;
     opacity: 0;
     transform: translateY(-15px);
     transition: all 0.3s ease;
     border: 1px solid #e5e7eb;
     scrollbar-width: thin;
+    /* Убираем display: none */
+    visibility: hidden;
 }
 
 .categories-menu::-webkit-scrollbar {
@@ -1597,9 +1598,9 @@ a {
 }
 
 .categories-menu.show {
-    display: block;
     opacity: 1;
     transform: translateY(0);
+    visibility: visible;
 }
 
 .category_link {
