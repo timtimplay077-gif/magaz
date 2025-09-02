@@ -2353,11 +2353,7 @@ quantity-controls {
     }
 }
 
-@media (max-width: 768px) {
-    .product .new-price {
-        font-size: 18px;
-    }
-}
+
 
 .product .price_buy .price-container {
     margin-bottom: 8px;
@@ -2595,7 +2591,6 @@ quantity-controls {
     box-sizing: border-box;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .phone-prefix {
         padding: 8px 10px;
@@ -2642,4 +2637,10 @@ select#region:focus {
     border-color: #007bff;
     box-shadow: 0 0 6px #22c55e;
     outline: none;
+}
+
+@media (max-width: 768px) {
+    .product .new-price {
+        font-size: 18px;
+    }
 }
