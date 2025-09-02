@@ -202,10 +202,43 @@ if (empty($basket_items)) {
                             <input type="text" id="city" name="city" placeholder="Місто" required>
                             <br><br>
                             <label for="region">* Регіон / Область</label><br>
-                            <input type="text" id="region" name="region" placeholder="Регіон / Область" required>
+                            <select id="region" name="region" required>
+                                <option value="" disabled selected>Оберіть область</option>
+                                <option value="Вінницька область">Вінницька область</option>
+                                <option value="Волинська область">Волинська область</option>
+                                <option value="Дніпропетровська область">Дніпропетровська область</option>
+                                <option value="Донецька область">Донецька область</option>
+                                <option value="Житомирська область">Житомирська область</option>
+                                <option value="Закарпатська область">Закарпатська область</option>
+                                <option value="Запорізька область">Запорізька область</option>
+                                <option value="Івано-Франківська область">Івано-Франківська область</option>
+                                <option value="Київська область">Київська область</option>
+                                <option value="Кіровоградська область">Кіровоградська область</option>
+                                <option value="Луганська область">Луганська область</option>
+                                <option value="Львівська область">Львівська область</option>
+                                <option value="Миколаївська область">Миколаївська область</option>
+                                <option value="Одеська область">Одеська область</option>
+                                <option value="Полтавська область">Полтавська область</option>
+                                <option value="Рівненська область">Рівненська область</option>
+                                <option value="Сумська область">Сумська область</option>
+                                <option value="Тернопільська область">Тернопільська область</option>
+                                <option value="Харківська область">Харківська область</option>
+                                <option value="Херсонська область">Херсонська область</option>
+                                <option value="Хмельницька область">Хмельницька область</option>
+                                <option value="Черкаська область">Черкаська область</option>
+                                <option value="Чернівецька область">Чернівецька область</option>
+                                <option value="Чернігівська область">Чернігівська область</option>
+                                <option value="м. Київ">м. Київ</option>
+                                <option value="м. Севастополь">м. Севастополь</option>
+                                <option value="Автономна Республіка Крим">Автономна Республіка Крим</option>
+                            </select>
+
                             <br><br>
                             <label for="address">* Адреса</label><br>
                             <input type="text" id="address" name="address" placeholder="Адреса" required>
+                            <br><br>
+                            <label for="nova_poshta">* Номер відділення Нової Пошти (необов'язково)</label><br>
+                            <input type="text" id="nova_poshta" name="nova_poshta" placeholder="Наприклад: №12">
                         </div>
                     </div>
                 </div>

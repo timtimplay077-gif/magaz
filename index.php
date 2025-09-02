@@ -186,7 +186,7 @@ function getCategoryName($category_id)
                 <img src="categoty/school-material.png" alt="Канцелярские товары">
                 <div class="categories">
                     <button class="categories-button" onclick="toggleCategories(this)">
-                        Категорії<?php echo $category_get ? ': ' . htmlspecialchars(getCategoryName($category_get)) : ''; ?>
+                        <p class="category-p">Категорії</p><?php echo $category_get ? ': ' . htmlspecialchars(getCategoryName($category_get)) : ''; ?>
                     </button>
                     <div class="categories-menu">
                         <?php

@@ -15,6 +15,7 @@ $phone = trim($_POST['phone'] ?? '');
 $city = trim($_POST['city'] ?? '');
 $region = trim($_POST['region'] ?? '');
 $address = trim($_POST['address'] ?? '');
+$nova_poshta = trim($_POST['nova_poshta'] ?? '');
 $basket_items = [];
 $total_amount = 0;
 $total_items = 0;
@@ -67,17 +68,16 @@ $stmt->close();
 if (empty($basket_items)) {
     die("Кошик порожній");
 }
-
 $orderInfo = "🛒 Нове замовлення \n\n";
 $orderInfo .= "👤 Клієнт: \n";
 $orderInfo .= "• Ім'я: $firstName\n• Прізвище: $lastName\n• Email: $email\n• Телефон: $phone\n\n";
-$orderInfo .= "📍 Адреса: \n• Місто: $city\n• Регіон: $region\n• Адреса: $address\n\n";
+$orderInfo .= "📍 Адреса: \n• Місто: $city\n• Регіон: $region\n• Адреса: $address\n";
 
-if (!empty($user_sale)) {
-    $orderInfo .= "🎫 Скидка пользователя: $user_sale%\n\n";
+if (!empty($nova_poshta)) {
+    $orderInfo .= "• Нова Пошта: $nova_poshta\n";
 }
 
-$orderInfo .= "📦 Замовлення: \n";
+$orderInfo .= "\n";
 
 foreach ($basket_items as $item) {
     $item_total = $item['final_price'] * $item['count'];
@@ -112,6 +112,7 @@ if (sendTelegram($orderInfo)) {
         'city' => $city,
         'region' => $region,
         'adres' => $address,
+        'nova_poshta' => $nova_poshta,
         'basket_items' => $basket_items,
         'total_amount' => $total_amount,
         'user_sale' => $user_sale

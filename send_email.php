@@ -10,7 +10,7 @@ require 'PHPMailer/src/SMTP.php';
 
 // Получаем данные из сессии
 if (!isset($_SESSION['order_data'])) {
-    die("Данные заказа не найдены. Вернитесь к оформлению заказа.");
+  die("Данные заказа не найдены. Вернитесь к оформлению заказа.");
 }
 
 $order_data = $_SESSION['order_data'];
@@ -21,19 +21,20 @@ $phone = $order_data['phone'] ?? '';
 $city = $order_data['city'] ?? '';
 $region = $order_data['region'] ?? '';
 $adres = $order_data['adres'] ?? '';
+$nova_poshta = $order_data['nova_poshta'] ?? '';
 $basket_items = $order_data['basket_items'] ?? [];
 $total_amount = $order_data['total_amount'] ?? 0;
 $user_sale = $order_data['user_sale'] ?? 0;
 
-$toEmail = 'admin@kanskrop.com'; // получатель - хостинговая почта
+$toEmail = 'admin@kanskrop.com';
 
 if (empty($firstName) || empty($lastName) || empty($email) || empty($phone)) {
-    die("Заполните обязательные поля: имя, фамилия, email, телефон");
+  die("Заполните обязательные поля: имя, фамилия, email, телефон");
 }
 
 $message = file_get_contents("mail/rekvisit.php");
 if ($message === false) {
-    die("Не удалось загрузить шаблон письма");
+  die("Не удалось загрузить шаблон письма");
 }
 
 $message = str_replace('{{first_name}}', htmlspecialchars($firstName), $message);
@@ -45,6 +46,7 @@ $message = str_replace('{{phone_raw}}', htmlspecialchars(preg_replace('/[^0-9+]/
 $message = str_replace('{{city}}', htmlspecialchars($city), $message);
 $message = str_replace('{{region}}', htmlspecialchars($region), $message);
 $message = str_replace('{{address}}', htmlspecialchars($adres), $message);
+$message = str_replace('{{nova_poshta}}', !empty($nova_poshta) ? 'Нова Пошта: ' . htmlspecialchars($nova_poshta) : '', $message);
 
 $products_html = '
 <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f4f6f8;padding:20px 0;font-family:Arial, sans-serif;">
@@ -55,9 +57,9 @@ $products_html = '
           <td style="padding:20px 24px;border-bottom:1px solid #eef0f2;">
             <h2 style="margin:0;font-size:20px;color:#0f1724;">Деталі замовлення</h2>';
 if (!empty($user_sale)) {
-    $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні (зі знижкою '.$user_sale.'%)</p>';
+  $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні (зі знижкою ' . $user_sale . '%)</p>';
 } else {
-    $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні</p>';
+  $products_html .= '<p style="margin:6px 0 0;font-size:13px;color:#667085;">Інформація про товари у замовленні</p>';
 }
 
 $products_html .= '
@@ -75,28 +77,28 @@ $products_html .= '
               </tr>';
 
 if (!empty($basket_items)) {
-    foreach ($basket_items as $item) {
-        $item_total = $item['final_price'] * $item['count'];
-        $product_code = $item['productCode'] ?? 'н/д';
-        
-        $products_html .= '
+  foreach ($basket_items as $item) {
+    $item_total = $item['final_price'] * $item['count'];
+    $product_code = $item['productCode'] ?? 'н/д';
+
+    $products_html .= '
               <tr>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;font-weight:bold;color:#0b66ff;">' . htmlspecialchars($product_code) . '</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;">' . htmlspecialchars($item['name']);
-        
-        if (!empty($item['price_modifier'])) {
-            $modifier_type = $item['price_modifier'] > 0 ? "надбавка" : "знижка";
-            $products_html .= '<br><small style="color:#667085;">(' . $modifier_type . ': ' . abs($item['price_modifier']) . '%)</small>';
-        }
-        
-        $products_html .= '</td>
+
+    if (!empty($item['price_modifier'])) {
+      $modifier_type = $item['price_modifier'] > 0 ? "надбавка" : "знижка";
+      $products_html .= '<br><small style="color:#667085;">(' . $modifier_type . ': ' . abs($item['price_modifier']) . '%)</small>';
+    }
+
+    $products_html .= '</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:center;">' . $item['count'] . ' шт.</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;">' . number_format($item['final_price'], 2) . ' ₴</td>
                 <td style="padding:12px;border-bottom:1px solid #eef0f2;text-align:right;font-weight:bold;">' . number_format($item_total, 2) . ' ₴</td>
               </tr>';
-    }
+  }
 } else {
-    $products_html .= '
+  $products_html .= '
               <tr>
                 <td colspan="5" style="padding:12px;text-align:center;color:#667085;">Немає даних про товари</td>
               </tr>';
@@ -122,25 +124,27 @@ $products_html .= '
 $message = str_replace('</body>', $products_html . '</body>', $message);
 
 $data = [
-    ["Код товара", "Наименование товара", "Количество", "Цена за шт. (со скидкой)", "Итого"],
+  ["Код товара", "Наименование товара", "Количество", "Цена за шт. (со скидкой)", "Итого", "Адрес доставки", "Новая Почта"],
 ];
 
 foreach ($basket_items as $item) {
-    $item_total = $item['final_price'] * $item['count'];
-    $product_code = $item['productCode'] ?? 'н/д';
-    
-    $data[] = [
-        $product_code,
-        $item['name'],
-        $item['count'],
-        $item['final_price'],
-        $item_total
-    ];
+  $item_total = $item['final_price'] * $item['count'];
+  $product_code = $item['productCode'] ?? 'н/д';
+
+  $data[] = [
+    $product_code,
+    $item['name'],
+    $item['count'],
+    $item['final_price'],
+    $item_total,
+    "$city, $region, $address",
+    $nova_poshta
+  ];
 }
-$data[] = ["", "", "", "Общая сумма:", $total_amount];
+$data[] = ["", "", "", "Общая сумма:", $total_amount, "", ""];
 
 if (!file_exists('cards')) {
-    mkdir('cards', 0777, true);
+  mkdir('cards', 0777, true);
 }
 
 $f_name = "cards/card" . time() . ".csv";
@@ -149,54 +153,54 @@ $fp = fopen($f_name, "w");
 fwrite($fp, "\xEF\xBB\xBF");
 
 foreach ($data as $value) {
-    fputcsv($fp, $value, ';');
+  fputcsv($fp, $value, ';');
 }
 fclose($fp);
 
 try {
-    $mail = new PHPMailer(true);
-    
-    $mail->isSMTP();
-    $mail->Host = 'smtp.hostinger.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'admin@kanskrop.com';
-    $mail->Password = 'Adminkanskrop2025!';
-    $mail->SMTPSecure = 'ssl';
-    $mail->Port = 465;
+  $mail = new PHPMailer(true);
 
-    $mail->setFrom('admin@kanskrop.com', 'Kanskrop Shop');
-    $mail->addAddress($toEmail, 'Admin');
-    $mail->addReplyTo($email, $firstName . ' ' . $lastName);
+  $mail->isSMTP();
+  $mail->Host = 'smtp.hostinger.com';
+  $mail->SMTPAuth = true;
+  $mail->Username = 'admin@kanskrop.com';
+  $mail->Password = 'Adminkanskrop2025!';
+  $mail->SMTPSecure = 'ssl';
+  $mail->Port = 465;
 
-    $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'base64';
-    $mail->isHTML(true);
+  $mail->setFrom('admin@kanskrop.com', 'Kanskrop Shop');
+  $mail->addAddress($toEmail, 'Admin');
+  $mail->addReplyTo($email, $firstName . ' ' . $lastName);
 
-    $mail->Subject = 'Новый заказ от ' . $firstName . ' ' . $lastName;
-    $mail->Body = $message;
-    $mail->AltBody = strip_tags($message);
-    if (file_exists($f_name)) {
-        $mail->addAttachment($f_name, 'заказ_' . date('Y-m-d') . '.csv');
-    }
+  $mail->CharSet = 'UTF-8';
+  $mail->Encoding = 'base64';
+  $mail->isHTML(true);
 
-    if ($mail->send()) {
-        echo 'Письмо успешно отправлено!';
-        unset($_SESSION['order_data']);
-        header("Location: thank_order.php");
-        exit;
-    } else {
-        echo "Ошибка при отправке письма";
-    }
-    
-    if (file_exists($f_name)) {
-        unlink($f_name);
-    }
-    
+  $mail->Subject = 'Новый заказ от ' . $firstName . ' ' . $lastName;
+  $mail->Body = $message;
+  $mail->AltBody = strip_tags($message);
+  if (file_exists($f_name)) {
+    $mail->addAttachment($f_name, 'заказ_' . date('Y-m-d') . '.csv');
+  }
+
+  if ($mail->send()) {
+    echo 'Письмо успешно отправлено!';
+    unset($_SESSION['order_data']);
+    header("Location: thank_order.php");
+    exit;
+  } else {
+    echo "Ошибка при отправке письма";
+  }
+
+  if (file_exists($f_name)) {
+    unlink($f_name);
+  }
+
 } catch (Exception $e) {
-    echo "Ошибка: {$mail->ErrorInfo}";
-    
-    if (file_exists($f_name)) {
-        unlink($f_name);
-    }
+  echo "Ошибка: {$mail->ErrorInfo}";
+
+  if (file_exists($f_name)) {
+    unlink($f_name);
+  }
 }
 ?>

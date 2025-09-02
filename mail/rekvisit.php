@@ -51,9 +51,15 @@
                 </td>
               </tr>
               <tr>
-                <td style="padding:10px 0;">
+                <td style="padding:10px 0;border-bottom:1px dashed #eef0f2;">
                   <strong style="display:block;color:#0b1220;">Адреса</strong>
                   <span style="color:#334155;">{{address}}</span>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;">
+                  <strong style="display:block;color:#0b1220;">Відділення Нової Пошти</strong>
+                  <span style="color:#334155;">{{nova_poshta}}</span>
                 </td>
               </tr>
             </table>

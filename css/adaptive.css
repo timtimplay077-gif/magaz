@@ -862,10 +862,19 @@
         padding: 1px;
     }
 }
-
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 1400px) {
     .categories-menu {
-        max-height: 400px;
+        max-height: 550px;
+    }
+}
+@media screen and (max-width: 1200px) {
+    .categories-menu {
+        max-height: 500px;
+    }
+}
+@media screen and (max-width: 1000px) {
+    .categories-menu {
+        max-height: 450px;
     }
 }
 @media screen and (max-width: 500px) {
