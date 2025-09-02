@@ -27,8 +27,8 @@ $user_result = $user_stmt->get_result();
 $user_row = $user_result->fetch_assoc();
 $user_sale = $user_row['sale'] ?? 0;
 $user_stmt->close();
-if (empty($firstName) || empty($lastName) || empty($email) || empty($phone) || empty($address)) {
-    die("Заповніть обов'язкові поля: ім'я, прізвище, email, телефон, адреса");
+if (empty($firstName) || empty($lastName) || empty($email) || empty($phone)) {
+    die("Заповніть обов'язкові поля: ім'я, прізвище, email, телефон");
 }
 $user_sale = $user_row['sale'] ?? 0;
 

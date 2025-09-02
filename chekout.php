@@ -234,8 +234,8 @@ if (empty($basket_items)) {
                             </select>
 
                             <br><br>
-                            <label for="address">* Адреса</label><br>
-                            <input type="text" id="address" name="address" placeholder="Адреса" required>
+                            <label for="address">* Адреса (необов'язково)</label><br>
+                            <input type="text" id="address" name="address" placeholder="Адреса">
                             <br><br>
                             <label for="nova_poshta">* Номер відділення Нової Пошти (необов'язково)</label><br>
                             <input type="text" id="nova_poshta" name="nova_poshta" placeholder="Наприклад: №12">
