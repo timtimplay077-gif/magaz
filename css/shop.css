@@ -2353,6 +2353,12 @@ quantity-controls {
     }
 }
 
+@media (max-width: 768px) {
+    .product .new-price {
+        font-size: 18px;
+    }
+}
+
 .product .price_buy .price-container {
     margin-bottom: 8px;
 }
