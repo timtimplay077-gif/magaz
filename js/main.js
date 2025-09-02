@@ -48,26 +48,6 @@ function set_mimiImg(src) {
     }
 }
 
-function openCart() {
-    const cartModal = document.getElementById('cartModal');
-    const overlay = document.getElementById('overlay');
-
-    if (cartModal && overlay) {
-        cartModal.classList.add('show');
-        overlay.classList.add('show');
-    }
-}
-
-function closeCart() {
-    const cartModal = document.getElementById('cartModal');
-    const overlay = document.getElementById('overlay');
-
-    if (cartModal && overlay) {
-        cartModal.classList.remove('show');
-        overlay.classList.remove('show');
-    }
-}
-
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         closeCart();
@@ -128,20 +108,14 @@ function openLogin() {
 function toggleCategories(button) {
     const menu = button.nextElementSibling;
     const isVisible = menu.classList.contains('show');
-
-    // Закрываем все другие открытые меню
     document.querySelectorAll('.categories-menu.show').forEach(otherMenu => {
         if (otherMenu !== menu) {
             otherMenu.classList.remove('show');
             otherMenu.previousElementSibling.classList.remove('active');
         }
     });
-
-    // Переключаем текущее меню
     menu.classList.toggle('show');
     button.classList.toggle('active');
-
-    // Закрытие при клике вне меню
     if (menu.classList.contains('show')) {
         setTimeout(() => {
             document.addEventListener('click', closeCategoriesMenu);
@@ -169,8 +143,6 @@ function closeCategoriesMenu(event) {
         document.removeEventListener('click', closeCategoriesMenu);
     }
 }
-
-// Закрытие меню при ресайзе
 window.addEventListener('resize', () => {
     document.querySelectorAll('.categories-menu.show').forEach(menu => {
         menu.classList.remove('show');
@@ -232,8 +204,6 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     const countEl = item.querySelector('.count');
     const priceElement = item.querySelector('.price');
     const oldPriceElement = item.querySelector('.old-price');
-
-    // Получаем базовую цену без скидки
     const basePrice = parseFloat(item.dataset.basePrice) || parseFloat(item.dataset.price) / ((100 - discountPercent) / 100);
     let pricePerUnit = parseFloat(item.dataset.price) || 0;
 
@@ -248,26 +218,18 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     }
 
     countEl.textContent = count;
-
-    // Пересчитываем цену с учетом скидки
     if (discountPercent > 0) {
         const discountMultiplier = (100 - discountPercent) / 100;
         pricePerUnit = basePrice * discountMultiplier;
     }
 
     const totalPrice = pricePerUnit * count;
-
-    // Обновляем цены
     if (priceElement) {
         priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
     }
-
-    // Обновляем старую цену если есть скидка
     if (oldPriceElement && discountPercent > 0) {
         oldPriceElement.textContent = (basePrice * count).toFixed(2) + ' ₴';
     }
-
-    // Находим элемент в cartData и обновляем его
     const cartItem = cartData.items.find(i => i.id == productId);
     if (cartItem) {
         cartItem.quantity = count;
@@ -359,7 +321,6 @@ function removeFromCart(productId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Удаляем элемент из cartData
                 const itemIndex = cartData.items.findIndex(i => i.id == productId);
                 if (itemIndex !== -1) {
                     cartData.items.splice(itemIndex, 1);
@@ -375,8 +336,6 @@ function removeFromCart(productId) {
                     if (cartItems && document.querySelectorAll('.header_card_product').length === 0) {
                         cartItems.innerHTML = '<p class="empty-cart">Кошик порожній</p>';
                     }
-
-                    // Обновляем глобальный счетчик
                     updateCartCounterGlobally(cartData.items.reduce((total, item) => total + item.quantity, 0));
                 }, 300);
             } else {
@@ -441,14 +400,9 @@ function addToCart(productId, event) {
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                // Получаем процент скидки из cartData
                 const discountPercent = cartData.discountPercent || 0;
-
-                // Применяем скидку к цене
                 let itemPrice = data.item.price;
                 let itemTotal = data.item.total;
-
-                // Если есть скидка, применяем её
                 if (discountPercent > 0) {
                     const discountMultiplier = (100 - discountPercent) / 100;
                     itemPrice = itemPrice * discountMultiplier;
@@ -512,8 +466,6 @@ function updateCartUI() {
         div.dataset.id = item.id;
         div.dataset.price = item.price;
         div.dataset.discount = item.discount_percent || 0;
-
-        // Добавляем отображение старой цены если есть скидка
         const priceHTML = item.has_discount && item.original_price ?
             `<div class="price-wrapper">
                 <span class="price discounted">${item.total.toFixed(2)} ₴</span>
@@ -546,8 +498,6 @@ function updateCartUI() {
         a + ((i.original_price || i.price) * i.quantity), 0);
 
     document.getElementById('cart-count').textContent = `В кошику: ${totalItems} ${getItemWord(totalItems)}`;
-
-    // Обновляем отображение общей суммы с учетом скидки
     const totalFooter = document.getElementById('cart-total');
     if (totalSumWithoutDiscount > totalSum) {
         totalFooter.innerHTML = `
@@ -810,10 +760,7 @@ function applyDiscountToCart() {
 
     if (discountPercent > 0) {
         const discountMultiplier = (100 - discountPercent) / 100;
-
-        // Применяем скидку ко всем товарам в корзине
         cartData.items.forEach(item => {
-            // Всегда пересчитываем цену с учетом скидки
             const originalPrice = item.price / discountMultiplier;
             item.original_price = originalPrice;
             item.price = originalPrice * discountMultiplier;
@@ -821,13 +768,9 @@ function applyDiscountToCart() {
             item.has_discount = true;
             item.discount_percent = discountPercent;
         });
-
-        // Пересчитываем общую сумму
         cartData.totalSum = cartData.items.reduce((sum, item) => sum + item.total, 0);
         cartData.totalSumWithoutDiscount = cartData.items.reduce((sum, item) =>
             sum + (item.original_price * item.quantity), 0);
-
-        // Обновляем UI
         updateCartUI();
     }
 
@@ -868,47 +811,34 @@ function updateProductButtons() {
 document.addEventListener('DOMContentLoaded', function () {
     recalcTotal();
     console.log('Cart initialized');
-
-    // Применяем скидку при загрузке страницы
     if (cartData.isLoggedIn && cartData.discountPercent > 0) {
         applyDiscountToCart();
     }
 });
-// Обработка поля телефона в авторизации
 document.addEventListener('DOMContentLoaded', function () {
     const loginInput = document.getElementById('login');
     const phonePrefix = document.querySelector('.phone-prefix');
 
     if (loginInput) {
         loginInput.addEventListener('input', function (e) {
-            // Если пользователь начинает вводить цифры, предполагаем что это телефон
             if (/^\d+$/.test(e.target.value)) {
-                // Автоматически добавляем +380 если его нет
                 if (!e.target.value.startsWith('+380')) {
-                    // Убираем все нецифровые символы
                     let cleanValue = e.target.value.replace(/\D/g, '');
-
-                    // Если номер начинается с 380, добавляем +
                     if (cleanValue.startsWith('380')) {
                         e.target.value = '+' + cleanValue;
                     }
-                    // Если номер начинается с 80 (старый формат)
                     else if (cleanValue.startsWith('80')) {
                         e.target.value = '+3' + cleanValue;
                     }
-                    // Если номер начинается с 0
                     else if (cleanValue.startsWith('0')) {
                         e.target.value = '+38' + cleanValue;
                     }
-                    // Любые другие цифры
                     else if (cleanValue.length > 0) {
                         e.target.value = '+380' + cleanValue;
                     }
                 }
             }
         });
-
-        // Показываем подсказку при фокусе
         loginInput.addEventListener('focus', function () {
             if (!this.value.includes('@')) {
                 phonePrefix.style.display = 'block';
@@ -920,14 +850,11 @@ document.addEventListener('DOMContentLoaded', function () {
         loginInput.addEventListener('blur', function () {
             phonePrefix.style.display = 'none';
         });
-
-        // Определяем тип ввода при изменении
         loginInput.addEventListener('change', function () {
             if (this.value.includes('@')) {
                 phonePrefix.style.display = 'none';
             } else {
                 phonePrefix.style.display = 'block';
-                // Форматируем телефон
                 if (this.value && !this.value.startsWith('+380') && /^\d+$/.test(this.value)) {
                     this.value = '+380' + this.value;
                 }
@@ -935,8 +862,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-
-// Валидация формы авторизации
 document.getElementById('authForm')?.addEventListener('submit', function (e) {
     const loginInput = document.getElementById('login');
     const passwordInput = document.getElementById('password');
