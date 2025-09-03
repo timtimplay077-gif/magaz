@@ -135,9 +135,11 @@ function getCategoryName($category_id)
     <script src="./slick/slick.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://kit.fontawesome.com/ee9963f31c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/adaptive.css?">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <title>Інтернет-Магазин КанцКроп</title>
 </head>
 
@@ -186,7 +188,8 @@ function getCategoryName($category_id)
                 <img src="categoty/school-material.png" alt="Канцелярские товары">
                 <div class="categories">
                     <button class="categories-button" onclick="toggleCategories(this)">
-                        <p class="category-p">Категорії</p><?php echo $category_get ? ': ' . htmlspecialchars(getCategoryName($category_get)) : ''; ?>
+                        <p class="category-p">Категорії</p>
+                        <?php echo $category_get ? ': ' . htmlspecialchars(getCategoryName($category_get)) : ''; ?>
                     </button>
                     <div class="categories-menu">
                         <?php

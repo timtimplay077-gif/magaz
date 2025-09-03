@@ -71,6 +71,11 @@ $db_image_query = $db_conn->query($db_image_sql);
         rel="stylesheet">
     <script src="https://kit.fontawesome.com/ee9963f31c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/adaptive.css?">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <title><?php print_r($row["name"]) ?></title>
 </head>
 
@@ -138,20 +143,28 @@ $db_image_query = $db_conn->query($db_image_sql);
                         <i class="fa-solid fa-chevron-right"></i>
                     </div>
                 <?php } ?>
-                <img class="slider_product" src="<?php print_r($row['img']); ?>" alt="">
-                <div class="product_photo_slider"> <?php
-                $images = "";
-                for ($i = 0; $i < $db_image_query->num_rows; $i++) {
-                    $db_image_row = $db_image_query->fetch_assoc();
-                    $images .= "'" . $db_image_row["img"] . "',";
-                    $img = $db_image_row["img"];
-                    ?>
-                        <img onclick="set_mimiImg('<?= $i ?>')" src="<?php print_r($img) ?>" alt="">
-                    <?php } ?>
-                </div>
+
+                <img class="slider_product" src="<?php print_r($row['img']); ?>" alt="<?php print_r($row["name"]) ?>">
+
+                <?php if ($db_image_query->num_rows > 0) { ?>
+                    <div class="product_photo_slider">
+                        <?php
+                        $images = "";
+                        $db_image_query->data_seek(0); // Сброс указателя
+                        for ($i = 0; $i < $db_image_query->num_rows; $i++) {
+                            $db_image_row = $db_image_query->fetch_assoc();
+                            $images .= "'" . $db_image_row["img"] . "',";
+                            $img = $db_image_row["img"];
+                            $active_class = $i === 0 ? 'active' : '';
+                            ?>
+                            <img class="<?php echo $active_class; ?>" onclick="set_mimiImg('<?= $i ?>')"
+                                src="<?php print_r($img) ?>" alt="Thumbnail <?= $i + 1 ?>">
+                        <?php } ?>
+                    </div>
+                <?php } ?>
             </div>
             <script>
-                const slider_wrapper_product = [<?= $images ?>];
+                const slider_wrapper_product = [<?= rtrim($images, ',') ?>];
             </script>
 
             <div class="product_row_about">
