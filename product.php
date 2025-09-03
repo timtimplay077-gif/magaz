@@ -315,11 +315,26 @@ $db_image_query = $db_conn->query($db_image_sql);
         </div>
     </div>
     <script src="js/main.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.about_product a[href^="#"]').on('click', function (e) {
+                e.preventDefault();
+
+                var target = this.hash;
+                var $target = $(target);
+
+                $('html, body').animate({
+                    'scrollTop': $target.offset().top
+                }, 800, 'swing');
+            });
+        });
+    </script>
     <?php
     if ($isLoggedIn) {
         include("dropdown.php");
     }
     ?>
+
 </body>
 
 </html>

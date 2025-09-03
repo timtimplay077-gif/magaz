@@ -1,6 +1,6 @@
 <button id="loginBtn" class="pointer"><i class="fa-regular fa-user"></i></button>
 <div id="loginModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content animated-modal">
         <span class="close">&times;</span>
         <h2>Авторизація</h2>
         <form action="authcheck.php" method="POST" id="authForm">

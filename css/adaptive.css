@@ -862,23 +862,33 @@
         padding: 1px;
     }
 }
+
 @media screen and (max-width: 1400px) {
     .categories-menu {
         max-height: 550px;
     }
 }
+
 @media screen and (max-width: 1200px) {
     .categories-menu {
         max-height: 500px;
     }
 }
+
 @media screen and (max-width: 1000px) {
     .categories-menu {
         max-height: 450px;
     }
 }
+
 @media screen and (max-width: 500px) {
     .categories-menu {
         max-height: 300px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .buy-btn.in-cart {
+        width: 76px;
     }
 }

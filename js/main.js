@@ -58,16 +58,52 @@ function toggleMenu() {
     setTimeout(() => {
         const userMenu = document.getElementById("userMenu");
         if (userMenu) {
-            userMenu.classList.toggle("show");
+            const isVisible = userMenu.classList.contains("show");
+
+            // Сначала закрываем все открытые меню
+            document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
+                if (otherMenu !== userMenu) {
+                    otherMenu.classList.remove("show");
+                    // Анимация закрытия
+                    otherMenu.style.opacity = "0";
+                    otherMenu.style.transform = "scale(0.95) translateY(-10px)";
+                }
+            });
+
+            // Переключаем текущее меню
+            if (isVisible) {
+                // Закрываем меню с анимацией
+                userMenu.style.opacity = "0";
+                userMenu.style.transform = "scale(0.95) translateY(-10px)";
+                setTimeout(() => {
+                    userMenu.classList.remove("show");
+                }, 150);
+            } else {
+                // Открываем меню с анимацией
+                userMenu.classList.add("show");
+                userMenu.style.opacity = "0";
+                userMenu.style.transform = "scale(0.95) translateY(-10px)";
+
+                // Запускаем анимацию
+                setTimeout(() => {
+                    userMenu.style.opacity = "1";
+                    userMenu.style.transform = "scale(1) translateY(0)";
+                    userMenu.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+                }, 10);
+            }
         }
     }, 100);
 }
-
 window.addEventListener('click', function (event) {
     if (!event.target.closest('.user-menu-container')) {
         const userMenu = document.getElementById("userMenu");
         if (userMenu && userMenu.classList.contains("show")) {
-            userMenu.classList.remove("show");
+            // Закрываем с анимацией
+            userMenu.style.opacity = "0";
+            userMenu.style.transform = "scale(0.95) translateY(-10px)";
+            setTimeout(() => {
+                userMenu.classList.remove("show");
+            }, 150);
         }
     }
 });
@@ -102,7 +138,31 @@ function openLogin() {
     const loginModal = document.getElementById("loginModal");
     if (loginModal) {
         loginModal.style.display = "block";
+
+        // Запускаем анимацию после небольшой задержки
+        setTimeout(() => {
+            const modalContent = loginModal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.style.animation = 'modalSlideIn 0.3s ease-out';
+            }
+        }, 10);
     }
+}
+
+// Добавьте обработчик для закрытия модального окна с анимацией
+if (span) {
+    span.onclick = () => {
+        if (modal) {
+            const modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.style.animation = 'modalSlideOut 0.2s ease-in';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modalContent.style.animation = ''; // Сбрасываем анимацию
+                }, 200);
+            }
+        }
+    };
 }
 
 function toggleCategories(button) {

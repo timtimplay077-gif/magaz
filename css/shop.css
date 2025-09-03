@@ -11,6 +11,12 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 150px;
 }
 
 img,
@@ -2257,7 +2263,7 @@ quantity-controls {
 
 .buy-btn.in-cart {
     background-color: #4CAF50;
-    padding: 10px;
+    padding: 8px;
     color: white;
     cursor: default;
     border-radius: 5px;
@@ -2643,5 +2649,67 @@ select#region:focus {
 @media (max-width: 768px) {
     .product .new-price {
         font-size: 18px;
+    }
+}
+
+.animated-modal {
+    animation: modalSlideIn 0.3s ease-out;
+    transform-origin: center;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+
+
+.modal.show {
+    opacity: 1;
+}
+
+.animated-dropdown {
+    animation: dropdownFadeIn 0.2s ease-out;
+    transform-origin: top right;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.dropdown-menu {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.dropdown-menu:not(.show) {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+    pointer-events: none;
+}
+
+@keyframes modalSlideOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.8) translateY(-50px);
     }
 }
