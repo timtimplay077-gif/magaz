@@ -8,7 +8,6 @@ require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
-// Получаем данные из сессии
 if (!isset($_SESSION['order_data'])) {
   die("Данные заказа не найдены. Вернитесь к оформлению заказа.");
 }

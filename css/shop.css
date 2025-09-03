@@ -2258,7 +2258,6 @@ quantity-controls {
     }
 }
 
-/* Адаптивность для мобильных */
 @media (max-width: 768px) {
     .notification {
         top: 10px;
@@ -2348,8 +2347,6 @@ quantity-controls {
     font-size: 19px;
     color: gray;
 }
-
-/* Стили для отображения цен со скидкой */
 .price-container {
     display: flex;
     flex-direction: column;
@@ -2385,8 +2382,6 @@ quantity-controls {
     font-weight: bold;
     margin-left: 8px;
 }
-
-/* Адаптация для мобильных */
 @media (max-width: 768px) {
     .old-price {
         font-size: 12px;
@@ -2432,7 +2427,6 @@ quantity-controls {
     color: #e74c3c;
 }
 
-/* Стили для корзины */
 .header_card_product .price-wrapper {
     display: flex;
     flex-direction: column;
@@ -2507,7 +2501,6 @@ quantity-controls {
     font-weight: 500;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .pagination {
         gap: 5px;
@@ -2541,7 +2534,6 @@ quantity-controls {
     display: inline-block;
 }
 
-/* Стили для группы input с префиксом */
 .input-group {
     margin-bottom: 20px;
 }
@@ -2592,7 +2584,6 @@ quantity-controls {
     font-size: 16px;
 }
 
-/* Стили для пароля */
 .password {
     margin-bottom: 20px;
 }
@@ -2605,7 +2596,6 @@ quantity-controls {
     font-size: 16px;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .phone-prefix {
         left: 10px;
