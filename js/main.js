@@ -491,7 +491,7 @@ function addToCart(productId, event) {
                     };
                     cartData.items.push(discountedItem);
                 }
-
+                showNotification('Товар додано до кошика!', 'success');
                 buyButton.innerHTML = '<span>У кошику</span>';
                 buyButton.classList.add('in-cart');
                 buyButton.disabled = true;
@@ -500,17 +500,18 @@ function addToCart(productId, event) {
                 updateCartCounterGlobally(data.cart_count);
                 updateCartUI();
             } else {
+                showNotification('Помилка при додаванні товару: ' + data.message, 'error');
                 buyButton.innerHTML = originalContent;
                 buyButton.disabled = false;
                 buyButton.style.opacity = '1';
-                alert('Помилка при додаванні товару: ' + data.message);
+
             }
         })
         .catch(() => {
             buyButton.innerHTML = originalContent;
             buyButton.disabled = false;
             buyButton.style.opacity = '1';
-            alert('Помилка мережі');
+            showNotification('Помилка мережі', 'error');
         });
 }
 
