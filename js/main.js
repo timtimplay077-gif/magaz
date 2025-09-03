@@ -23,102 +23,30 @@ function getCSRFToken() {
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     return metaTag ? metaTag.getAttribute('content') : '';
 }
-let isAnimating = false;
 
-function slider_product(direction) {
-    if (isAnimating) return;
-
-    if (direction === "right") {
+function slider_product(cord) {
+    if (cord === "right") {
         slider_work++;
-    } else if (direction === "left") {
+    } else if (cord === "left") {
         slider_work--;
     }
 
-    if (slider_work >= slider_wrapper_product.length && direction === "right") {
+    if (slider_work >= slider_wrapper_product.length && cord === "right") {
         slider_work = 0;
-    } else if (slider_work < 0 && direction === "left") {
+    } else if (slider_work < 0 && cord === "left") {
         slider_work = slider_wrapper_product.length - 1;
     }
 
     set_mimiImg(slider_work);
 }
 
-function set_mimiImg(index) {
-    if (isAnimating) return;
-
-    isAnimating = true;
+function set_mimiImg(src) {
+    slider_work = src;
     const big_img = document.querySelector('.slider_product');
-    const thumbnails = document.querySelectorAll('.product_photo_slider img');
-
-    if (!big_img) {
-        isAnimating = false;
-        return;
+    if (big_img) {
+        big_img.src = slider_wrapper_product[slider_work];
     }
-
-    // Анимация исчезновения
-    big_img.classList.add('fade-out');
-
-    setTimeout(() => {
-        // Смена изображения
-        big_img.src = slider_wrapper_product[index];
-
-        // Анимация появления
-        big_img.classList.remove('fade-out');
-        big_img.classList.add('fade-in');
-
-        // Обновление активной миниатюры
-        thumbnails.forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === index);
-        });
-
-        slider_work = index;
-
-        setTimeout(() => {
-            big_img.classList.remove('fade-in');
-            isAnimating = false;
-        }, 500);
-
-    }, 500); // Время должно совпадать с CSS transition duration
 }
-// Предзагрузка изображений
-function preloadImages(images) {
-    images.forEach(src => {
-        const img = new Image();
-        img.src = src;
-    });
-}
-
-// Вызовите эту функцию при загрузке страницы
-preloadImages(slider_wrapper_product);
-// Добавьте поддержку свайпов для мобильных устройств
-let touchStartX = 0;
-let touchEndX = 0;
-let isSwiping = false;
-
-const sliderElement = document.querySelector('.slider_wrapper2');
-
-sliderElement.addEventListener('touchstart', function (e) {
-    touchStartX = e.changedTouches[0].screenX;
-    isSwiping = true;
-}, false);
-
-sliderElement.addEventListener('touchmove', function (e) {
-    if (!isSwiping) return;
-    touchEndX = e.changedTouches[0].screenX;
-}, false);
-
-sliderElement.addEventListener('touchend', function () {
-    if (!isSwiping) return;
-    isSwiping = false;
-    handleSwipe();
-}, false);
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'ArrowRight') {
-        slider_product('right');
-    } else if (event.key === 'ArrowLeft') {
-        slider_product('left');
-    }
-});
 
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
@@ -131,32 +59,23 @@ function toggleMenu() {
         const userMenu = document.getElementById("userMenu");
         if (userMenu) {
             const isVisible = userMenu.classList.contains("show");
-
-            // Сначала закрываем все открытые меню
             document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
                 if (otherMenu !== userMenu) {
                     otherMenu.classList.remove("show");
-                    // Анимация закрытия
                     otherMenu.style.opacity = "0";
                     otherMenu.style.transform = "scale(0.95) translateY(-10px)";
                 }
             });
-
-            // Переключаем текущее меню
             if (isVisible) {
-                // Закрываем меню с анимацией
                 userMenu.style.opacity = "0";
                 userMenu.style.transform = "scale(0.95) translateY(-10px)";
                 setTimeout(() => {
                     userMenu.classList.remove("show");
                 }, 150);
             } else {
-                // Открываем меню с анимацией
                 userMenu.classList.add("show");
                 userMenu.style.opacity = "0";
                 userMenu.style.transform = "scale(0.95) translateY(-10px)";
-
-                // Запускаем анимацию
                 setTimeout(() => {
                     userMenu.style.opacity = "1";
                     userMenu.style.transform = "scale(1) translateY(0)";
@@ -170,7 +89,6 @@ window.addEventListener('click', function (event) {
     if (!event.target.closest('.user-menu-container')) {
         const userMenu = document.getElementById("userMenu");
         if (userMenu && userMenu.classList.contains("show")) {
-            // Закрываем с анимацией
             userMenu.style.opacity = "0";
             userMenu.style.transform = "scale(0.95) translateY(-10px)";
             setTimeout(() => {
@@ -210,8 +128,6 @@ function openLogin() {
     const loginModal = document.getElementById("loginModal");
     if (loginModal) {
         loginModal.style.display = "block";
-
-        // Запускаем анимацию после небольшой задержки
         setTimeout(() => {
             const modalContent = loginModal.querySelector('.modal-content');
             if (modalContent) {
@@ -220,8 +136,6 @@ function openLogin() {
         }, 10);
     }
 }
-
-// Добавьте обработчик для закрытия модального окна с анимацией
 if (span) {
     span.onclick = () => {
         if (modal) {
@@ -230,7 +144,7 @@ if (span) {
                 modalContent.style.animation = 'modalSlideOut 0.2s ease-in';
                 setTimeout(() => {
                     modal.style.display = 'none';
-                    modalContent.style.animation = ''; // Сбрасываем анимацию
+                    modalContent.style.animation = '';
                 }, 200);
             }
         }
@@ -240,26 +154,20 @@ if (span) {
 function toggleCategories(button) {
     const menu = button.nextElementSibling;
     const isVisible = menu.classList.contains('show');
-
-    // Закрываем все другие открытые меню
     document.querySelectorAll('.categories-menu.show').forEach(otherMenu => {
         if (otherMenu !== menu) {
             otherMenu.classList.remove('show');
             otherMenu.previousElementSibling.classList.remove('active');
         }
     });
-
-    // Переключаем текущее меню
     menu.classList.toggle('show');
     button.classList.toggle('active');
 
     if (menu.classList.contains('show')) {
-        // Добавляем обработчик для закрытия при клике вне меню
         setTimeout(() => {
             document.addEventListener('click', closeCategoriesMenu);
         }, 0);
     } else {
-        // Убираем обработчик если меню закрыто
         document.removeEventListener('click', closeCategoriesMenu);
     }
 }
