@@ -589,11 +589,8 @@ include('data/user_data.php');
                         <label for="terms">Я погоджуюсь з <a href="#">умовами угоди користувача</a> та політикою
                             конфіденційності</label>
                     </div>
-
-                    <button type="submit" class="register_button">
-                        <i class="fas fa-user-plus" style="margin-right: 10px;"></i>
-                        Зареєструватися
-                    </button>
+                    <button type="submit" class="register_button"> <i class="fas fa-user-plus"
+                            style="margin-right: 10px;"></i>Зареєструватися</button>
                 </form>
             </div>
         </div>
@@ -681,7 +678,6 @@ include('data/user_data.php');
     <script src="js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Функция для переключения видимости пароля
             const toggleButtons = document.querySelectorAll('.toggle-password');
             toggleButtons.forEach(button => {
                 button.addEventListener('click', function () {
@@ -700,121 +696,6 @@ include('data/user_data.php');
                 });
             });
 
-            // Валидация формы в реальном времени
-            const form = document.getElementById('registrationForm');
-            const inputs = form.querySelectorAll('input');
-
-            inputs.forEach(input => {
-                input.addEventListener('blur', function () {
-                    validateField(this);
-                });
-
-                input.addEventListener('input', function () {
-                    if (this.classList.contains('error')) {
-                        validateField(this);
-                    }
-                });
-            });
-
-            function validateField(field) {
-                const value = field.value.trim();
-                let isValid = true;
-                let errorMessage = '';
-
-                switch (field.id) {
-                    case 'firstName':
-                    case 'lastName':
-                        if (value.length < 1 || value.length > 32) {
-                            isValid = false;
-                            errorMessage = 'Поле має містити від 1 до 32 символів';
-                        }
-                        break;
-                    case 'email':
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!emailRegex.test(value)) {
-                            isValid = false;
-                            errorMessage = 'Введіть коректну email адресу';
-                        }
-                        break;
-                    case 'phone':
-                        const phoneRegex = /^\d{9}$/;
-                        if (!phoneRegex.test(value)) {
-                            isValid = false;
-                            errorMessage = 'Номер має містити 9 цифр';
-                        }
-                        break;
-                    case 'password':
-                        if (value.length < 6) {
-                            isValid = false;
-                            errorMessage = 'Пароль має містити мінімум 6 символів';
-                        }
-                        break;
-                    case 'confirmPassword':
-                        const password = document.getElementById('password').value;
-                        if (value !== password) {
-                            isValid = false;
-                            errorMessage = 'Паролі не співпадають';
-                        }
-                        break;
-                }
-
-                // Обновление состояния поля
-                const errorElement = field.parentElement.querySelector('.incorect_pass') ||
-                    field.parentElement.parentElement.querySelector('.incorect_pass');
-
-                if (!isValid && value !== '') {
-                    field.classList.add('error');
-                    field.classList.remove('success');
-
-                    if (errorElement) {
-                        errorElement.textContent = errorMessage;
-                        errorElement.style.display = 'block';
-                    }
-                } else if (value !== '') {
-                    field.classList.remove('error');
-                    field.classList.add('success');
-
-                    if (errorElement) {
-                        errorElement.style.display = 'none';
-                    }
-                } else {
-                    field.classList.remove('error', 'success');
-
-                    if (errorElement) {
-                        errorElement.style.display = 'none';
-                    }
-                }
-            }
-
-            // Валидация при отправке формы
-            form.addEventListener('submit', function (e) {
-                let formIsValid = true;
-
-                inputs.forEach(input => {
-                    validateField(input);
-                    if (input.classList.contains('error')) {
-                        formIsValid = false;
-                    }
-                });
-
-                const terms = document.getElementById('terms');
-                if (!terms.checked) {
-                    formIsValid = false;
-                    terms.parentElement.style.outline = '2px solid var(--error-color)';
-                    terms.parentElement.style.borderRadius = '5px';
-                } else {
-                    terms.parentElement.style.outline = 'none';
-                }
-
-                if (!formIsValid) {
-                    e.preventDefault();
-                    // Прокрутка к первой ошибке
-                    const firstError = form.querySelector('.error');
-                    if (firstError) {
-                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }
-            });
         });
     </script>
 </body>

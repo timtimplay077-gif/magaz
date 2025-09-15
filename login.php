@@ -397,8 +397,11 @@ include('data/user_data.php');
         </div>
     </div>
 
-    <div class="h2_login block">
-        <h2>Авторизація</h2>
+    <div class="h2_login">
+        <div class="block">
+            <h2>Авторизація</h2>
+        </div>
+
     </div>
 
     <div class="container block unselectable">
@@ -510,7 +513,6 @@ include('data/user_data.php');
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Функция для переключения видимости пароля
             const togglePassword = document.querySelector('.toggle-password1');
             if (togglePassword) {
                 togglePassword.addEventListener('click', function () {
@@ -528,19 +530,13 @@ include('data/user_data.php');
                     }
                 });
             }
-
-            // Валидация формы в реальном времени
             const loginForm = document.getElementById('loginForm');
             if (loginForm) {
                 const phoneInput = document.getElementById('login');
                 const passwordInput = document.getElementById('password');
-
-                // Валидация телефона
                 phoneInput.addEventListener('blur', function () {
                     validatePhoneField(this);
                 });
-
-                // Валидация пароля
                 passwordInput.addEventListener('blur', function () {
                     validatePasswordField(this);
                 });
@@ -579,15 +575,10 @@ include('data/user_data.php');
                 }
 
                 function showFieldError(field, message) {
-                    // Удаляем предыдущее сообщение об ошибке, если есть
                     hideFieldError(field);
-
-                    // Создаем элемент для сообщения об ошибке
                     const errorElement = document.createElement('p');
                     errorElement.className = 'p_login_error';
                     errorElement.textContent = message;
-
-                    // Вставляем сообщение после поля ввода
                     field.parentNode.insertBefore(errorElement, field.nextSibling);
                 }
 
@@ -597,8 +588,6 @@ include('data/user_data.php');
                         nextElement.remove();
                     }
                 }
-
-                // Валидация при отправке формы
                 loginForm.addEventListener('submit', function (e) {
                     let formIsValid = true;
 
@@ -611,7 +600,6 @@ include('data/user_data.php');
 
                     if (!formIsValid) {
                         e.preventDefault();
-                        // Прокрутка к первой ошибке
                         const firstError = loginForm.querySelector('.error');
                         if (firstError) {
                             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });

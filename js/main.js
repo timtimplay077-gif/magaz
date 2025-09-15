@@ -325,8 +325,6 @@ function updateCartFooter() {
     } else {
         cartFooter.style.display = 'block';
         if (emptyCartState) emptyCartState.style.display = 'none';
-
-        // Обновляем данные в футере
         let totalItems = 0;
         let totalSum = 0;
         let totalSumWithoutDiscount = 0;
@@ -338,21 +336,16 @@ function updateCartFooter() {
 
             totalItems += quantity;
             totalSum += price * quantity;
-
-            // Рассчитываем цену без скидки
             const priceWithoutDiscount = discountPercent > 0 ?
                 price / (1 - discountPercent / 100) : price;
             totalSumWithoutDiscount += priceWithoutDiscount * quantity;
         });
-
-        // Обновляем значения в футере
         document.getElementById('total-items-count').textContent =
             totalItems + ' ' + getItemWord(totalItems);
 
         const discountRow = document.querySelector('.discount-row');
         if (totalSumWithoutDiscount > totalSum) {
             if (!discountRow) {
-                // Создаем строку скидки если ее нет
                 const summary = document.querySelector('.cart-summary');
                 const discountHtml = `
                     <div class="summary-row discount-row">
@@ -371,8 +364,6 @@ function updateCartFooter() {
 
         document.getElementById('total-sum').textContent =
             totalSum.toFixed(2) + ' ₴';
-
-        // Обновляем счетчик в кнопке корзины
         updateCartCounter(totalItems);
     }
 }
@@ -593,8 +584,6 @@ function updateCartUI() {
         div.dataset.id = item.id;
         div.dataset.price = item.price;
         div.dataset.discount = item.discount_percent || 0;
-
-        // Используем ту же структуру, что и в productBasket.php
         div.innerHTML = `
             <div class="cart-item-image">
                 <img src="${item.img}" alt="${item.name}">
@@ -626,11 +615,7 @@ function updateCartUI() {
         `;
         cartItems.appendChild(div);
     });
-
-    // Обновляем футер корзины
     updateCartFooter();
-
-    // Инициализируем обработчики событий для новых элементов
     initCartEventListeners();
 }
 function showNotification(message, type) {

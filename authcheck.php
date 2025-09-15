@@ -27,7 +27,6 @@ if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
     if (strpos($phone, '+380') === false) {
         $phone = '+380' . preg_replace('/^38?0?/', '', $phone);
     }
-    $phone = preg_replace('/[^0-9+]/', '', $phone);
 
     $stmt = $db_conn->prepare("SELECT * FROM users WHERE phone = ?");
     $stmt->bind_param("s", $phone);

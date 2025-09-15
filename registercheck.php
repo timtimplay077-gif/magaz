@@ -33,15 +33,7 @@ if (strlen($firstName) < 1 || strlen($firstName) > 32) {
 if (strlen($lastName) < 1 || strlen($lastName) > 32) {
     $errors["lastName"] = true;
 }
-$phone = $_POST['phone'];
-if (!str_starts_with($phone, '+380')) {
-    $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-    if (str_starts_with($cleanPhone, '380')) {
-        $phone = '+' . $cleanPhone;
-    } else {
-        $phone = '+380' . $cleanPhone;
-    }
-}
+$phone = '+380' . preg_replace('/[^0-9]/', '', $_POST['phone']);
 if (strlen($phone) !== 13 || !preg_match('/^\+380\d{9}$/', $phone)) {
     $errors["phone"] = true;
 }

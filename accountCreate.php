@@ -68,6 +68,294 @@ include('data/user_data.php');
 </head>
 
 <body>
+    <style>
+        :root {
+            --success-color: #28a745;
+            --success-light: #d4edda;
+            --success-border: #c3e6cb;
+            --primary-color: #4a6bff;
+            --text-color: #333;
+            --light-text: #6c757d;
+        }
+
+        .account_h2 {
+            text-align: center;
+            margin: 40px 0 30px;
+        }
+
+        .account_h2 h2 {
+            font-size: 2.8rem;
+            color: var(--success-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .account_h2 h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success-color), #20c997);
+            border-radius: 2px;
+        }
+
+        .account_content {
+            max-width: 800px;
+            margin: 0 auto 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--success-border);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .account_content:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--success-color), #20c997);
+        }
+
+        .account_content:after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(40, 167, 69, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .account_content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .account_content p:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--success-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .success-icon {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .success-icon i {
+            font-size: 5rem;
+            color: var(--success-color);
+            background: var(--success-light);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease;
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #3a56e0);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 107, 255, 0.4);
+            background: linear-gradient(135deg, #3a56e0, var(--primary-color));
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            padding: 15px 30px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.2);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .account_h2 h2 {
+                font-size: 2.2rem;
+            }
+
+            .account_content {
+                padding: 30px 20px;
+                margin: 0 15px 40px;
+            }
+
+            .account_content p {
+                font-size: 1.1rem;
+                padding-left: 35px;
+            }
+
+            .success-icon i {
+                font-size: 4rem;
+                width: 100px;
+                height: 100px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-outline {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .account_h2 h2 {
+                font-size: 1.8rem;
+            }
+
+            .account_content p {
+                font-size: 1rem;
+                padding-left: 30px;
+            }
+
+            .account_content p:before {
+                width: 25px;
+                height: 25px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--success-color);
+            opacity: 0.7;
+            animation: confettiFall 5s ease-in infinite;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(500px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
     <?php include("components/header.php");
     ?>
     <div class="whatWeHave unselectable">
@@ -88,15 +376,33 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
-    <div class="account_h2 block">
-        <h2>Ваш обліковий запис створений</h2>
-    </div>
-    <div class="account_content block">
-        <p>Вітаємо! Ви успішно зареєстровані в магазині.</p>
-        <p>Тепер ви можете скористатись додатковими можливостями: перегляд історії замовлень, друк рахунку, зміна
-            контактної інформації та адрес доставки, та інше.</p>
-        <p>Якщо у вас виникли запитання, напишіть нам.</p>
+    <div class="account_h2">
+        <div class="block">
+            <h2>Ваш обліковий запис створений!</h2>
+        </div>
 
+    </div>
+
+    <div class="account_content block">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+
+        <p>Вітаємо! Ви успішно зареєстровані в магазині KansKrop.</p>
+        <p>Тепер ви можете скористатись додатковими можливостями: зміна
+            контактної інформації та адрес доставки, та інше.</p>
+        <p>Якщо у вас виникли запитання, напишіть нам - ми завжди раді допомогти!</p>
+
+        <div class="action-buttons">
+            <a href="index.php" class="btn-primary">
+                <i class="fas fa-home"></i>
+                На головну
+            </a>
+            <a href="login.php" class="btn-outline">
+                <i class="fas fa-sign-in-alt"></i>
+                Увійти в акаунт
+            </a>
+        </div>
     </div>
     <div class="benefits-section unselectable">
         <div class="block">
