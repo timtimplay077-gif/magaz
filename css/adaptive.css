@@ -1259,7 +1259,7 @@
     }
 
     .cart-item {
-        grid-template-columns: 60px 1fr;
+        grid-template-columns: 75px 1fr;
     }
 
     .cart-item-controls {
