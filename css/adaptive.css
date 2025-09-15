@@ -1386,10 +1386,6 @@
         font-size: 14px;
         height: 38px;
     }
-
-    #password {
-        height: 38px;
-    }
 }
 
 @media (max-width: 768px) {

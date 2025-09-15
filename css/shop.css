@@ -411,6 +411,7 @@ a {
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     padding-top: 130px;
+    padding-bottom: 20px;
 }
 
 .about_product .block {
@@ -861,19 +862,6 @@ a {
 .registration_users h3 {
     font-size: 24px;
     margin-bottom: 30px;
-}
-
-.registration_users .register_button {
-    background-color: #221f1f;
-    color: white;
-    width: 150px;
-    height: 40px;
-    border-radius: 10px;
-    border: none;
-}
-
-.registration_users .register_button:hover {
-    background-color: black;
 }
 
 .register_content a {
@@ -2511,7 +2499,7 @@ quantity-controls {
     align-items: center;
 }
 
-.phone-prefix {
+.phone-prefix1 {
     position: absolute;
     background: #f3f4f6;
     padding: 10px 12px;
@@ -2554,16 +2542,6 @@ quantity-controls {
 .password {
     margin-bottom: 20px;
 }
-
-#password {
-    height: 40px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 0 15px;
-    font-size: 16px;
-}
-
-
 
 .phone-input-container {
     position: relative;

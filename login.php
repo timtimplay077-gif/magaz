@@ -64,11 +64,320 @@ include('data/user_data.php');
     <link rel="manifest" href="/site.webmanifest">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <title>Авторизація</title>
+    <style>
+        /* Специальные стили для страницы авторизации */
+        :root {
+            --primary-color: #4a6bff;
+            --primary-hover: #3a56e0;
+            --secondary-color: #f8f9fa;
+            --text-color: #333;
+            --light-text: #6c757d;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+            --border-color: #dee2e6;
+            --border-radius: 12px;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        .h2_login {
+            text-align: center;
+            margin: 30px 0 20px;
+        }
+
+        .h2_login h2 {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .h2_login h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin: 30px auto 50px;
+            max-width: 1200px;
+        }
+
+        .form-section {
+            flex: 1;
+            min-width: 400px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #4a6bff, #3a56e0);
+        }
+
+        .form-section:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .form-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .form-section h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        .form-section p {
+            color: var(--light-text);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .form-section label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .form-section input[type="text"],
+        .form-section input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+        }
+
+        .form-section input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+            outline: none;
+            background-color: white;
+        }
+
+        .phone-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .phone-prefix1 {
+            background: #f8f9fa;
+            padding: 14px 12px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            font-weight: 500;
+            color: var(--text-color);
+            height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        #login {
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            flex: 1;
+            height: 48px;
+        }
+
+        .p_login_error {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: block;
+            padding: 10px;
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--error-color);
+        }
+
+        .link {
+            display: block;
+            margin: 20px 0;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 107, 255, 0.3);
+        }
+
+        .btn:hover:before {
+            left: 100%;
+        }
+
+        .password-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .toggle-password1 {
+            position: absolute;
+            right: 15px;
+            top: 53px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--light-text);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-section {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .form-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-section {
+                min-width: auto;
+                width: 100%;
+                max-width: 500px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-section {
+                padding: 25px 20px;
+            }
+
+            .h2_login h2 {
+                font-size: 2rem;
+            }
+
+            .form-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-section input[type="text"],
+            .form-section input[type="password"] {
+                padding: 12px 14px;
+            }
+        }
+
+        /* Дополнительные визуальные улучшения */
+        .form-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(74, 107, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .benefits-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
-    <?php include("components/header.php");
-    ?>
+    <?php include("components/header.php"); ?>
+
     <div class="whatWeHave unselectable">
         <div class="block">
             <div class="category-header">
@@ -87,40 +396,52 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
+
     <div class="h2_login block">
         <h2>Авторизація</h2>
     </div>
+
     <div class="container block unselectable">
         <div class="form-section">
             <h2>Постійний покупець</h2>
-            <form action="authcheck.php" method="POST">
+            <form action="authcheck.php" method="POST" id="loginForm">
                 <label for="login">* Телефон</label>
                 <div class="phone-input-container">
                     <span class="phone-prefix1">+380</span>
                     <input type="text" id="login" name="login" placeholder="XXXXXXXXX" required>
                 </div>
-                <br>
-                <label for="password">* Пароль</label>
-                <input type="password" id="password" name="password" placeholder="Пароль" required>
-                <?php
-                if (isset($_SESSION['login_error'])) {
-                    echo "<p class='p_login_error'>" . $_SESSION['login_error'] . "</p>";
-                    unset($_SESSION['login_error']);
-                }
-                ?>
-                <a class="link" href="reset-password.php">Забули пароль?</a>
-                <button class="btn" type="submit">Увійти</button>
+
+                <div class="password-field">
+                    <label for="password">* Пароль</label>
+                    <input type="password" id="password" name="password" placeholder="Введіть ваш пароль" required>
+                    <button type="button" class="toggle-password1" aria-label="Показати пароль">
+                        <i class="far fa-eye"></i>
+                    </button>
+                </div>
+
+                <?php if (isset($_SESSION['login_error'])): ?>
+                    <p class='p_login_error'><?= $_SESSION['login_error'] ?></p>
+                    <?php unset($_SESSION['login_error']); ?>
+                <?php endif; ?>
+                <button class="btn" type="submit">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 10px;"></i>Увійти
+                </button>
             </form>
         </div>
 
         <div class="form-section unselectable">
             <h2>Новий покупець</h2>
+            <i class="fas fa-user-plus benefits-icon"></i>
             <p>
                 Створення облікового запису допоможе здійснювати покупки швидше та більш зручно.
                 Ви також зможете відслідковувати статус замовлень, використовувати закладки,
                 переглядати минулі замовлення, та отримувати знижки для постійних покупців.
             </p>
-            <a href="registration.php"><button class="btn">Продовжити</button></a>
+            <a href="registration.php">
+                <button class="btn">
+                    <i class="fas fa-arrow-right" style="margin-right: 10px;"></i>Продовжити
+                </button>
+            </a>
         </div>
     </div>
     <div class="benefits-section unselectable">
@@ -187,7 +508,119 @@ include('data/user_data.php');
     include("contact/contact_end.php")
         ?>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Функция для переключения видимости пароля
+            const togglePassword = document.querySelector('.toggle-password1');
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function () {
+                    const passwordInput = document.getElementById('password');
+                    const icon = this.querySelector('i');
 
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+
+            // Валидация формы в реальном времени
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                const phoneInput = document.getElementById('login');
+                const passwordInput = document.getElementById('password');
+
+                // Валидация телефона
+                phoneInput.addEventListener('blur', function () {
+                    validatePhoneField(this);
+                });
+
+                // Валидация пароля
+                passwordInput.addEventListener('blur', function () {
+                    validatePasswordField(this);
+                });
+
+                function validatePhoneField(field) {
+                    const value = field.value.trim();
+                    const phoneRegex = /^\d{9}$/;
+
+                    if (value !== '' && !phoneRegex.test(value)) {
+                        field.classList.add('error');
+                        showFieldError(field, 'Номер має містити рівно 9 цифр');
+                    } else if (value !== '') {
+                        field.classList.remove('error');
+                        field.classList.add('success');
+                        hideFieldError(field);
+                    } else {
+                        field.classList.remove('error', 'success');
+                        hideFieldError(field);
+                    }
+                }
+
+                function validatePasswordField(field) {
+                    const value = field.value.trim();
+
+                    if (value !== '' && value.length < 6) {
+                        field.classList.add('error');
+                        showFieldError(field, 'Пароль має містити мінімум 6 символів');
+                    } else if (value !== '') {
+                        field.classList.remove('error');
+                        field.classList.add('success');
+                        hideFieldError(field);
+                    } else {
+                        field.classList.remove('error', 'success');
+                        hideFieldError(field);
+                    }
+                }
+
+                function showFieldError(field, message) {
+                    // Удаляем предыдущее сообщение об ошибке, если есть
+                    hideFieldError(field);
+
+                    // Создаем элемент для сообщения об ошибке
+                    const errorElement = document.createElement('p');
+                    errorElement.className = 'p_login_error';
+                    errorElement.textContent = message;
+
+                    // Вставляем сообщение после поля ввода
+                    field.parentNode.insertBefore(errorElement, field.nextSibling);
+                }
+
+                function hideFieldError(field) {
+                    const nextElement = field.nextElementSibling;
+                    if (nextElement && nextElement.className === 'p_login_error') {
+                        nextElement.remove();
+                    }
+                }
+
+                // Валидация при отправке формы
+                loginForm.addEventListener('submit', function (e) {
+                    let formIsValid = true;
+
+                    validatePhoneField(phoneInput);
+                    validatePasswordField(passwordInput);
+
+                    if (phoneInput.classList.contains('error') || passwordInput.classList.contains('error')) {
+                        formIsValid = false;
+                    }
+
+                    if (!formIsValid) {
+                        e.preventDefault();
+                        // Прокрутка к первой ошибке
+                        const firstError = loginForm.querySelector('.error');
+                        if (firstError) {
+                            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+            }
+        });
+    </script>
     <div id="authCheck" data-logged-in="<?php echo $isLoggedIn ? 'true' : 'false'; ?>" style="display: none;"></div>
     <?php
 

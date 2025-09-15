@@ -1,4 +1,6 @@
-<?php
+<!--  ЗАБЫЛ ПАРОЛЬ НЕ РОБОТАЕТ  
+ЕСЛИ КТО-ТО СМОЖЕТ СДЕЛАЙТЕ -->
+<!-- <?php
 include('data/session_start.php');
 include('data/database.php');
 include('productBasket.php');
@@ -190,4 +192,4 @@ include('data/user_data.php');
     <script src="js/main.js"></script>
 </body>
 
-</html>
+</html> -->
