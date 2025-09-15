@@ -238,7 +238,6 @@ include('data/user_data.php');
             box-shadow: 0 5px 15px rgba(74, 107, 255, 0.2);
         }
 
-        /* Анимации */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -283,7 +282,6 @@ include('data/user_data.php');
             }
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .account_h2 h2 {
                 font-size: 2.2rem;

@@ -64,11 +64,370 @@ include('data/user_data.php');
     <link rel="manifest" href="/site.webmanifest">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <title>Обліковий запис</title>
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --primary-hover: #3a56e0;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --text-color: #333;
+            --light-text: #6c757d;
+            --border-color: #dee2e6;
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .h2_info {
+            text-align: center;
+            margin: 40px 0 30px;
+        }
+
+        .h2_info h2 {
+            font-size: 2.8rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .h2_info h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+            border-radius: 2px;
+        }
+
+        .accountinfo_content {
+            max-width: 1000px;
+            margin: 0 auto 60px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .accountinfo {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .accountinfo:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+        }
+
+        .h3_info {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg-light);
+            position: relative;
+        }
+
+        .h3_info:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .accountinfo label {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .accountinfo input[type="text"],
+        .accountinfo input[type="email"],
+        .accountinfo input[type="tel"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--bg-light);
+            margin-bottom: 20px;
+        }
+
+        .accountinfo input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+            outline: none;
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        .accountinfo input:read-only {
+            background-color: #f8f9fa;
+            color: var(--light-text);
+            cursor: not-allowed;
+        }
+
+        .user-avatar {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .user-avatar i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--bg-light), #e9ecef);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.2);
+        }
+
+        .user-welcome {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .user-welcome h4 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .user-welcome p {
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+
+        .logaut-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .logaut-box h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .logaut-box button {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logaut-box button:first-child {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .logaut-box button:first-child:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.3);
+        }
+
+        .logaut-box button:last-child {
+            background: #4a6bff;
+            color: white;
+        }
+
+        .logaut-box button:last-child:hover {
+            background: #c82333;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .account-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--bg-light);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-light), #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .accountinfo_content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .logaut-box {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .h2_info h2 {
+                font-size: 2.2rem;
+            }
+
+            .accountinfo {
+                padding: 30px 20px;
+            }
+
+            .account-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .h2_info h2 {
+                font-size: 1.8rem;
+            }
+
+            .accountinfo input[type="text"],
+            .accountinfo input[type="email"],
+            .accountinfo input[type="tel"] {
+                padding: 12px 15px;
+            }
+
+            .user-avatar i {
+                font-size: 3rem;
+            }
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 28px;
+            transform: translateY(-50%);
+            color: var(--light-text);
+        }
+
+        .input-with-icon {
+            padding-left: 45px !important;
+        }
+
+        .edit-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .edit-btn:hover {
+            color: var(--primary-hover);
+            transform: translateY(-50%) scale(1.1);
+        }
+    </style>
 </head>
 
 <body>
-    <?php include("components/header.php");
-    ?>
+    <?php include("components/header.php"); ?>
+
     <div class="whatWeHave unselectable">
         <div class="block">
             <div class="category-header">
@@ -87,9 +446,14 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
-    <div class="h2_info block">
-        <h2>Обліковий запис</h2>
+
+    <div class="h2_info">
+        <div class="block">
+            <h2>Обліковий запис</h2>
+        </div>
+
     </div>
+
     <?php
     $result = $db_conn->query("SELECT * FROM users WHERE id = $user_id");
     if ($roww = $result->fetch_assoc()) {
@@ -104,27 +468,69 @@ include('data/user_data.php');
         $phone = "";
     }
     ?>
+
     <div class="accountinfo_content block">
-        <div class="accountinfo ">
+        <div class="accountinfo">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+
+            <div class="user-welcome">
+                <h4>Вітаємо, <?php echo $firstName . ' ' . $lastName; ?>!</h4>
+                <p>Ваші особисті дані</p>
+            </div>
+
             <h3 class="h3_info">Особисті дані</h3>
-            <label for="firstName">* Ім’я</label><br>
-            <input type="text" id="firstName" name="firstName" placeholder="Ім’я" value="<?php print_r($firstName) ?>">
-            <br><br>
 
-            <label for="lastName">* Прізвище</label><br>
-            <input type="text" id="lastName" name="lastName" placeholder="Прізвище" value="<?php print_r($lastName) ?>">
-            <br><br>
+            <div class="input-group">
+                <label for="firstName">Ім'я</label>
+                <div style="position: relative;">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="firstName" name="firstName" class="input-with-icon" placeholder="Ім'я"
+                        value="<?php echo $firstName; ?>" readonly>
+                </div>
+            </div>
 
-            <label for="email">* E-Mail</label><br>
-            <input type="email" id="email" name="email" placeholder="E-Mail" value="<?php print_r($email) ?>">
-            <br><br>
+            <div class="input-group">
+                <label for="lastName">Прізвище</label>
+                <div style="position: relative;">
+                    <i class="fas fa-user-tag input-icon"></i>
+                    <input type="text" id="lastName" name="lastName" class="input-with-icon" placeholder="Прізвище"
+                        value="<?php echo $lastName; ?>" readonly>
+                </div>
+            </div>
 
-            <label for="phone">* Телефон</label><br>
-            <input type="tel" id="phone1" name="phone" placeholder="Телефон" value="<?php print_r($phone) ?>">
+            <div class="input-group">
+                <label for="email">E-Mail</label>
+                <div style="position: relative;">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="email" name="email" class="input-with-icon" placeholder="E-Mail"
+                        value="<?php echo $email; ?>" readonly>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="phone">Телефон</label>
+                <div style="position: relative;">
+                    <i class="fas fa-phone input-icon"></i>
+                    <input type="tel" id="phone1" name="phone" class="input-with-icon" placeholder="Телефон"
+                        value="<?php echo $phone; ?>" readonly>
+                </div>
+            </div>
         </div>
+
         <div class="logaut-box">
-            <a href="accountinfo.php"><button>Обліковий запис</button></a>
-            <button onclick="confirmLogout()">Вихід</button>
+            <h3>Керування акаунтом</h3>
+            <a href="accountinfo.php">
+                <button>
+                    <i class="fas fa-user-cog"></i>
+                    Налаштування
+                </button>
+            </a>
+            <button onclick="confirmLogout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Вийти
+            </button>
         </div>
     </div>
     <div class="benefits-section unselectable">

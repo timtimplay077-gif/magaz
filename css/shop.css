@@ -2580,37 +2580,6 @@ quantity-controls {
     font-weight: 900;
     font-size: 20px;
 }
-
-select#region {
-    width: 100%;
-    max-width: 350px;
-    padding-left: 8px;
-    padding-bottom: 7px;
-    padding-top: 7px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    font-size: 16px;
-    color: #333;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
-    cursor: pointer;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-select#region:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 6px #22c55e;
-    outline: none;
-}
-
-
-
 .animated-modal {
     animation: modalSlideIn 0.3s ease-out;
     transform-origin: center;

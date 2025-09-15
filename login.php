@@ -65,7 +65,6 @@ include('data/user_data.php');
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <title>Авторизація</title>
     <style>
-        /* Специальные стили для страницы авторизации */
         :root {
             --primary-color: #4a6bff;
             --primary-hover: #3a56e0;
@@ -299,7 +298,6 @@ include('data/user_data.php');
             font-size: 1.2rem;
         }
 
-        /* Анимации */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -319,8 +317,6 @@ include('data/user_data.php');
         .form-section:nth-child(2) {
             animation-delay: 0.2s;
         }
-
-        /* Адаптивность */
         @media (max-width: 992px) {
             .container {
                 flex-direction: column;
@@ -352,8 +348,6 @@ include('data/user_data.php');
                 padding: 12px 14px;
             }
         }
-
-        /* Дополнительные визуальные улучшения */
         .form-section::after {
             content: '';
             position: absolute;
@@ -416,10 +410,7 @@ include('data/user_data.php');
 
                 <div class="password-field">
                     <label for="password">* Пароль</label>
-                    <input type="password" id="password" name="password" placeholder="Введіть ваш пароль" required>
-                    <button type="button" class="toggle-password1" aria-label="Показати пароль">
-                        <i class="far fa-eye"></i>
-                    </button>
+                    <input type="text" id="password" name="password" placeholder="Введіть ваш пароль" required>
                 </div>
 
                 <?php if (isset($_SESSION['login_error'])): ?>

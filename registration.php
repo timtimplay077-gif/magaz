@@ -64,7 +64,6 @@ include('data/user_data.php');
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <title>Реєстрація</title>
     <style>
-        /* Специальные стили для страницы регистрации */
         :root {
             --primary-color: #4a6bff;
             --primary-hover: #3a56e0;
@@ -358,7 +357,6 @@ include('data/user_data.php');
             border-color: var(--light-text);
         }
 
-        /* Анимации */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -376,7 +374,6 @@ include('data/user_data.php');
             animation: fadeIn 0.6s ease-out;
         }
 
-        /* Адаптивность */
         @media (max-width: 992px) {
             .registration_users {
                 flex-direction: column;
@@ -415,8 +412,6 @@ include('data/user_data.php');
                 padding: 12px 14px;
             }
         }
-
-        /* Стили для улучшения визуальной иерархии */
         .form-section {
             margin-bottom: 30px;
             padding-bottom: 20px;
