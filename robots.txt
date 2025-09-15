@@ -8,7 +8,7 @@ Disallow: /odercheck.php
 Disallow: /product.php
 Disallow: /registration.php
 Disallow: /reset-password.php
-Disallow: /thank_order.php
+Disallow: /thanks_for_order.php
 Allow: /
 
 Sitemap: https://kanskrop.com/sitemap.xml

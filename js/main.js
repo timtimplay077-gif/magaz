@@ -131,7 +131,7 @@ function openLogin() {
         setTimeout(() => {
             const modalContent = loginModal.querySelector('.modal-content');
             if (modalContent) {
-                modalContent.style.animation = 'modalSlideIn 0.3s ease-out';
+                modalContent.style.animation = 'modalAppear 0.3s ease';
             }
         }, 10);
     }
@@ -141,7 +141,7 @@ if (span) {
         if (modal) {
             const modalContent = modal.querySelector('.modal-content');
             if (modalContent) {
-                modalContent.style.animation = 'modalSlideOut 0.2s ease-in';
+                modalContent.style.animation = 'modalAppear 0.2s ease reverse';
                 setTimeout(() => {
                     modal.style.display = 'none';
                     modalContent.style.animation = '';
@@ -290,6 +290,7 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     updateQuantity(productId, count);
     recalcTotal();
     updateGlobalCartCount();
+    updateCartFooter();
 }
 function recalcTotal() {
     let totalSum = 0;
@@ -313,20 +314,70 @@ function recalcTotal() {
     updateCartCounterGlobally(totalItems);
 }
 
-function updateCartFooter(totalItems, totalSum) {
-    const countFooter = document.getElementById('cart-count');
-    const totalFooter = document.getElementById('cart-total');
+function updateCartFooter() {
+    const cartFooter = document.getElementById('cart-footer');
+    const cartItems = document.querySelectorAll('.cart-item');
+    const emptyCartState = document.querySelector('.empty-cart-state');
 
-    if (countFooter) {
-        countFooter.textContent = 'В кошику: ' + totalItems + ' ' + getItemWord(totalItems);
-    }
+    if (cartItems.length === 0) {
+        cartFooter.style.display = 'none';
+        if (emptyCartState) emptyCartState.style.display = 'block';
+    } else {
+        cartFooter.style.display = 'block';
+        if (emptyCartState) emptyCartState.style.display = 'none';
 
-    if (totalFooter) {
-        totalFooter.textContent = '⠀на суму: ' + totalSum.toFixed(2) + ' ₴';
+        // Обновляем данные в футере
+        let totalItems = 0;
+        let totalSum = 0;
+        let totalSumWithoutDiscount = 0;
+
+        cartItems.forEach(item => {
+            const quantity = parseInt(item.querySelector('.quantity-count').textContent);
+            const price = parseFloat(item.getAttribute('data-price'));
+            const discountPercent = parseFloat(item.getAttribute('data-discount'));
+
+            totalItems += quantity;
+            totalSum += price * quantity;
+
+            // Рассчитываем цену без скидки
+            const priceWithoutDiscount = discountPercent > 0 ?
+                price / (1 - discountPercent / 100) : price;
+            totalSumWithoutDiscount += priceWithoutDiscount * quantity;
+        });
+
+        // Обновляем значения в футере
+        document.getElementById('total-items-count').textContent =
+            totalItems + ' ' + getItemWord(totalItems);
+
+        const discountRow = document.querySelector('.discount-row');
+        if (totalSumWithoutDiscount > totalSum) {
+            if (!discountRow) {
+                // Создаем строку скидки если ее нет
+                const summary = document.querySelector('.cart-summary');
+                const discountHtml = `
+                    <div class="summary-row discount-row">
+                        <span class="summary-label">Знижка:</span>
+                        <span class="summary-value" id="total-discount">-${(totalSumWithoutDiscount - totalSum).toFixed(2)} ₴</span>
+                    </div>
+                `;
+                summary.insertBefore(createElementFromHTML(discountHtml), document.querySelector('.total-row'));
+            } else {
+                discountRow.querySelector('#total-discount').textContent =
+                    '-' + (totalSumWithoutDiscount - totalSum).toFixed(2) + ' ₴';
+            }
+        } else if (discountRow) {
+            discountRow.remove();
+        }
+
+        document.getElementById('total-sum').textContent =
+            totalSum.toFixed(2) + ' ₴';
+
+        // Обновляем счетчик в кнопке корзины
+        updateCartCounter(totalItems);
     }
 }
 function getItemWord(count) {
-    if (count === 0) return 'товарів';
+    if (count == 0) return 'товарів';
     if (count % 10 === 1 && count % 100 !== 11) return 'товар';
     if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) return 'товари';
     return 'товарів';
@@ -347,12 +398,16 @@ function updateQuantity(productId, newQuantity) {
         console.log('Ошибка обновления количества:', error);
     });
 }
-
+function createElementFromHTML(htmlString) {
+    const div = document.createElement('div');
+    div.innerHTML = htmlString.trim();
+    return div.firstChild;
+}
 function removeFromCart(productId) {
-    const item = document.querySelector('.header_card_product[data-id="' + productId + '"]');
+    const item = document.querySelector('.cart-item[data-id="' + productId + '"]');
     if (!item) return;
 
-    const deleteBtn = item.querySelector('.delete-btn');
+    const deleteBtn = item.querySelector('.cart-item-remove');
     if (deleteBtn) {
         deleteBtn.style.pointerEvents = 'none';
         deleteBtn.style.opacity = '0.5';
@@ -381,7 +436,7 @@ function removeFromCart(productId) {
                     item.remove();
                     recalcTotal();
                     const cartItems = document.getElementById('cart-items');
-                    if (cartItems && document.querySelectorAll('.header_card_product').length === 0) {
+                    if (cartItems && document.querySelectorAll('.cart-item').length === 0) {
                         cartItems.innerHTML = '<p class="empty-cart">Кошик порожній</p>';
                     }
                     updateCartCounterGlobally(cartData.items.reduce((total, item) => total + item.quantity, 0));
@@ -402,9 +457,9 @@ function removeFromCart(productId) {
             console.log('Ошибка сети:', error);
         });
 }
+updateCartFooter();
 document.addEventListener('DOMContentLoaded', function () {
     recalcTotal();
-    console.log('Cart initialized');
 });
 
 function openCartModal() {
@@ -450,7 +505,7 @@ function addToCart(productId, event) {
     if (!buyButton) return;
 
     if (!cartData.isLoggedIn) {
-        alert('Спочатку авторизуйтесь!');
+        showNotification('Спочатку авторизуйтесь!', 'error');
         return;
     }
 
@@ -511,68 +566,72 @@ function addToCart(productId, event) {
             buyButton.innerHTML = originalContent;
             buyButton.disabled = false;
             buyButton.style.opacity = '1';
-            showNotification('Помилка мережі', 'error');
         });
 }
-
-
-
 function updateCartUI() {
     const cartItems = document.getElementById('cart-items');
     if (!cartItems) return;
 
     cartItems.innerHTML = '';
     if (cartData.items.length === 0) {
-        cartItems.innerHTML = '<p class="empty-cart">Кошик порожній</p>';
+        cartItems.innerHTML = `
+            <div class="empty-cart-state">
+                <div class="empty-cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h3 class="empty-cart-title">Кошик порожній</h3>
+                <p class="empty-cart-message">Додайте товари до кошика, щоб зробити покупку</p>
+                <button class="empty-cart-button" onclick="closeCartModal()">Продовжити покупки</button>
+            </div>
+        `;
         return;
     }
 
     cartData.items.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'header_card_product';
+        div.className = 'cart-item';
         div.dataset.id = item.id;
         div.dataset.price = item.price;
         div.dataset.discount = item.discount_percent || 0;
-        const priceHTML = item.has_discount && item.original_price ?
-            `<div class="price-wrapper">
-                <span class="price discounted">${item.total.toFixed(2)} ₴</span>
-            </div>` :
-            `<div class="price-wrapper">
-                <span class="price">${item.total.toFixed(2)} ₴</span>
-            </div>`;
 
+        // Используем ту же структуру, что и в productBasket.php
         div.innerHTML = `
-            <div class="delete-wrapper">
-                <a href="#" class="delete-btn" onclick="removeFromCart(${item.id}); return false;">
-                    <img src="img/recycle-bin.png" alt="Видалити">
-                </a>
+            <div class="cart-item-image">
+                <img src="${item.img}" alt="${item.name}">
             </div>
-            <div class="photo-wrapper"><img src="${item.img}" alt="${item.name}"></div>
-            <div class="name-wrapper"><p>${item.name}</p></div>
-            ${priceHTML}
-            <div class="quantity-wrapper">
-                <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', ${item.id}, ${item.discount_percent || 0})">-</button>
-                <span class="count">${item.quantity}</span>
-                <button class="qty-btn plus" onclick="changeQuantity(this, 'increase', ${item.id}, ${item.discount_percent || 0})">+</button>
+            <div class="cart-item-details">
+                <h3 class="cart-item-name">${item.name}</h3>
+                <div class="cart-item-price">
+                    ${item.has_discount ? `
+                        <span class="original-price">${(item.original_price || item.price / (1 - item.discount_percent / 100)).toFixed(2)} ₴</span>
+                    ` : ''}
+                    <span class="final-price ${item.has_discount ? 'discounted' : ''}">
+                        ${item.price.toFixed(2)} ₴
+                    </span>
+                </div>
+            </div>
+            <div class="cart-item-controls">
+                <div class="quantity-controls">
+                    <button class="qty-btn minus" onclick="changeQuantity(this, 'decrease', ${item.id}, ${item.discount_percent || 0})">-</button>
+                    <span class="quantity-count">${item.quantity}</span>
+                    <button class="qty-btn plus" onclick="changeQuantity(this, 'increase', ${item.id}, ${item.discount_percent || 0})">+</button>
+                </div>
+                <div class="cart-item-total">
+                    <span class="item-total-price">${item.total.toFixed(2)} ₴</span>
+                </div>
+                <a href="#" class="cart-item-remove" onclick="removeFromCart(${item.id}); return false;">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
             </div>
         `;
         cartItems.appendChild(div);
     });
 
-    const totalItems = cartData.items.reduce((a, i) => a + i.quantity, 0);
-    const totalSum = cartData.items.reduce((a, i) => a + i.total, 0);
-    const totalSumWithoutDiscount = cartData.items.reduce((a, i) =>
-        a + ((i.original_price || i.price) * i.quantity), 0);
+    // Обновляем футер корзины
+    updateCartFooter();
 
-    document.getElementById('cart-count').textContent = `В кошику: ${totalItems} ${getItemWord(totalItems)}`;
-    const totalFooter = document.getElementById('cart-total');
-    if (totalSumWithoutDiscount > totalSum) {
-        totalFooter.innerHTML = `
-            <span>${totalSum.toFixed(2)} ₴</span>
-        `;
-    } else {
-        totalFooter.textContent = `⠀на суму: ${totalSum.toFixed(2)} ₴`;
-    }
+    // Инициализируем обработчики событий для новых элементов
+    initCartEventListeners();
 }
 function showNotification(message, type) {
     document.querySelectorAll('.notification').forEach(n => n.remove());
@@ -668,43 +727,19 @@ function loadCartContent() {
 }
 
 function updateCartCounter(count) {
-    const counter = document.querySelector('.cart-counter');
-    const cartButton = document.querySelector('.cart-button');
-
+    const cartCounter = document.querySelector('.cart-counter');
     if (count > 0) {
-        if (counter) {
+        if (!cartCounter) {
+            const cartBtn = document.querySelector('.cart-btn');
+            const counter = document.createElement('span');
+            counter.className = 'cart-counter';
             counter.textContent = count;
-            counter.classList.add('update');
-            setTimeout(() => counter.classList.remove('update'), 300);
-        } else if (cartButton) {
-            const newCounter = createElement('span', { class: 'cart-counter' }, count);
-            cartButton.appendChild(newCounter);
-
-            newCounter.style.opacity = '0';
-            newCounter.style.transform = 'scale(0.5)';
-
-            setTimeout(() => {
-                newCounter.style.opacity = '1';
-                newCounter.style.transform = 'scale(1)';
-                newCounter.style.transition = 'all 0.3s ease';
-            }, 10);
+            cartBtn.appendChild(counter);
+        } else {
+            cartCounter.textContent = count;
         }
-    } else if (counter) {
-        counter.style.opacity = '0';
-        counter.style.transform = 'scale(0.5)';
-
-        setTimeout(() => {
-            if (counter.parentElement) {
-                counter.remove();
-            }
-        }, 300);
-    }
-
-    const cartModal = document.getElementById('cartModal');
-    if (cartModal && cartModal.classList.contains('show')) {
-        setTimeout(() => {
-            loadCartContent();
-        }, 100);
+    } else if (cartCounter) {
+        cartCounter.remove();
     }
 }
 
@@ -954,3 +989,176 @@ document.getElementById('authForm')?.addEventListener('submit', function (e) {
         }
     }
 });
+
+
+
+function confirmLogout() {
+    const overlay = document.createElement('div');
+    overlay.id = 'logout-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `;
+    const modal = document.createElement('div');
+    modal.id = 'logout-modal';
+    modal.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        max-width: 400px;
+        width: 90%;
+        animation: modalSlideIn 0.3s ease;
+    `;
+
+    modal.innerHTML = `
+        <h3 style="margin-bottom: 20px; color: #333; font-size: 20px;">Ви впевнені, що хочете вийти?</h3>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button onclick="performLogout()" style="
+                background: #e74c3c;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 16px;
+                transition: all 0.2s ease;
+            ">Так, вийти</button>
+            <button onclick="closeLogoutModal()" style="
+                background: #95a5a6;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 16px;
+                transition: all 0.2s ease;
+            ">Скасувати</button>
+        </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    modal.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+}
+
+
+function performLogout() {
+    window.location.href = 'logaut.php';
+}
+document.addEventListener('click', function (e) {
+    if (e.target.id === 'logout-overlay') {
+        closeLogoutModal();
+    }
+});
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        closeLogoutModal();
+    }
+});
+function openLogoutModal(event) {
+    if (event) event.preventDefault();
+
+    const modal = document.getElementById('logoutModal');
+    const overlay = document.createElement('div');
+    overlay.id = 'logout-overlay';
+    overlay.className = 'logout-overlay';
+
+    document.body.appendChild(overlay);
+    modal.style.display = 'block';
+    document.body.classList.add('modal-open');
+    setTimeout(() => {
+        const modalContent = modal.querySelector('.logout-modal-content');
+        if (modalContent) {
+            modalContent.style.animation = 'modalAppear 0.3s ease forwards';
+        }
+        overlay.style.animation = 'overlayAppear 0.3s ease forwards';
+    }, 10);
+    overlay.onclick = function (e) {
+        if (e.target === overlay) {
+            closeLogoutModal();
+        }
+    };
+    const escapeHandler = function (e) {
+        if (e.key === 'Escape') {
+            closeLogoutModal();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    };
+    document.addEventListener('keydown', escapeHandler);
+}
+
+function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    const overlay = document.getElementById('logout-overlay');
+
+    if (overlay) {
+        overlay.style.animation = 'overlayAppear 0.2s ease reverse forwards';
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }, 200);
+    }
+
+    if (modal) {
+        const modalContent = modal.querySelector('.logout-modal-content');
+        if (modalContent) {
+            modalContent.style.animation = 'modalAppear 0.2s ease reverse forwards';
+        }
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 200);
+    }
+
+    document.body.classList.remove('modal-open');
+}
+
+function performLogout() {
+    window.location.href = 'logaut.php';
+}
+document.addEventListener('click', function (e) {
+    if (e.target.closest('.dropdown-menu') && e.target.textContent === 'Вийти з акаунту') {
+        openLogoutModal(e);
+    }
+});
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const toggleBtn = document.querySelector('.toggle-password i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleBtn.classList.remove('fa-eye');
+        toggleBtn.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleBtn.classList.remove('fa-eye-slash');
+        toggleBtn.classList.add('fa-eye');
+    }
+}
+function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+}
+function openLoginModal() {
+    document.getElementById('loginModal').style.display = 'block';
+}
+document.getElementById('loginBtn').addEventListener('click', openLoginModal);
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeLoginModal();
+    }
+});
+document.querySelector('.modal-overlay').addEventListener('click', closeLoginModal);

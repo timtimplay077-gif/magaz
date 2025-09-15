@@ -48,7 +48,7 @@ if ($isLoggedIn) {
 
             $quantity = $item['basket_count'];
             $item_total = $final_price * $quantity;
-            $item_total_without_discount = $price_without_discount * $quantity; 
+            $item_total_without_discount = $price_without_discount * $quantity;
 
             $basket_items[] = [
                 'id' => $item['product_id'],
@@ -60,9 +60,9 @@ if ($isLoggedIn) {
                 'price_without_discount' => $price_without_discount,
                 'quantity' => $quantity,
                 'total' => $item_total,
-                'total_without_discount' => $item_total_without_discount, 
+                'total_without_discount' => $item_total_without_discount,
                 'has_discount' => $has_discount,
-                'discount_percent' => isset($user_row['sale']) ? $user_row['sale'] : 0 
+                'discount_percent' => isset($user_row['sale']) ? $user_row['sale'] : 0
             ];
 
             $total_items += $quantity;
@@ -94,66 +94,101 @@ function getItemWord($count)
         <span class="cart-counter"><?= $total_items ?></span>
     <?php endif; ?>
 </button>
-
-<div class="modal modal-basket" id="cartModal" style="display:none;">
-    <div class="cart-header">
-        <div class="flex_close">
-            <div class="cart-title">
-                <p>Кошик</p>
+<div class="modal modal-basket" id="cartModal" style="display:none; background: #0A0A0A;">
+    <div class="cart-header-content">
+        <div class="cart-logo-section">
+            <div class="cart-logo-wrapper">
+                <img src="img/kanskrop_logo.png" alt="Logo" class="cart-logo-img">
+                <div class="cart-logo-glow"></div>
             </div>
-            <button class="delete-button" onclick="closeCartModal()">
-                <img src="img/close.png" alt="Закрити">
-            </button>
+            <h2 class="cart-title">Кошик</h2>
+        </div>
+        <button class="cart-close-btn" onclick="closeCartModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div class="cart-content">
+        <div class="cart-items-container" id="cart-items">
+            <?php if (!empty($basket_items)): ?>
+                <?php foreach ($basket_items as $item): ?>
+                    <div class="cart-item" data-id="<?= $item['id'] ?>" data-basket-id="<?= $item['basket_id'] ?>"
+                        data-price="<?= $item['price'] ?>" data-discount="<?= $item['discount_percent'] ?>">
+                        <div class="cart-item-image">
+                            <img src="<?= $item['img'] ?>" alt="<?= htmlspecialchars($item['name']) ?>">
+                        </div>
+                        <div class="cart-item-details">
+                            <h3 class="cart-item-name"><?= htmlspecialchars($item['name']) ?></h3>
+                            <div class="cart-item-price">
+                                <?php if ($item['has_discount']): ?>
+                                    <span class="original-price"><?= number_format($item['price_without_discount'], 2) ?> ₴</span>
+                                <?php endif; ?>
+                                <span class="final-price <?= $item['has_discount'] ? 'discounted' : '' ?>">
+                                    <?= number_format($item['price'], 2) ?> ₴
+                                </span>
+                            </div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <div class="quantity-controls">
+                                <button class="qty-btn minus"
+                                    onclick="changeQuantity(this, 'decrease', <?= $item['id'] ?>, <?= $item['discount_percent'] ?>)">-</button>
+                                <span class="quantity-count"><?= $item['quantity'] ?></span>
+                                <button class="qty-btn plus"
+                                    onclick="changeQuantity(this, 'increase', <?= $item['id'] ?>, <?= $item['discount_percent'] ?>)">+</button>
+                            </div>
+                            <div class="cart-item-total">
+                                <span class="item-total-price"><?= number_format($item['total'], 2) ?> ₴</span>
+                            </div>
+                            <a href="#" class="cart-item-remove" onclick="removeFromCart(<?= $item['id'] ?>); return false;">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="empty-cart-state" id="empty-cart-state" style="display: block;">
+                    <div class="empty-cart-icon">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </div>
+                    <h3 class="empty-cart-title">Кошик порожній</h3>
+                    <p class="empty-cart-message">Додайте товари до кошика, щоб зробити покупку</p>
+                    <button class="empty-cart-button" onclick="closeCartModal()">Продовжити покупки</button>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
-    <div id="cart-items">
-        <?php if (!empty($basket_items)): ?>
-            <?php foreach ($basket_items as $item): ?>
-                <div class="header_card_product" data-id="<?= $item['id'] ?>" data-basket-id="<?= $item['basket_id'] ?>"
-                    data-price="<?= $item['price'] ?>" data-discount="<?= $item['discount_percent'] ?>">
-                    <div class="delete-wrapper">
-                        <a href="#" class="delete-btn" onclick="removeFromCart(<?= $item['id'] ?>); return false;">
-                            <img src="img/recycle-bin.png" alt="Видалити">
-                        </a>
-                    </div>
-                    <div class="photo-wrapper">
-                        <img src="<?= $item['img'] ?>" alt="<?= htmlspecialchars($item['name']) ?>">
-                    </div>
-                    <div class="name-wrapper">
-                        <p><?= htmlspecialchars($item['name']) ?></p>
-                    </div>
-                    <div class="price-wrapper">
-                        <?php if (isset($item['has_discount']) && $item['has_discount']): ?>
-                    
-                        <?php endif; ?>
-                        <span class="price <?= (isset($item['has_discount']) && $item['has_discount']) ? 'discounted' : '' ?>">
-                            <?= number_format($item['total'], 2) ?> ₴
-                        </span>
-                    </div>
-                    <div class="quantity-wrapper">
-                        <button class="qty-btn minus"
-                            onclick="changeQuantity(this, 'decrease', <?= $item['id'] ?>, <?= $item['discount_percent'] ?>)">-</button>
-                        <span class="count"><?= $item['quantity'] ?></span>
-                        <button class="qty-btn plus"
-                            onclick="changeQuantity(this, 'increase', <?= $item['id'] ?>, <?= $item['discount_percent'] ?>)">+</button>
-                    </div>
+    <div class="cart-footer" id="cart-footer" style="<?= empty($basket_items) ? 'display: none;' : '' ?>">
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span class="summary-label">Товарів:</span>
+                <span class="summary-value" id="total-items-count"><?= $total_items ?>
+                    <?= getItemWord($total_items) ?></span>
+            </div>
+            <?php if ($total_sum_without_discount > $total_sum): ?>
+                <div class="summary-row discount-row">
+                    <span class="summary-label">Знижка:</span>
+                    <span class="summary-value"
+                        id="total-discount">-<?= number_format($total_sum_without_discount - $total_sum, 2) ?> ₴</span>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="empty-cart">Кошик порожній</p>
-        <?php endif; ?>
+            <?php endif; ?>
+            <div class="summary-row total-row">
+                <span class="summary-label">До сплати:</span>
+                <span class="summary-value" id="total-sum"><?= number_format($total_sum, 2) ?> ₴</span>
+            </div>
+        </div>
+        <div class="cart-actions">
+            <a href="chekout.php" class="checkout-button">
+                <i class="fa-solid fa-credit-card"></i>
+                Оформити замовлення
+            </a>
+            <button class="continue-shopping-btn" onclick="closeCartModal()">
+                <i class="fa-solid fa-arrow-left"></i>
+                Продовжити покупки
+            </button>
+        </div>
     </div>
-
-    <div class="cart-footer">
-        <span id="cart-count">В кошику: <?= $total_items ?> <?= getItemWord($total_items) ?></span>
-        <?php if ($total_sum_without_discount > $total_sum): ?>
-        <?php endif; ?>
-        <span id="cart-total">⠀на суму: <?= number_format($total_sum, 2) ?> ₴</span>
-    </div>
-    <a href="chekout.php" class="buy-button">Оформити замовлення</a>
 </div>
-
 <script>
     const cartData = {
         items: <?= json_encode($basket_items) ?>,

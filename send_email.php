@@ -185,7 +185,7 @@ try {
   if ($mail->send()) {
     echo 'Письмо успешно отправлено!';
     unset($_SESSION['order_data']);
-    header("Location: thank_order.php");
+    header("Location: thanks_for_order.php");
     exit;
   } else {
     echo "Ошибка при отправке письма";

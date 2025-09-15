@@ -11,7 +11,6 @@ if (isset($_SESSION['logout_success'])) {
     });
     </script>';
 }
-
 include('data/baner2.php');
 include('data/category.php');
 $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
@@ -44,7 +43,7 @@ include('data/baner2.php');
 include('data/user_data.php');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 
 <head>
     <meta charset="UTF-8">
@@ -63,7 +62,7 @@ include('data/user_data.php');
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <title>Обліковий запис</title>
+    <title>Дякуємо за замовлення | KansKrop</title>
 </head>
 
 <body>
@@ -87,44 +86,85 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
-    <div class="h2_info block">
-        <h2>Обліковий запис</h2>
-    </div>
-    <?php
-    $result = $db_conn->query("SELECT * FROM users WHERE id = $user_id");
-    if ($roww = $result->fetch_assoc()) {
-        $firstName = htmlspecialchars($roww['firstName']);
-        $lastName = htmlspecialchars($roww['lastName']);
-        $email = htmlspecialchars($roww['email']);
-        $phone = htmlspecialchars($roww['phone']);
-    } else {
-        $firstName = "";
-        $lastName = "";
-        $email = "";
-        $phone = "";
-    }
-    ?>
-    <div class="accountinfo_content block">
-        <div class="accountinfo ">
-            <h3 class="h3_info">Особисті дані</h3>
-            <label for="firstName">* Ім’я</label><br>
-            <input type="text" id="firstName" name="firstName" placeholder="Ім’я" value="<?php print_r($firstName) ?>">
-            <br><br>
-
-            <label for="lastName">* Прізвище</label><br>
-            <input type="text" id="lastName" name="lastName" placeholder="Прізвище" value="<?php print_r($lastName) ?>">
-            <br><br>
-
-            <label for="email">* E-Mail</label><br>
-            <input type="email" id="email" name="email" placeholder="E-Mail" value="<?php print_r($email) ?>">
-            <br><br>
-
-            <label for="phone">* Телефон</label><br>
-            <input type="tel" id="phone1" name="phone" placeholder="Телефон" value="<?php print_r($phone) ?>">
+    <div class="thank-you-container">
+        <div class="thank-you-icon">
+            <i class="fas fa-check-circle"></i>
         </div>
-        <div class="logaut-box">
-            <a href="accountinfo.php"><button>Обліковий запис</button></a>
-            <button onclick="confirmLogout()">Вихід</button>
+
+        <h1 class="thank-you-title">Дякуємо за ваше замовлення!</h1>
+
+        <p class="thank-you-message">
+            Ваше замовлення успішно отримано та обробляється. Наш менеджер зв'яжеться з вами найближчим часом для
+            підтвердження деталей.
+        </p>
+
+        <div class="order-details">
+            <h3>Деталі замовлення</h3>
+
+            <div class="detail-row">
+                <span class="detail-label">Номер замовлення:</span>
+                <span class="detail-value">#<?= rand(1000, 9999) ?></span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Дата замовлення:</span>
+                <span class="detail-value"><?= date('d.m.Y') ?></span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Спосіб оплати:</span>
+                <span class="detail-value">Післяплата</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Статус:</span>
+                <span class="detail-value" style="color: #28a745;">Обробляється</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="index.php" class="btn-primary">
+                <i class="fas fa-home me-2"></i> На головну
+            </a>
+        </div>
+    </div>
+    <div class="block">
+        <div class="continue-shopping">
+            <h3>Можливо, вас зацікавить</h3>
+            <div class="product-suggestions">
+                <?php
+                $suggestions_sql = "SELECT * FROM products ORDER BY RAND() LIMIT 6";
+                $suggestions_result = $db_conn->query($suggestions_sql);
+
+                if ($suggestions_result && $suggestions_result->num_rows > 0) {
+                    while ($product = $suggestions_result->fetch_assoc()) {
+                        $product_url = "product.php?id=" . $product['id'];
+                        $image_path = !empty($product['img']) ? $product['img'] : 'img/products/default.jpg';
+                        ?>
+                        <a href="<?= $product_url ?>" class="suggestion-item-link">
+                            <div class="suggestion-item">
+                                <img src="<?= $image_path ?>" alt="<?= htmlspecialchars($product['name']) ?>"
+                                    class="suggestion-img">
+                                <div class="suggestion-name"><?= htmlspecialchars($product['name']) ?></div>
+                                <div class="suggestion-price"><?= number_format($product['price'], 2, ',', ' ') ?> грн</div>
+                            </div>
+                        </a>
+                        <?php
+                    }
+                } else {
+
+                    foreach ($fallback_products as $product) {
+                        ?>
+                        <div class="suggestion-item">
+                            <img src="<?= $product['image'] ?>" alt="<?= $product['name'] ?>" class="suggestion-img">
+                            <div class="suggestion-name"><?= $product['name'] ?></div>
+                            <div class="suggestion-price"><?= $product['price'] ?> грн</div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
         </div>
     </div>
     <div class="benefits-section unselectable">
@@ -187,15 +227,18 @@ include('data/user_data.php');
             </div>
         </div>
     </div>
+
     <?php
     include("contact/contact_end.php")
         ?>
+
 
     <?php
     if ($isLoggedIn) {
         include("dropdown.php");
     }
     ?>
+
     <script src="js/main.js"></script>
 </body>
 

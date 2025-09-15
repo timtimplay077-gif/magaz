@@ -12,7 +12,6 @@ if (isset($_SESSION['logout_success'])) {
     </script>';
 }
 
-include('data/baner.php');
 include('data/baner2.php');
 include('data/category.php');
 $isLoggedIn = isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0;
@@ -41,7 +40,6 @@ if ($isLoggedIn) {
 } elseif (isset($_SESSION['cart'])) {
     $cart_count = array_sum($_SESSION['cart']);
 }
-include('data/baner.php');
 include('data/baner2.php');
 include('data/user_data.php');
 ?>
@@ -69,51 +67,23 @@ include('data/user_data.php');
 </head>
 
 <body>
-    <div class="head unselectable">
-        <div class="block">
-            <a class="logo" href="index.php"><img src="img/kanskrop_logo.png" alt="KansKrop"></a>
-            <form method="GET" class="input_head" action="index.php">
-                <a href="index.php"> <label>
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Я шукаю..." name="search" value="">
-                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                    </label></a>
-
-            </form>
-            <div class="icons_head">
-                <?php if ($isLoggedIn): ?>
-                    <?php include("dropdown.php") ?>
-                    <button onclick="toggleMenu()"><i class="fa-regular fa-user"></i></button>
-                <?php else: ?>
-                    <button onclick="openLogin()"><?php include("auth.php"); ?></button>
-                <?php endif; ?>
-
-                <?php if ($isLoggedIn): ?>
-                    <button onclick="openCartModal()" class="cart-btn">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <?php if ($cart_count > 0): ?>
-                            <span class="cart-counter"><?= $cart_count ?></span>
-                        <?php endif; ?>
-                    </button>
-                <?php else: ?>
-                    <button onclick="alert('Спочатку авторизуйтесь!')" class="cart-btn">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <?php if (isset($_SESSION['cart']) && array_sum($_SESSION['cart']) > 0): ?>
-                            <span class="cart-counter"><?= array_sum($_SESSION['cart']) ?></span>
-                        <?php endif; ?>
-                    </button>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
+    <?php include("components/header.php");
+    ?>
     <div class="whatWeHave unselectable">
         <div class="block">
-            <div class="whatWeHave_kans">
-                <img src="categoty/school-material.png" alt="">
-                <a href="index.php">Канцелярія</a>
-            </div>
-            <div class="marquee">
-                <span id="marqueeText"></span>
+            <div class="category-header">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <img src="categoty/school-material.png" alt="Канцелярія">
+                        <div class="icon-hover-effect"></div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <a href="index.php" class="category-link">
+                        <span class="link-text">Канцелярія</span>
+                        <div class="link-underline"></div>
+                        <div class="link-hover-effect"></div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -153,54 +123,70 @@ include('data/user_data.php');
             <a href="registration.php"><button class="btn">Продовжити</button></a>
         </div>
     </div>
-
-    <div class="banner-blocks-container2 unselectable">
+    <div class="benefits-section unselectable">
         <div class="block">
-            <?php foreach ($data_baner1 as $key => $value): ?>
-                <div class="card2">
-                    <img src="<?= $value['img'] ?>" alt="" class="logo_card">
-                    <h3><?= $value['name'] ?></h3>
-                    <p><?= $value['text'] ?></p>
+            <div class="benefits-header">
+                <h2>Наші переваги</h2>
+                <p>Чому клієнти обирають нас</p>
+                <div class="benefits-divider"></div>
+            </div>
+            <div class="benefits-grid">
+                <?php foreach ($data_baner1 as $value): ?>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <img src="<?= $value['img'] ?>" alt="<?= htmlspecialchars($value['name']) ?>">
+                            <div class="icon-overlay"></div>
+                        </div>
+                        <div class="benefit-content">
+                            <h3><?= htmlspecialchars($value['name']) ?></h3>
+                            <p><?= htmlspecialchars($value['text']) ?></p>
+                        </div>
+                        <div class="benefit-hover-effect"></div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <div class="logo-map-section unselectable">
+        <div class="block">
+            <div class="logo-map-grid">
+                <div class="logo-card">
+                    <div class="logo-content">
+                        <img src="img/kanskrop_logo.png" alt="KansKrop" class="main-logo">
+                        <div class="logo-overlay"></div>
+                        <div class="logo-glow"></div>
+                    </div>
+                    <div class="logo-info">
+                        <h3>КанцКроп</h3>
+                        <p>Інтернет-магазин канцелярських товарів</p>
+                        <div class="logo-features">
+                            <span class="feature-tag">Якість</span>
+                            <span class="feature-tag">Надійність</span>
+                            <span class="feature-tag">Швидка доставка</span>
+                        </div>
+                    </div>
                 </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-    <div class="logo_end">
-        <div class="block">
-            <div>
-                <img src="img/kanskrop_logo.png" alt="KansKrop">
-            </div>
-            <div class="iframe">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d195.92550423792767!2d32.28413667954254!3d48.51912323100282!3m2!1i1024!2i768!4f13.1!5e1!3m2!1suk!2sua!4v1756587377844!5m2!1suk!2sua"
-                    width="450" height="300" style="border-radius: 15px; border: 1px solid lightgray;"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </div>
-    </div>
-    <div class="contact unselectable">
-        <div class="block">
-            <div class="card3">
-                <p><img src="contact/phone.png" alt="Телефон" class="baner2_img">Номер телефона:
-                    <span class="phone_number">+380 500 534 408</span>
-                </p>
-                <p><img src="contact/gmail.png" alt="Email" class="baner2_img">Наша пошта:
-                    <span class="phone_number">admin@kanskrop.com</span>
-                </p>
-                <p><img src="contact/location.png" alt="Адреса" class="baner2_img">м.Кропивницький</p>
-            </div>
-            <div class="ourVT">
-                <a href="https://t.me/kanskrop" target="_blank">
-                    <img src="contact/telegram.png" alt="Telegram" class="contact_logo">
-                    <p>Telegram</p>
-                </a>
-                <a href="viber://chat?number=%2B380500534408">
-                    <img src="contact/viber.png" alt="Viber" class="contact_logo">
-                    <p>Viber</p>
-                </a>
+                <div class="map-card">
+                    <div class="map-header">
+                        <h3>Ми знаходимось</h3>
+                        <div class="map-divider"></div>
+                    </div>
+                    <div class="map-container">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d195.92550423792767!2d32.28413667954254!3d48.51912323100282!3m2!1i1024!2i768!4f13.1!5e1!3m2!1suk!2sua!4v1756587377844!5m2!1suk!2sua"
+                            width="100%" height="300" style="border: none;" referrerpolicy="no-referrer-when-downgrade"
+                            class="map-iframe" loading="lazy" allowfullscreen>
+                        </iframe>
+                        <div class="map-overlay"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <?php
+    include("contact/contact_end.php")
+        ?>
+
 
     <div id="authCheck" data-logged-in="<?php echo $isLoggedIn ? 'true' : 'false'; ?>" style="display: none;"></div>
     <?php
