@@ -189,57 +189,162 @@ $db_image_query = $db_conn->query($db_image_sql);
             </div>
         </div>
     </div>
-    <div class="product_delivery_payment unselectable">
-        <div class="block">
-            <div class="delivery">
-                <h2>Доставка</h2>
-                <a href="https://novaposhta.ua/shipping-cost/"><img src="payment/novaposhta.svg" alt="">Доставка Новою
-                    Поштою</a>
-                <p class="delivery_p">Адреси найближчих відділень дивитися на карті</p>
-                <a href="https://www.ukrposhta.ua/ua/taryfy-ukrposhta-standart" class="delivery_a"><img
-                        src="payment/ukrposhta.svg" alt="">
-                    <p class="delivery_p1">Доставка Укр поштою</p>
-                </a>
-                <a href="#location"><img src="payment/pickup.svg" alt="">Самовивіз (м.Кропивницький) Безкоштовно</a>
-            </div>
-            <div class="payment">
-                <h2>Оплата</h2>
-                <div class="paymant_photo">
-                    <img src="payment/1.svg" alt="">
-                    <img src="payment/2.svg" alt="">
-                    <img src="payment/4.svg" alt="">
-                    <img src="payment/5.svg" alt="">
-                </div>
-
-
-            </div>
-        </div>
-    </div>
-    <?php if (!empty($row['aboutproduct'])): ?>
-        <div class="product_description unselectable">
-            <div class="block" id="about">
-                <h2 class="product_name">Усе про <?php print_r(value: $row['name']) ?></h2>
-                <p><?php print_r(value: $row['aboutproduct']) ?></p>
-            </div>
-        </div>
-    <?php endif; ?>
-    </div>
     <div class="block">
-        <div class="characteristics" id="char">
-            <h2>Характеристика <?php print_r($row["name"]) ?></h2>
-            <p><?php print_r($row["characteristic_1"]) ?></p>
-            <p><?php print_r($row["characteristic_2"]) ?></p>
-            <p><?php print_r($row["characteristic_3"]) ?></p>
-            <p><?php print_r($row["characteristic_4"]) ?></p>
-            <p><?php print_r($row["characteristic_5"]) ?></p>
-            <p><?php print_r($row["characteristic_6"]) ?></p>
-            <p><?php print_r($row["characteristic_7"]) ?></p>
-            <p><?php print_r($row["characteristic_8"]) ?></p>
-            <p><?php print_r($row["characteristic_9"]) ?></p>
-            <p><?php print_r($row["characteristic_10"]) ?></p>
+        <?php if (!empty($row['aboutproduct'])): ?>
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-info-circle"></i> Усе про Товар</h2>
+                </div>
+                <div class="section-content">
+                    <p class="about-content"><?php print_r(value: $row['aboutproduct']) ?></p>
+                </div>
+            </div>
+        <?php endif; ?>
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-list-alt"></i> Характеристики Товару <?php print_r($row["name"]) ?></h2>
+            </div>
+            <div class="section-content">
+                <div class="characteristics-grid">
+                    <?php if (!empty($row['characteristic_1'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_1"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_2'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_2"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_3'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_3"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_4'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_4"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_5'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_5"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_6'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_6"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_7'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_7"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_8'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_8"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_9'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_9"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($row['characteristic_10'])): ?>
+                        <div class="char-item">
+                            <p><?php print_r($row["characteristic_10"]) ?></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
-
+    <div class="delivery-payment-section">
+        <div class="block">
+            <h2 class="section-title">Доставка та оплата</h2>
+            <div class="delivery-grid">
+                <div class="delivery-option">
+                    <div class="delivery-header">
+                        <div class="delivery-icon">
+                            <img src="payment/novaposhta.svg" alt="Нова Пошта">
+                        </div>
+                        <h3 class="delivery-title">Нова Пошта</h3>
+                    </div>
+                    <p class="delivery-description">
+                        Швидка та надійна доставка по всій Україні. Відправка в день замовлення.
+                    </p>
+                    <a href="https://novaposhta.ua/shipping-cost/" class="delivery-link" target="_blank">
+                        Детальніше про тарифи
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="delivery-option">
+                    <div class="delivery-header">
+                        <div class="delivery-icon">
+                            <img src="payment/ukrposhta.svg" alt="Укрпошта">
+                        </div>
+                        <h3 class="delivery-title">Укрпошта</h3>
+                    </div>
+                    <p class="delivery-description">
+                        Економна доставка у віддалені куточки України. Ідеально для невеликих посилок.
+                    </p>
+                    <a href="https://www.ukrposhta.ua/ua/taryfy-ukrposhta-standart" class="delivery-link"
+                        target="_blank">
+                        Тарифи Укрпошти
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="delivery-option">
+                    <div class="delivery-header">
+                        <div class="delivery-icon">
+                            <img src="payment/pickup.svg" alt="Самовивіз">
+                        </div>
+                        <h3 class="delivery-title">Самовивіз</h3>
+                    </div>
+                    <p class="delivery-description">
+                        Заберіть замовлення самотужки з нашого магазину в м. Кропивницький. Безкоштовно.
+                    </p>
+                    <a href="https://maps.app.goo.gl/Tyci6VFU98RzmDXS8" class="delivery-link">
+                        Дивитися на карті
+                        <i class="fas fa-map-marker-alt"></i>
+                    </a>
+                </div>
+                <div class="delivery-option">
+                    <div class="delivery-header">
+                        <div class="delivery-icon">
+                            <i class="fas fa-truck" style="font-size: 24px; color: #4CAF50;"></i>
+                        </div>
+                        <h3 class="delivery-title">Кур'єрська доставка</h3>
+                    </div>
+                    <p class="delivery-description">
+                        Доставка кур'єром до дверей у м. Кропивницький. Зручно та швидко.
+                    </p>
+                    <span class="delivery-link">
+                        Деталі у менеджера
+                        <i class="fas fa-phone"></i>
+                    </span>
+                </div>
+            </div>
+            <h3 style="text-align: center; margin: 40px 0 20px; color: #2d3748; font-size: 1.5rem;">
+                Способи оплати
+            </h3>
+            <div class="payment-methods">
+                <div class="payment-method">
+                    <img src="payment/1.svg" alt="Payment Method 1">
+                </div>
+                <div class="payment-method">
+                    <img src="payment/2.svg" alt="Payment Method 2">
+                </div>
+                <div class="payment-method">
+                    <img src="payment/4.svg" alt="Payment Method 4">
+                </div>
+                <div class="payment-method">
+                    <img src="payment/5.svg" alt="Payment Method 5">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="benefits-section unselectable">
         <div class="block">
             <div class="benefits-header">

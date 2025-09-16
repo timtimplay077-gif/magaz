@@ -1397,7 +1397,6 @@
     }
 
     #phone {
-        padding-left: 60px;
         height: 38px;
         font-size: 14px;
     }
@@ -1481,5 +1480,11 @@
     .phone-input-container,
     .password-container {
         padding: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-content {
+        font-size: 16px;
     }
 }
