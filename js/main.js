@@ -246,14 +246,16 @@ document.addEventListener('DOMContentLoaded', function () {
 function changeQuantity(button, action, productId, discountPercent = 0) {
     if (!button || !button.closest) return;
 
-    const item = button.closest('.header_card_product');
+    const item = button.closest('.cart-item');
     if (!item) return;
 
-    const countEl = item.querySelector('.count');
-    const priceElement = item.querySelector('.price');
-    const oldPriceElement = item.querySelector('.old-price');
-    const basePrice = parseFloat(item.dataset.basePrice) || parseFloat(item.dataset.price) / ((100 - discountPercent) / 100);
-    let pricePerUnit = parseFloat(item.dataset.price) || 0;
+    const countEl = item.querySelector('.quantity-count');
+    const priceElement = item.querySelector('.final-price');
+    const oldPriceElement = item.querySelector('.original-price');
+    const totalElement = item.querySelector('.item-total-price');
+
+    const basePrice = parseFloat(item.dataset.price) || 0;
+    let pricePerUnit = basePrice;
 
     let count = parseInt(countEl.textContent) || 0;
 
@@ -266,25 +268,14 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     }
 
     countEl.textContent = count;
-    if (discountPercent > 0) {
-        const discountMultiplier = (100 - discountPercent) / 100;
-        pricePerUnit = basePrice * discountMultiplier;
-    }
-
     const totalPrice = pricePerUnit * count;
-    if (priceElement) {
-        priceElement.textContent = totalPrice.toFixed(2) + ' ₴';
-    }
-    if (oldPriceElement && discountPercent > 0) {
-        oldPriceElement.textContent = (basePrice * count).toFixed(2) + ' ₴';
+    if (totalElement) {
+        totalElement.textContent = totalPrice.toFixed(2) + ' ₴';
     }
     const cartItem = cartData.items.find(i => i.id == productId);
     if (cartItem) {
         cartItem.quantity = count;
         cartItem.total = totalPrice;
-        if (discountPercent > 0 && !cartItem.original_price) {
-            cartItem.original_price = basePrice;
-        }
     }
 
     updateQuantity(productId, count);
@@ -295,18 +286,19 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
 function recalcTotal() {
     let totalSum = 0;
     let totalItems = 0;
-    const items = document.querySelectorAll('.header_card_product');
+    const items = document.querySelectorAll('.cart-item');
 
     items.forEach(function (item) {
         const price = parseFloat(item.dataset.price) || 0;
-        const count = parseInt(item.querySelector('.count').textContent) || 0;
+        const count = parseInt(item.querySelector('.quantity-count').textContent) || 0;
         const total = price * count;
 
         totalSum += total;
         totalItems += count;
-        const priceElement = item.querySelector('.price');
-        if (priceElement) {
-            priceElement.textContent = total.toFixed(2) + ' ₴';
+
+        const totalElement = item.querySelector('.item-total-price');
+        if (totalElement) {
+            totalElement.textContent = total.toFixed(2) + ' ₴';
         }
     });
 
@@ -1123,7 +1115,7 @@ document.addEventListener('click', function (e) {
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById('password');
     const toggleBtn = document.querySelector('.toggle-password i');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         toggleBtn.classList.remove('fa-eye');
@@ -1141,7 +1133,7 @@ function openLoginModal() {
     document.getElementById('loginModal').style.display = 'block';
 }
 document.getElementById('loginBtn').addEventListener('click', openLoginModal);
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         closeLoginModal();
     }
