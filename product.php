@@ -195,7 +195,7 @@ $db_image_query = $db_conn->query($db_image_sql);
     </div>
     <div class="block">
         <?php if (!empty($row['aboutproduct'])): ?>
-            <div class="section">
+            <div class="section" id="about">
                 <div class="section-header">
                     <h2><i class="fas fa-info-circle"></i> Усе про Товар</h2>
                 </div>
@@ -205,7 +205,7 @@ $db_image_query = $db_conn->query($db_image_sql);
             </div>
         <?php endif; ?>
         <div class="section">
-            <div class="section-header">
+            <div class="section-header" id="char">
                 <h2><i class="fas fa-list-alt"></i> Характеристики Товару <?php print_r($row["name"]) ?></h2>
             </div>
             <div class="section-content">
