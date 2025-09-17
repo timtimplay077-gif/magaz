@@ -243,7 +243,11 @@ function getCategoryName($category_id)
                         ?>
                         <button class="buy-btn <?= $isInCart ? 'in-cart' : '' ?>"
                             onclick="addToCart(<?= $product_id ?>, event)">
-                            <?= $isInCart ? 'У кошику' : 'Купити' ?>
+                            <?php if ($isInCart): ?>
+                                <i class="fa-solid fa-check"></i> У кошику
+                            <?php else: ?>
+                                <i class="fa-solid fa-cart-plus"></i> Купити
+                            <?php endif; ?>
                         </button>
                     </div>
                 </div>

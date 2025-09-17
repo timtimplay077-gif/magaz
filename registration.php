@@ -65,8 +65,8 @@ include('data/user_data.php');
     <title>Реєстрація</title>
     <style>
         :root {
-            --primary-color: #4a6bff;
-            --primary-hover: #3a56e0;
+            --primary-color: #4CAF50;
+            --primary-hover: #1b5a1dff;
             --secondary-color: #f8f9fa;
             --text-color: #333;
             --light-text: #6c757d;
@@ -132,7 +132,7 @@ include('data/user_data.php');
             left: 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(90deg, #4a6bff, #3a56e0);
+            background: #4CAF50;
         }
 
         .register_content:hover {
@@ -315,7 +315,7 @@ include('data/user_data.php');
             left: 0;
             width: 5px;
             height: 100%;
-            background: linear-gradient(to bottom, #4a6bff, #3a56e0);
+            background: #4CAF50;
         }
 
         .login-box button {
@@ -412,6 +412,7 @@ include('data/user_data.php');
                 padding: 12px 14px;
             }
         }
+
         .form-section {
             margin-bottom: 30px;
             padding-bottom: 20px;

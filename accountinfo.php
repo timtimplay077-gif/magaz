@@ -66,8 +66,8 @@ include('data/user_data.php');
     <title>Обліковий запис</title>
     <style>
         :root {
-            --primary-color: #4a6bff;
-            --primary-hover: #3a56e0;
+            --primary-color: #4CAF50;
+            --primary-hover: #1b5a1dff;
             --secondary-color: #6c757d;
             --success-color: #28a745;
             --text-color: #333;
@@ -76,6 +76,7 @@ include('data/user_data.php');
             --bg-light: #f8f9fa;
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+
         }
 
         .h2_info {
@@ -266,7 +267,7 @@ include('data/user_data.php');
         }
 
         .logaut-box button:last-child {
-            background: #4a6bff;
+            background: #4CAF50;
             color: white;
         }
 

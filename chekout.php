@@ -118,8 +118,8 @@ if (empty($basket_items)) {
     <title>Оформлення заказу</title>
     <style>
         :root {
-            --primary-color: #4a6bff;
-            --primary-hover: #3a56e0;
+            --primary-color: #4CAF50;
+            --primary-hover: #1b5a1dff;
             --success-color: #28a745;
             --warning-color: #ffc107;
             --text-color: #333;
@@ -338,7 +338,7 @@ if (empty($basket_items)) {
         }
 
         .order_ready_button {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            background: #4CAF50;
             color: white;
             border: none;
             padding: 20px 40px;
@@ -347,7 +347,7 @@ if (empty($basket_items)) {
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 10px 30px rgba(74, 107, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -359,7 +359,7 @@ if (empty($basket_items)) {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: #4CAF50;
             transition: var(--transition);
         }
 
@@ -430,6 +430,7 @@ if (empty($basket_items)) {
             background: var(--border-color);
             z-index: 1;
         }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -453,6 +454,7 @@ if (empty($basket_items)) {
                 transform: translateY(0);
             }
         }
+
         @media (max-width: 968px) {
             .chekount {
                 grid-template-columns: 1fr;
