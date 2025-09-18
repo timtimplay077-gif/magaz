@@ -141,6 +141,55 @@ function getCategoryName($category_id)
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Інтернет-Магазин КанцКроп</title>
 </head>
+<style>
+    :root {
+        --slider-primary: #4CAF50;
+        --slider-primary-hover: #1b5a1d;
+        --slider-bg: #f8f9fa;
+        --slider-text: #333;
+        --slider-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    .slick_slider .slick-dots {
+        bottom: 20px;
+    }
+
+    .slick_slider .slick-dots li {
+        width: 12px;
+        height: 12px;
+        margin: 0 6px;
+    }
+
+    .slick_slider .slick-dots li button {
+        width: 12px;
+        height: 12px;
+        padding: 0;
+    }
+
+    .slick_slider .slick-dots li button:before {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: white;
+        border-radius: 50%;
+        opacity: 0.6;
+        transition: all 0.3s ease;
+    }
+
+    .slick_slider .slick-dots li.slick-active button:before {
+        background: var(--slider-primary);
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    .slick_slider .slick-dots li button:hover:before {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+    .slick_slider .slick-loading .slick-list {
+        background: var(--slider-bg) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%234CAF50" stroke-width="8" stroke-dasharray="62.83 62.83" transform="rotate(0 50 50)"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50"/></circle></svg>') center center no-repeat;
+        background-size: 50px;
+    }
+</style>
 
 <body>
     <?php include("components/header.php") ?>
@@ -386,7 +435,7 @@ function getCategoryName($category_id)
                 centerMode: true,
                 variableWidth: true,
                 autoplay: true,
-                autoplaySpeed: 5000,
+                autoplaySpeed: 4000,
                 speed: 800,
                 pauseOnHover: true,
                 pauseOnFocus: true,

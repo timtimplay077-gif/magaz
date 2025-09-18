@@ -412,7 +412,11 @@ $db_image_query = $db_conn->query($db_image_sql);
     <?php
     include("contact/contact_end.php")
         ?>
-
+    <div id="imageModal" class="modal-image">
+        <span class="close-modal-image">&times;</span>
+        <img class="modal-image-content" id="modalImage">
+        <div class="modal-image-caption"></div>
+    </div>
     <script src="js/main.js"></script>
     <script>
         $(document).ready(function () {
