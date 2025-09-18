@@ -582,7 +582,7 @@ include('data/user_data.php');
 
                     <div class="terms-container">
                         <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">Я погоджуюсь з <a href="#">умовами угоди користувача</a> та політикою
+                        <label for="terms">Я погоджуюсь з <a href="terms.php">умовами угоди користувача</a> та політикою
                             конфіденційності</label>
                     </div>
                     <button type="submit" class="register_button"> <i class="fas fa-user-plus"
