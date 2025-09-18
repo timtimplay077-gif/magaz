@@ -169,7 +169,7 @@ function getCategoryName($category_id)
         content: '';
         width: 12px;
         height: 12px;
-        background: white;
+        background: black;
         border-radius: 50%;
         opacity: 0.6;
         transition: all 0.3s ease;
