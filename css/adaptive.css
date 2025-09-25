@@ -1627,14 +1627,6 @@
         width: 40px;
         height: 40px;
     }
-
-    .arrow_l1 {
-        left: -20px;
-    }
-
-    .arrow_r1 {
-        right: -20px;
-    }
 }
 
 @media (max-width: 480px) {
