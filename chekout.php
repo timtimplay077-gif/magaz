@@ -89,7 +89,11 @@ if ($basket_query && $basket_query->num_rows > 0) {
         $total += $item_total;
     }
 }
-
+$min_order_amount = 200;
+if ($total < $min_order_amount) {
+    header('Location: index.php?message=Мінімальна сума замовлення ' . $min_order_amount . ' грн');
+    exit;
+}
 if (empty($basket_items)) {
     header('Location: index.php?message=Кошик порожній');
     exit;

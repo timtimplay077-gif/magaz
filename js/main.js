@@ -250,13 +250,9 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     if (!item) return;
 
     const countEl = item.querySelector('.quantity-count');
-    const priceElement = item.querySelector('.final-price');
-    const oldPriceElement = item.querySelector('.original-price');
     const totalElement = item.querySelector('.item-total-price');
 
     const basePrice = parseFloat(item.dataset.price) || 0;
-    let pricePerUnit = basePrice;
-
     let count = parseInt(countEl.textContent) || 0;
 
     if (action === 'increase') {
@@ -268,7 +264,7 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     }
 
     countEl.textContent = count;
-    const totalPrice = pricePerUnit * count;
+    const totalPrice = basePrice * count;
     if (totalElement) {
         totalElement.textContent = totalPrice.toFixed(2) + ' ₴';
     }
@@ -276,12 +272,15 @@ function changeQuantity(button, action, productId, discountPercent = 0) {
     if (cartItem) {
         cartItem.quantity = count;
         cartItem.total = totalPrice;
+        cartData.totalItems = cartData.items.reduce((sum, item) => sum + item.quantity, 0);
+        cartData.totalSum = cartData.items.reduce((sum, item) => sum + item.total, 0);
+        cartData.totalSumWithoutDiscount = cartData.items.reduce((sum, item) =>
+            sum + (item.price_without_discount * item.quantity), 0);
     }
-
     updateQuantity(productId, count);
-    recalcTotal();
-    updateGlobalCartCount();
     updateCartFooter();
+    updateCartCounterGlobally(cartData.totalItems);
+    checkAndUpdateMinOrderStatus();
 }
 function recalcTotal() {
     let totalSum = 0;
@@ -295,15 +294,12 @@ function recalcTotal() {
 
         totalSum += total;
         totalItems += count;
-
-        const totalElement = item.querySelector('.item-total-price');
-        if (totalElement) {
-            totalElement.textContent = total.toFixed(2) + ' ₴';
-        }
     });
-
+    cartData.totalSum = totalSum;
+    cartData.totalItems = totalItems;
     updateCartFooter(totalItems, totalSum);
     updateCartCounterGlobally(totalItems);
+    checkAndUpdateMinOrderStatus();
 }
 
 function updateCartFooter() {
@@ -411,18 +407,33 @@ function removeFromCart(productId) {
                 if (itemIndex !== -1) {
                     cartData.items.splice(itemIndex, 1);
                 }
+                cartData.totalItems = cartData.items.reduce((sum, item) => sum + item.quantity, 0);
+                cartData.totalSum = cartData.items.reduce((sum, item) => sum + item.total, 0);
+                cartData.totalSumWithoutDiscount = cartData.items.reduce((sum, item) =>
+                    sum + (item.price_without_discount * item.quantity), 0);
 
                 item.style.opacity = '0';
                 item.style.transition = 'opacity 0.3s ease';
 
                 setTimeout(() => {
                     item.remove();
-                    recalcTotal();
+                    updateCartFooter();
+                    updateCartCounterGlobally(cartData.totalItems);
+                    checkAndUpdateMinOrderStatus();
+
                     const cartItems = document.getElementById('cart-items');
                     if (cartItems && document.querySelectorAll('.cart-item').length === 0) {
-                        cartItems.innerHTML = '<p class="empty-cart">Кошик порожній</p>';
+                        cartItems.innerHTML = ` <div class="empty-cart-state">
+                <div class="empty-cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h3 class="empty-cart-title">Кошик порожній</h3>
+                <p class="empty-cart-message">Додайте товари до кошика, щоб зробити покупку</p>
+                <button class="empty-cart-button" onclick="closeCartModal()">Продовжити покупки</button>
+            </div>`;
+                        const cartFooter = document.getElementById('cart-footer');
+                        if (cartFooter) cartFooter.style.display = 'none';
                     }
-                    updateCartCounterGlobally(cartData.items.reduce((total, item) => total + item.quantity, 0));
                 }, 300);
             } else {
                 if (deleteBtn) {
@@ -507,6 +518,7 @@ function addToCart(productId, event) {
                 const discountPercent = cartData.discountPercent || 0;
                 let itemPrice = data.item.price;
                 let itemTotal = data.item.total;
+
                 if (discountPercent > 0) {
                     const discountMultiplier = (100 - discountPercent) / 100;
                     itemPrice = itemPrice * discountMultiplier;
@@ -525,10 +537,19 @@ function addToCart(productId, event) {
                         price: itemPrice,
                         total: itemTotal,
                         has_discount: discountPercent > 0,
-                        discount_percent: discountPercent
+                        discount_percent: discountPercent,
+                        price_without_discount: discountPercent > 0 ?
+                            itemPrice / (1 - discountPercent / 100) : itemPrice
                     };
                     cartData.items.push(discountedItem);
                 }
+
+                // ОБНОВЛЯЕМ ОБЩИЕ СУММЫ
+                cartData.totalItems = data.cart_count;
+                cartData.totalSum = cartData.items.reduce((sum, item) => sum + item.total, 0);
+                cartData.totalSumWithoutDiscount = cartData.items.reduce((sum, item) =>
+                    sum + (item.price_without_discount * item.quantity), 0);
+
                 showNotification('Товар додано до кошика!', 'success');
                 buyButton.innerHTML = '<span>У кошику</span>';
                 buyButton.classList.add('in-cart');
@@ -537,12 +558,15 @@ function addToCart(productId, event) {
 
                 updateCartCounterGlobally(data.cart_count);
                 updateCartUI();
+                setTimeout(() => {
+                    checkAndUpdateMinOrderStatus();
+                }, 100);
+
             } else {
                 showNotification('Помилка при додаванні товару: ' + data.message, 'error');
                 buyButton.innerHTML = originalContent;
                 buyButton.disabled = false;
                 buyButton.style.opacity = '1';
-
             }
         })
         .catch(() => {
@@ -567,8 +591,12 @@ function updateCartUI() {
                 <button class="empty-cart-button" onclick="closeCartModal()">Продовжити покупки</button>
             </div>
         `;
+        const cartFooter = document.getElementById('cart-footer');
+        if (cartFooter) cartFooter.style.display = 'none';
         return;
     }
+    const cartFooter = document.getElementById('cart-footer');
+    if (cartFooter) cartFooter.style.display = 'block';
 
     cartData.items.forEach(item => {
         const div = document.createElement('div');
@@ -584,7 +612,7 @@ function updateCartUI() {
                 <h3 class="cart-item-name">${item.name}</h3>
                 <div class="cart-item-price">
                     ${item.has_discount ? `
-                        <span class="original-price">${(item.original_price || item.price / (1 - item.discount_percent / 100)).toFixed(2)} ₴</span>
+                        <span class="original-price">${(item.price_without_discount || item.price / (1 - item.discount_percent / 100)).toFixed(2)} ₴</span>
                     ` : ''}
                     <span class="final-price ${item.has_discount ? 'discounted' : ''}">
                         ${item.price.toFixed(2)} ₴
@@ -608,7 +636,7 @@ function updateCartUI() {
         cartItems.appendChild(div);
     });
     updateCartFooter();
-    initCartEventListeners();
+    checkAndUpdateMinOrderStatus();
 }
 function showNotification(message, type) {
     document.querySelectorAll('.notification').forEach(n => n.remove());
@@ -1139,3 +1167,119 @@ document.addEventListener('keydown', function (e) {
     }
 });
 document.querySelector('.modal-overlay').addEventListener('click', closeLoginModal);
+function checkMinOrderAmount() {
+    const minAmount = 200;
+    const currentTotal = cartData.totalSum || 0;
+    return currentTotal >= minAmount;
+}
+function showMinOrderAlert() {
+    const minAmount = 200;
+    const currentTotal = cartData.totalSum || 0;
+    const needed = minAmount - currentTotal;
+}
+function updateCheckoutButton() {
+    const checkoutBtn = document.querySelector('.checkout-button');
+    const isMinReached = checkMinOrderAmount();
+
+    if (checkoutBtn) {
+        if (!isMinReached) {
+            checkoutBtn.classList.add('disabled');
+            checkoutBtn.onclick = function (e) {
+                e.preventDefault();
+                showMinOrderAlert();
+                return false;
+            };
+        } else {
+            checkoutBtn.classList.remove('disabled');
+            checkoutBtn.onclick = null;
+        }
+    }
+}
+function updateMinOrderNotice(isReached, currentTotal, minAmount) {
+    let notice = document.querySelector('.min-order-notice');
+
+    if (!notice) {
+        notice = document.createElement('div');
+        notice.className = 'min-order-notice';
+        const summary = document.querySelector('.cart-summary');
+        if (summary) {
+            summary.parentNode.insertBefore(notice, summary);
+        }
+    }
+
+    if (isReached) {
+        notice.innerHTML = `
+            <i class="fa-solid fa-check-circle"></i>
+            <span>Мінімальна сума замовлення досягнута</span>
+        `;
+        notice.className = 'min-order-notice notice-success';
+    } else {
+        const needed = minAmount - currentTotal;
+        notice.innerHTML = `
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            <span>
+                Мінімальна сума замовлення: <strong>${minAmount.toFixed(2)} ₴</strong>. 
+                До мінімуму не вистачає: <strong>${needed.toFixed(2)} ₴</strong>
+            </span>
+        `;
+        notice.className = 'min-order-notice notice-warning pulse-warning';
+        setTimeout(() => {
+            notice.classList.remove('pulse-warning');
+        }, 1000);
+    }
+}
+function checkAndUpdateMinOrderStatus() {
+    const minAmount = 200;
+    const currentTotal = cartData.totalSum || 0;
+    const isMinReached = currentTotal >= minAmount;
+    updateMinOrderNotice(isMinReached, currentTotal, minAmount);
+    updateCheckoutButton(isMinReached);
+    if (!isMinReached) {
+        const needed = minAmount - currentTotal;
+        highlightMinOrderWarning();
+    }
+}
+function updateCheckoutButton(isMinReached) {
+    const checkoutBtn = document.querySelector('.checkout-button');
+    if (!checkoutBtn) return;
+
+    if (!isMinReached) {
+        checkoutBtn.classList.add('disabled');
+        checkoutBtn.onclick = function (e) {
+            e.preventDefault();
+            showMinOrderAlert();
+            return false;
+        };
+    } else {
+        checkoutBtn.classList.remove('disabled');
+        checkoutBtn.onclick = null;
+        checkoutBtn.href = 'chekout.php';
+    }
+}
+function highlightMinOrderWarning() {
+    const notice = document.querySelector('.min-order-notice');
+    if (notice && notice.classList.contains('notice-warning')) {
+        notice.classList.add('pulse-warning');
+        setTimeout(() => notice.classList.remove('pulse-warning'), 1000);
+    }
+}
+function showMinOrderAlert() {
+    const minAmount = 200;
+    const currentTotal = cartData.totalSum || 0;
+    const needed = minAmount - currentTotal;
+}
+function openCartModal() {
+    const modal = document.getElementById('cartModal');
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    overlay.className = 'overlay';
+    overlay.onclick = closeCartModal;
+    document.body.appendChild(overlay);
+
+    modal.style.display = 'block';
+    setTimeout(() => {
+        overlay.classList.add('show');
+        modal.classList.add('show');
+        checkAndUpdateMinOrderStatus();
+    }, 10);
+}

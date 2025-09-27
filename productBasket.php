@@ -76,7 +76,8 @@ if ($isLoggedIn && isset($user_row['sale'])) {
 } elseif (!$isLoggedIn) {
     unset($_SESSION['user_discount']);
 }
-
+$min_order_amount = 200; // Минимальная сумма заказа
+$is_min_amount_reached = $total_sum >= $min_order_amount;
 function getItemWord($count)
 {
     if ($count == 0)
@@ -177,8 +178,20 @@ function getItemWord($count)
                 <span class="summary-value" id="total-sum"><?= number_format($total_sum, 2) ?> ₴</span>
             </div>
         </div>
+        <div class="min-order-notice <?= $is_min_amount_reached ? 'notice-success' : 'notice-warning' ?>">
+            <i class="fa-solid <?= $is_min_amount_reached ? 'fa-check-circle' : 'fa-exclamation-triangle' ?>"></i>
+            <span>
+                <?php if ($is_min_amount_reached): ?>
+                    Мінімальна сума замовлення досягнута
+                <?php else: ?>
+                    Мінімальна сума замовлення: <strong><?= number_format($min_order_amount, 2) ?> ₴</strong>.
+                    До мінімуму не вистачає: <strong><?= number_format($min_order_amount - $total_sum, 2) ?> ₴</strong>
+                <?php endif; ?>
+            </span>
+        </div>
         <div class="cart-actions">
-            <a href="chekout.php" class="checkout-button">
+            <a href="chekout.php" class="checkout-button <?= !$is_min_amount_reached ? 'disabled' : '' ?>"
+                <?= !$is_min_amount_reached ? 'onclick="showMinOrderAlert(); return false;"' : '' ?>>
                 <i class="fa-solid fa-credit-card"></i>
                 Оформити замовлення
             </a>
@@ -187,6 +200,7 @@ function getItemWord($count)
                 Продовжити покупки
             </button>
         </div>
+
     </div>
 </div>
 <script>

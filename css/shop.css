@@ -6595,3 +6595,51 @@ quantity-controls {
         background-position: 0% 50%;
     }
 }
+
+.min-order-notice {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.min-order-notice.notice-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.min-order-notice.notice-success {
+    background: #d1edff;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.checkout-button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #6c757d !important;
+}
+
+.pulse-warning {
+    animation: pulseWarning 1s ease-in-out;
+}
+
+@keyframes pulseWarning {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+        background: #fff8e1;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
