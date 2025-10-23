@@ -77,7 +77,7 @@ include('data/user_data.php');
                         <div class="icon-hover-effect"></div>
                         <div class="icon-glow"></div>
                     </div>
-                    <a href="mainpage.php" class="category-link">
+                    <a href="index.php" class="category-link">
                         <span class="link-text">Канцелярія</span>
                         <div class="link-underline"></div>
                         <div class="link-hover-effect"></div>
@@ -123,7 +123,7 @@ include('data/user_data.php');
         </div>
 
         <div class="action-buttons">
-            <a href="mainpage.php" class="btn-primary">
+            <a href="index.php" class="btn-primary">
                 <i class="fas fa-home me-2"></i> На головну
             </a>
         </div>

@@ -1,7 +1,7 @@
 <header class="main-header unselectable">
     <div class="header-container">
         <div class="header-logo">
-            <a href="mainpage.php" class="logo-link">
+            <a href="index.php" class="logo-link">
                 <div class="logo-wrapper">
                     <img src="img/kanskrop_logo.png" alt="KansKrop" class="logo-img">
                     <div class="logo-glow"></div>
@@ -10,7 +10,7 @@
             </a>
         </div>
         <div class="header-search">
-            <form method="GET" action="mainpage.php" class="search-form" id="searchForm">
+            <form method="GET" action="index.php" class="search-form" id="searchForm">
                 <div class="search-container">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     <input type="text" placeholder="Я шукаю..." name="search" class="search-input" id="searchInput"

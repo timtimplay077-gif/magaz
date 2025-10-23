@@ -91,7 +91,7 @@ if ($count_result) {
 $total_pages = ceil($total_products / $max_page);
 if ($total_pages > 0 && $page_active >= $total_pages) {
     $page_active = $total_pages - 1;
-    header("Location: mainpage.php?page=$page_active$category_get_t$search_get_t$sort_get_t");
+    header("Location: index.php?page=$page_active$category_get_t$search_get_t$sort_get_t");
     exit;
 }
 
@@ -99,7 +99,7 @@ $db_sql = "SELECT * FROM `products` $category_active $search_active $sort_active
 $tabl = $db_conn->query($db_sql);
 if (!$tabl->num_rows && $page_active > 0) {
     $next_page_t = $page_active - 1;
-    header("Location: mainpage.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
+    header("Location: index.php?page=$next_page_t$category_get_t$search_get_t$sort_get_t");
     exit;
 }
 function getCategoryName($category_id)
@@ -208,7 +208,7 @@ function getCategoryName($category_id)
                         <?php
                         $category_query->data_seek(0);
                         while ($category_row = $category_query->fetch_assoc()): ?>
-                            <a href="mainpage.php?category=<?= $category_row['id'] ?>" class="category_link">
+                            <a href="index.php?category=<?= $category_row['id'] ?>" class="category_link">
                                 <?= htmlspecialchars($category_row['name']) ?>
                             </a>
                         <?php endwhile; ?>
@@ -318,7 +318,7 @@ function getCategoryName($category_id)
         <div class="pagination">
             <?php
             if ($current_page > 1): ?>
-                <a href="mainpage.php?page=<?= $page_active - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+                <a href="index.php?page=<?= $page_active - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <i class="fa-solid fa-chevron-left"></i>
                 </a>
             <?php endif; ?>
@@ -334,14 +334,14 @@ function getCategoryName($category_id)
 
             <?php
             if ($start_page > 1): ?>
-                <a href="mainpage.php?page=0<?= $category_get_t . $sort_get_t . $search_get_t ?>">1</a>
+                <a href="index.php?page=0<?= $category_get_t . $sort_get_t . $search_get_t ?>">1</a>
                 <?php if ($start_page > 2): ?>
                     <span class="pagination-ellipsis">...</span>
                 <?php endif; ?>
             <?php endif; ?>
 
             <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                <a href="mainpage.php?page=<?= $i - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>"
+                <a href="index.php?page=<?= $i - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>"
                     class="<?= $i == $current_page ? 'active' : '' ?>">
                     <?= $i ?>
                 </a>
@@ -352,14 +352,14 @@ function getCategoryName($category_id)
                 <?php if ($end_page < $total_pages - 1): ?>
                     <span class="pagination-ellipsis">...</span>
                 <?php endif; ?>
-                <a href="mainpage.php?page=<?= $total_pages - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+                <a href="index.php?page=<?= $total_pages - 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <?= $total_pages ?>
                 </a>
             <?php endif; ?>
 
             <?php
             if ($current_page < $total_pages): ?>
-                <a href="mainpage.php?page=<?= $page_active + 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
+                <a href="index.php?page=<?= $page_active + 1 ?><?= $category_get_t . $sort_get_t . $search_get_t ?>">
                     <i class="fa-solid fa-chevron-right"></i>
                 </a>
             <?php endif; ?>
