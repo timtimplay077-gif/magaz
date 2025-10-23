@@ -40,7 +40,7 @@ include('productBasket.php');
                         <div class="icon-hover-effect"></div>
                         <div class="icon-glow"></div>
                     </div>
-                    <a href="index.php" class="category-link">
+                    <a href="mainpage.php" class="category-link">
                         <span class="link-text">Канцелярія</span>
                         <div class="link-underline"></div>
                         <div class="link-hover-effect"></div>

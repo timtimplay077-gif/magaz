@@ -2,7 +2,7 @@ User-agent: *
 Disallow: /accountCreate.php
 Disallow: /accountinfo.php
 Disallow: /addproduct.php
-Disallow: /chekout.php
+Disallow: /place_an_order.php
 Disallow: /login.php
 Disallow: /odercheck.php
 Disallow: /product.php

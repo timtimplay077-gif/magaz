@@ -91,11 +91,11 @@ if ($basket_query && $basket_query->num_rows > 0) {
 }
 $min_order_amount = 200;
 if ($total < $min_order_amount) {
-    header('Location: index.php?message=Мінімальна сума замовлення ' . $min_order_amount . ' грн');
+    header('Location: mainpage.php?message=Мінімальна сума замовлення ' . $min_order_amount . ' грн');
     exit;
 }
 if (empty($basket_items)) {
-    header('Location: index.php?message=Кошик порожній');
+    header('Location: mainpage.php?message=Кошик порожній');
     exit;
 }
 ?>
@@ -577,7 +577,7 @@ if (empty($basket_items)) {
                         <div class="icon-hover-effect"></div>
                         <div class="icon-glow"></div>
                     </div>
-                    <a href="index.php" class="category-link">
+                    <a href="mainpage.php" class="category-link">
                         <span class="link-text">Канцелярія</span>
                         <div class="link-underline"></div>
                         <div class="link-hover-effect"></div>

@@ -19,6 +19,6 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 session_start();
 $_SESSION['logout_success'] = 'Ви успішно вийшли з системи';
-header("Location: index.php");
+header("Location: mainpage.php");
 exit();
 ?>

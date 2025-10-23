@@ -60,6 +60,6 @@ $_SESSION['email'] = $user['email'];
 $_SESSION['phone'] = $user['phone'];
 $_SESSION['firstName'] = $user['firstName'] ?? '';
 $_SESSION['lastName'] = $user['lastName'] ?? '';
-header("Location: index.php");
+header("Location: mainpage.php");
 exit();
 ?>

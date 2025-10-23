@@ -365,7 +365,7 @@ include('data/user_data.php');
                         <div class="icon-hover-effect"></div>
                         <div class="icon-glow"></div>
                     </div>
-                    <a href="index.php" class="category-link">
+                    <a href="mainpage.php" class="category-link">
                         <span class="link-text">Канцелярія</span>
                         <div class="link-underline"></div>
                         <div class="link-hover-effect"></div>
@@ -392,7 +392,7 @@ include('data/user_data.php');
         <p>Якщо у вас виникли запитання, напишіть нам - ми завжди раді допомогти!</p>
 
         <div class="action-buttons">
-            <a href="index.php" class="btn-primary">
+            <a href="mainpage.php" class="btn-primary">
                 <i class="fas fa-home"></i>
                 На головну
             </a>

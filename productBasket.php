@@ -190,7 +190,7 @@ function getItemWord($count)
             </span>
         </div>
         <div class="cart-actions">
-            <a href="chekout.php" class="checkout-button <?= !$is_min_amount_reached ? 'disabled' : '' ?>"
+            <a href="place_an_order.php" class="checkout-button <?= !$is_min_amount_reached ? 'disabled' : '' ?>"
                 <?= !$is_min_amount_reached ? 'onclick="showMinOrderAlert(); return false;"' : '' ?>>
                 <i class="fa-solid fa-credit-card"></i>
                 Оформити замовлення

@@ -1254,7 +1254,7 @@ function updateCheckoutButton(isMinReached) {
     } else {
         checkoutBtn.classList.remove('disabled');
         checkoutBtn.onclick = null;
-        checkoutBtn.href = 'chekout.php';
+        checkoutBtn.href = 'place_an_order.php';
     }
 }
 function highlightMinOrderWarning() {
