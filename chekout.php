@@ -609,12 +609,6 @@ if (empty($basket_items)) {
             </div>
             <div class="step-label">Доставка</div>
         </div>
-        <div class="progress-step">
-            <div class="step-icon">
-                <i class="fas fa-credit-card"></i>
-            </div>
-            <div class="step-label">Оплата</div>
-        </div>
     </div>
 
     <div class="block">
