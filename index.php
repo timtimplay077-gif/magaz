@@ -149,6 +149,7 @@ function getCategoryName($category_id)
         --slider-text: #333;
         --slider-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
+
     .slick_slider .slick-dots {
         bottom: 20px;
     }
@@ -185,6 +186,7 @@ function getCategoryName($category_id)
         opacity: 1;
         transform: scale(1.3);
     }
+
     .slick_slider .slick-loading .slick-list {
         background: var(--slider-bg) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%234CAF50" stroke-width="8" stroke-dasharray="62.83 62.83" transform="rotate(0 50 50)"><animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50"/></circle></svg>') center center no-repeat;
         background-size: 50px;
@@ -274,6 +276,9 @@ function getCategoryName($category_id)
                         <img class="mini_img" src="<?= $row['img'] ?>" alt="<?= htmlspecialchars($row['name']) ?>">
                         <div class="product_info"><?= htmlspecialchars($row['name']) ?></div>
                     </a>
+                    <div class="product_manufacturer">
+                        <p>Код: <?php print_r($row["productСode"]) ?></p>
+                    </div>
                     <div class="price_buy">
                         <div class="price-container">
                             <?php if ($has_discount): ?>
@@ -282,8 +287,9 @@ function getCategoryName($category_id)
                             <span class="new-price <?= $has_discount ? 'discounted' : '' ?>">
                                 <?= number_format($discount_price, 2) ?>₴
                             </span>
+
                             <?php if ($has_discount && $userSale > 0): ?>
-                                <small style="color: green; font-size: 12px;">Ваша скидка: <?= $userSale ?>%</small>
+                                <small style="color: green; font-size: 12px;">Ваша знижка: <?= $userSale ?>%</small>
                             <?php endif; ?>
                         </div>
                         <?php

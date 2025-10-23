@@ -103,9 +103,8 @@ $db_image_query = $db_conn->query($db_image_sql);
                         <i class="fa-solid fa-chevron-right"></i>
                     </div>
                 <?php } ?>
-
-                <img class="slider_product" src="<?php print_r($row['img']); ?>" alt="<?php print_r($row["name"]) ?>">
-
+                <img class="slider_product" src="<?php print_r($row['img']); ?>" alt="<?php print_r($row["name"]) ?>"
+                    style="cursor: zoom-in;" onclick="openModal(0)">
                 <?php if ($db_image_query->num_rows > 0) { ?>
                     <div class="product_photo_slider">
                         <?php
@@ -117,8 +116,9 @@ $db_image_query = $db_conn->query($db_image_sql);
                             $img = $db_image_row["img"];
                             $active_class = $i === 0 ? 'active' : '';
                             ?>
-                            <img class="<?php echo $active_class; ?>" onclick="set_mimiImg('<?= $i ?>')"
-                                src="<?php print_r($img) ?>" alt="Thumbnail <?= $i + 1 ?>">
+                            <img class="<?php echo $active_class; ?>"
+                                onclick="set_mimiImg('<?= $i ?>')" src="<?php print_r($img) ?>"
+                                alt="Thumbnail <?= $i + 1 ?>" style="cursor: pointer;">
                         <?php } ?>
                     </div>
                 <?php } ?>
@@ -412,11 +412,6 @@ $db_image_query = $db_conn->query($db_image_sql);
     <?php
     include("contact/contact_end.php")
         ?>
-    <div id="imageModal" class="modal-image">
-        <span class="close-modal-image">&times;</span>
-        <img class="modal-image-content" id="modalImage">
-        <div class="modal-image-caption"></div>
-    </div>
     <script src="js/main.js"></script>
     <script>
         $(document).ready(function () {
@@ -437,7 +432,21 @@ $db_image_query = $db_conn->query($db_image_sql);
         include("dropdown.php");
     }
     ?>
-
+<div class="image-modal" id="imageModal">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    
+    <button class="modal-nav modal-prev hidden" onclick="navigateModal(-1)">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    
+    <button class="modal-nav modal-next hidden" onclick="navigateModal(1)">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    
+    <div class="modal-content1">
+        <img class="modal-image" id="modalImage" src="" alt="" onclick="closeModal()">
+    </div>
+</div>
 </body>
 
 </html>
