@@ -6424,9 +6424,9 @@ quantity-controls {
 }
 
 .product_manufacturer p {
-    font-size: 16px;
-    color: #6b7280;
-    font-weight: 500;
+    font-size: 18px;
+    color: #383c43;
+    font-weight: 800;
 }
 
 .product_row_price {
@@ -6753,6 +6753,7 @@ quantity-controls {
 .modal-nav.hidden {
     display: none;
 }
+
 .modal-counter {
     position: absolute;
     bottom: 30px;
